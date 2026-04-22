@@ -10,5 +10,10 @@ namespace Identity.Domain.Interfaces
         Task<User?> FindByUsernameAsync(string username);
         Task<bool> CheckPasswordAsync(User user, string password);
         Task<IList<string>> GetRolesAsync(User user);
+        Task<bool> CreateUserAsync(User user, string password, string role);
+        Task<bool> ChangePasswordAsync(User user, string newPassword);
+        Task<User?> FindByIdAsync(string userId);
+        Task<IList<User>> GetAllUsersAsync(int page, int pageSize);
+        Task<int> GetTotalUsersCountAsync();
     }
 }

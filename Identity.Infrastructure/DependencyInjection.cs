@@ -21,14 +21,17 @@ namespace Identity.Infrastructure
             services.AddIdentity<User, IdentityRole>(options =>
             {
                 options.Password.RequireDigit = true;
-                options.Password.RequiredLength = 8;
-                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireUppercase = true;
                 options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireLowercase = true;
             })
             .AddEntityFrameworkStores<IdentityDbContext>()
             .AddDefaultTokenProviders();
 
             services.AddScoped<IAuthRepository, AuthRepository>();
+            services.AddScoped<SharedKernel.Interfaces.IAuthRepository, AuthRepository>();
+
 
             return services;
         }

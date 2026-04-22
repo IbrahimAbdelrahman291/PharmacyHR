@@ -1,0 +1,14 @@
+﻿using Employees.Application.DTOs;
+using SharedKernel.Wrappers;
+
+
+namespace Employees.Application.Interfaces
+{
+    public interface IEmployeeService
+    {
+        Task<Result<bool>> CreateAsync(CreateEmployeeDto dto);
+        Task<Result<EmployeeDto>> GetByIdAsync(int id);
+        Task<Result<PaginatedResponse<EmployeeDto>>> GetAllAsync(int page, int pageSize, int? branchId);
+        Task<Result<bool>> UpdateAsync(int id, UpdateEmployeeDto dto);
+    }
+}

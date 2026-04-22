@@ -1,14 +1,28 @@
 <Solution>
   <Folder Name="/src/" />
+  <Folder Name="/src/Host/">
+    <Project Path="PharmacyHR.API/PharmacyHR.API.csproj" Id="9a01d004-b014-44c1-891e-6792969a8315" />
+  </Folder>
   <Folder Name="/src/Modules/" />
+  <Folder Name="/src/Modules/Branches/">
+    <Project Path="Branches.API/Branches.API.csproj" Id="209b0203-8321-4148-955c-44f4508ff6a4" />
+    <Project Path="Branches.Application/Branches.Application.csproj" Id="2fafe1a1-f66a-475d-897f-12c690144608" />
+    <Project Path="Branches.Domain/Branches.Domain.csproj" Id="61f5918d-ffe0-4ef8-9b9f-6b858781caa3" />
+    <Project Path="Branches.Infrastructure/Branches.Infrastructure.csproj" Id="6a4b5dc2-3c57-48a1-84ba-a842288e7047" />
+  </Folder>
+  <Folder Name="/src/Modules/Employee/">
+    <Project Path="Employees.API/Employees.API.csproj" Id="f15490ce-c421-4135-8b05-86517f19592b" />
+    <Project Path="Employees.Application/Employees.Application.csproj" Id="2407fe94-3a31-4be5-afa0-1d7a87e51e29" />
+    <Project Path="Employees.Domain/Employees.Domain.csproj" Id="fcd5f13e-8539-459e-9d6b-3e30053bec0f" />
+    <Project Path="Employees.Infrastructure/Employees.Infrastructure.csproj" Id="ccaf06c2-6ca0-40be-91c2-df3a675664da" />
+  </Folder>
   <Folder Name="/src/Modules/Identity/">
     <Project Path="Identity.API/Identity.API.csproj" />
     <Project Path="Identity.Application/Identity.Application.csproj" />
     <Project Path="Identity.Domain/Identity.Domain.csproj" />
     <Project Path="Identity.Infrastructure/Identity.Infrastructure.csproj" />
   </Folder>
-  <Folder Name="/src/Modules/Shared/">
+  <Folder Name="/src/Shared/">
     <Project Path="SharedKernel/SharedKernel.csproj" />
   </Folder>
-  <Project Path="PharmacyHR/PharmacyHR.csproj" />
 </Solution>

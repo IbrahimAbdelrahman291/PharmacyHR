@@ -1,5 +1,6 @@
 ﻿using Identity.Application.DTOs;
 using Identity.Application.Interfaces;
+using Identity.Domain.Entities;
 using Identity.Domain.Enums;
 using Identity.Domain.Interfaces;
 using Microsoft.Extensions.Configuration;
@@ -32,7 +33,7 @@ namespace Identity.Application.Services
 
             var isPasswordValid = await _authRepository.CheckPasswordAsync(user, request.Password);
             if (!isPasswordValid)
-                return Result<LoginResponseDto>.Failure("Invalid email or password");
+                return Result<LoginResponseDto>.Failure("Invalid username or password");
 
             var roles = await _authRepository.GetRolesAsync(user);
             var role = roles.FirstOrDefault() ?? string.Empty;
@@ -47,7 +48,51 @@ namespace Identity.Application.Services
             });
         }
 
-        private string GenerateToken(Domain.Entities.User user, string role)
+        public async Task<Result<bool>> CreateUserAsync(CreateUserDto dto)
+        {
+            var existingUser = await _authRepository.FindByUsernameAsync(dto.Username);
+            if (existingUser is not null)
+                return Result<bool>.Failure("Username already exists");
+
+            var validRoles = new[]
+            {
+                UserRoles.Admin,
+                UserRoles.HR,
+                UserRoles.Accountant,
+                UserRoles.Control,
+                UserRoles.Manager
+            };
+
+            if (!validRoles.Contains(dto.Role))
+                return Result<bool>.Failure("Invalid role");
+
+            var user = new User
+            {
+                UserName = dto.Username,
+                Name = dto.Name
+            };
+
+            var result = await _authRepository.CreateUserAsync(user, dto.Password, dto.Role);
+            if (!result)
+                return Result<bool>.Failure("Failed to create user");
+
+            return Result<bool>.Success(true);
+        }
+
+        public async Task<Result<bool>> ChangePasswordAsync(string userId, ChangePasswordDto dto)
+        {
+            var user = await _authRepository.FindByIdAsync(userId);
+            if (user is null)
+                return Result<bool>.Failure("User not found");
+
+            var result = await _authRepository.ChangePasswordAsync(user, dto.NewPassword);
+            if (!result)
+                return Result<bool>.Failure("Failed to change password");
+
+            return Result<bool>.Success(true);
+        }
+
+        private string GenerateToken(User user, string role)
         {
             var claims = new List<Claim>
             {
@@ -80,6 +125,33 @@ namespace Identity.Application.Services
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public async Task<Result<PaginatedResponse<UserDto>>> GetAllUsersAsync(int page, int pageSize)
+        {
+            var users = await _authRepository.GetAllUsersAsync(page, pageSize);
+            var totalCount = await _authRepository.GetTotalUsersCountAsync();
+
+            var userDtos = new List<UserDto>();
+            foreach (var user in users)
+            {
+                var roles = await _authRepository.GetRolesAsync(user);
+                userDtos.Add(new UserDto
+                {
+                    Id = user.Id,
+                    Username = user.UserName ?? string.Empty,
+                    Name = user.Name,
+                    Role = roles.FirstOrDefault() ?? string.Empty
+                });
+            }
+
+            return Result<PaginatedResponse<UserDto>>.Success(new PaginatedResponse<UserDto>
+            {
+                Data = userDtos,
+                TotalCount = totalCount,
+                Page = page,
+                PageSize = pageSize
+            });
         }
     }
 }
