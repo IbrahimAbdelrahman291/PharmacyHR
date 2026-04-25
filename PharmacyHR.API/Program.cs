@@ -9,6 +9,10 @@ using Employees.Application;
 using Employees.Infrastructure;
 using Branches.Application;
 using Branches.Infrastructure;
+using Payroll.Application;
+using Payroll.Infrastructure;
+using Hangfire;
+using Payroll.Application.Interfaces;
 
 public partial class Program
 {
@@ -21,7 +25,9 @@ public partial class Program
             .AddApplicationPart(typeof(Identity.API.Controllers.AuthController).Assembly)
             .AddApplicationPart(typeof(Employees.API.Controllers.EvaluationCriteriaController).Assembly)
             .AddApplicationPart(typeof(Branches.API.Controllers.BranchesController).Assembly)
-            .AddApplicationPart(typeof(Employees.API.Controllers.EmployeesController).Assembly);
+            .AddApplicationPart(typeof(Employees.API.Controllers.EmployeesController).Assembly)
+            .AddApplicationPart(typeof(Payroll.API.Controllers.PayrollController).Assembly);
+
 
 
         // Swagger
@@ -39,6 +45,9 @@ public partial class Program
         // Branches Module
         builder.Services.AddBranchesInfrastructure(builder.Configuration);
         builder.Services.AddBranchesApplication();
+        // Payroll Module
+        builder.Services.AddPayrollInfrastructure(builder.Configuration);
+        builder.Services.AddPayrollApplication();
 
         // JWT Authentication
         builder.Services.AddAuthentication(options =>
@@ -76,6 +85,22 @@ public partial class Program
         });
 
         var app = builder.Build();
+
+        //Hangfire
+        app.UseHangfireDashboard("/hangfire");
+
+        var recurringOptions = new RecurringJobOptions
+        {
+            TimeZone = TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time")
+        };
+
+        RecurringJob.AddOrUpdate<INewMonthJob>(
+            "start-new-month-job",
+            service => service.ExecuteAsync(),
+            "0 0 1 * *",
+            recurringOptions
+        );
+
 
         // Seed Identity Data
         #region Data seeding Identity

@@ -13,14 +13,18 @@ namespace Employees.Application.Services
         private readonly IBranchRepository _branchRepository;
         private readonly IAuthRepository _authRepository;
 
+        private readonly SharedKernel.Interfaces.IMonthlyDataRepository _monthlyDataRepository;
+
         public EmployeeService(
             IEmployeeRepository employeeRepository,
             IBranchRepository branchRepository,
-            IAuthRepository authRepository)
+            IAuthRepository authRepository,
+            SharedKernel.Interfaces.IMonthlyDataRepository monthlyDataRepository)
         {
             _employeeRepository = employeeRepository;
             _branchRepository = branchRepository;
             _authRepository = authRepository;
+            _monthlyDataRepository = monthlyDataRepository;
         }
 
         public async Task<Result<bool>> CreateAsync(CreateEmployeeDto dto)
@@ -66,7 +70,14 @@ namespace Employees.Application.Services
                 employee.Id,
                 dto.BranchId
             );
-
+            var target = (dto.ShiftHours ?? 0) * 26;
+            await _monthlyDataRepository.CreateMonthlyDataAsync(
+                employee.Id,
+                dto.Role,
+                dto.TotalSalary,
+                dto.SalaryPerHour,
+                target
+            );
             if (!userCreated)
                 return Result<bool>.Failure("Failed to create user");
 
@@ -148,5 +159,43 @@ namespace Employees.Application.Services
             await _employeeRepository.UpdateAsync(employee);
             return Result<bool>.Success(true);
         }
+        public async Task<Result<EmployeeHistoryDto>> GetHistoryAsync(int employeeId)
+        {
+            var employee = await _employeeRepository.GetByIdAsync(employeeId);
+            if (employee is null)
+                return Result<EmployeeHistoryDto>.Failure("Employee not found");
+
+            var history = await _employeeRepository.GetHistoryByEmployeeIdAsync(employeeId);
+            if (history is null)
+                return Result<EmployeeHistoryDto>.Failure("Employee history not found");
+
+            return Result<EmployeeHistoryDto>.Success(new EmployeeHistoryDto
+            {
+                EmployeeId = history.EmployeeId,
+                HiringDate = history.HiringDate,
+                Qualification = history.Qualification,
+                GraduationYear = history.GraduationYear,
+                NationalId = history.NationalId,
+                PhoneNumber = history.PhoneNumber,
+                EndOfServiceDate = history.EndOfServiceDate,
+                EndOfServiceReason = history.EndOfServiceReason,
+                EndOfServiceType = history.EndOfServiceType
+            });
+        }
+
+        public async Task<Result<bool>> UpdateEndOfServiceAsync(int employeeId, UpdateEndOfServiceDto dto)
+        {
+            var history = await _employeeRepository.GetHistoryByEmployeeIdAsync(employeeId);
+            if (history is null)
+                return Result<bool>.Failure("Employee history not found");
+
+            history.EndOfServiceDate = dto.EndOfServiceDate;
+            history.EndOfServiceReason = dto.EndOfServiceReason;
+            history.EndOfServiceType = dto.EndOfServiceType;
+
+            await _employeeRepository.UpdateHistoryAsync(history);
+            return Result<bool>.Success(true);
+        }
+
     }
 }

@@ -55,5 +55,14 @@ namespace Employees.Infrastructure.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
+        public async Task<EmployeeHistory?> GetHistoryByEmployeeIdAsync(int employeeId)
+             => await _context.EmployeeHistories.FirstOrDefaultAsync(h => h.EmployeeId == employeeId);
+
+        public async Task<bool> UpdateHistoryAsync(EmployeeHistory history)
+        {
+            _context.EmployeeHistories.Update(history);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

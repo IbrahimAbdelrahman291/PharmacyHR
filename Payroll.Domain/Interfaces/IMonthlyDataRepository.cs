@@ -1,0 +1,16 @@
+﻿using Payroll.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Payroll.Domain.Interfaces
+{
+    public interface IMonthlyDataRepository
+    {
+        Task<MonthlyEmployeeData?> GetCurrentMonthAsync(int employeeId);
+        Task<MonthlyEmployeeData?> GetByMonthAndYearAsync(int employeeId, int month, int year);
+        Task<bool> AddAsync(MonthlyEmployeeData data);
+        Task<bool> UpdateAsync(MonthlyEmployeeData data);
+        Task<IList<MonthlyEmployeeData>> GetAllCurrentMonthAsync(int? branchId);
+    }
+}

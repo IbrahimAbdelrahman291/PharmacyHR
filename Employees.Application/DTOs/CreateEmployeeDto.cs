@@ -11,6 +11,8 @@ namespace Employees.Application.DTOs
         public string Name { get; set; } = string.Empty;
         public string Role { get; set; } = string.Empty;
         public string? theNameOfJob { get; set; }
+        public double? TotalSalary { get; set; }    // للـ Static بس
+        public double? SalaryPerHour { get; set; }  // للـ Changable/Delivery بس
         public string? BankName { get; set; }
         public string? BankAccount { get; set; }
         public TimeOnly? CheckInTime { get; set; }

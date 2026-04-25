@@ -30,7 +30,7 @@ namespace Employees.API.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Admin},{UserRoles.Manager}")]
+        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Employee}")]
         public async Task<IActionResult> GetById(int id)
         {
             var result = await _service.GetByIdAsync(id);
@@ -60,6 +60,27 @@ namespace Employees.API.Controllers
                 return NotFound(new { message = result.Error });
 
             return Ok(new { message = "Employee updated successfully" });
+        }
+        [HttpGet("{id}/history")]
+        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Employee}")]
+        public async Task<IActionResult> GetHistory(int id)
+        {
+            var result = await _service.GetHistoryAsync(id);
+            if (!result.IsSuccess)
+                return NotFound(new { message = result.Error });
+
+            return Ok(result.Value);
+        }
+
+        [HttpPut("{id}/end-of-service")]
+        [Authorize(Roles = UserRoles.HR)]
+        public async Task<IActionResult> UpdateEndOfService(int id, [FromBody] UpdateEndOfServiceDto dto)
+        {
+            var result = await _service.UpdateEndOfServiceAsync(id, dto);
+            if (!result.IsSuccess)
+                return NotFound(new { message = result.Error });
+
+            return Ok(new { message = "End of service updated successfully" });
         }
     }
 }

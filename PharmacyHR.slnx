@@ -22,6 +22,12 @@
     <Project Path="Identity.Domain/Identity.Domain.csproj" />
     <Project Path="Identity.Infrastructure/Identity.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/src/Modules/Payroll/">
+    <Project Path="Payroll.API/Payroll.API.csproj" Id="24a47ab0-b4f9-4ecc-83f9-41c53c37eec3" />
+    <Project Path="Payroll.Application/Payroll.Application.csproj" Id="e1464b57-53c9-44dc-8cd1-6273bf2f72f7" />
+    <Project Path="Payroll.Domain/Payroll.Domain.csproj" Id="e9025c53-2243-426b-b849-a67a1440fa4f" />
+    <Project Path="Payroll.Infrastructure/Payroll.Infrastructure.csproj" Id="aeead700-7ffd-4f53-a0f2-8aaaabb2795d" />
+  </Folder>
   <Folder Name="/src/Shared/">
     <Project Path="SharedKernel/SharedKernel.csproj" />
   </Folder>
