@@ -55,6 +55,9 @@ namespace Payroll.Application.Services
             if (dto.HoursOverTime.HasValue)
                 await _sharedRepository.UpdateHoursOverTimeAsync(employeeId, dto.HoursOverTime.Value);
 
+            if (dto.ForgetedHours.HasValue)
+                await _sharedRepository.AddForgetedHoursAsync(employeeId, dto.ForgetedHours.Value);
+
             return Result<bool>.Success(true);
         }
 

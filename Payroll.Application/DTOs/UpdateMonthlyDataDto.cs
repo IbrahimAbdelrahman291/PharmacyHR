@@ -10,5 +10,7 @@ namespace Payroll.Application.DTOs
         public double? SalaryPerHour { get; set; }    // Changable/Delivery بس
         public double? Insurence { get; set; }
         public double? HoursOverTime { get; set; }
+        public double? ForgetedHours { get; set; }
+
     }
 }
