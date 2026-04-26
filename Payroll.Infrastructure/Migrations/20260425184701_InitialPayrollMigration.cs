@@ -129,7 +129,8 @@ namespace Payroll.Infrastructure.Migrations
                     TotalBorrows = table.Column<double>(type: "float", nullable: true),
                     TotalCashBorrows = table.Column<double>(type: "float", nullable: true),
                     Holidaies = table.Column<int>(type: "int", nullable: true),
-                    NetSalary = table.Column<double>(type: "float", nullable: true)
+                    NetSalary = table.Column<double>(type: "float", nullable: true),
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {

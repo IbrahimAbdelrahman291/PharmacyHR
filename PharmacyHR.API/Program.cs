@@ -1,18 +1,22 @@
+using Branches.Application;
+using Branches.Infrastructure;
+using Branches.Infrastructure.Data;
+using Employees.Application;
+using Employees.Infrastructure;
+using Employees.Infrastructure.Data;
+using Hangfire;
 using Identity.Application;
 using Identity.Infrastructure;
 using Identity.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Employees.Application;
-using Employees.Infrastructure;
-using Branches.Application;
-using Branches.Infrastructure;
 using Payroll.Application;
-using Payroll.Infrastructure;
-using Hangfire;
 using Payroll.Application.Interfaces;
+using Payroll.Infrastructure;
+using Payroll.Infrastructure.Data;
+using System.Text;
 
 public partial class Program
 {
@@ -85,6 +89,35 @@ public partial class Program
         });
 
         var app = builder.Build();
+
+        #region migrations
+        // Migrate databases and seed identity data
+        //using (var scope = app.Services.CreateScope())
+        //{
+        //    try
+        //    {
+        //        var identityDb = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
+        //        await identityDb.Database.MigrateAsync();
+
+        //        var employeesDb = scope.ServiceProvider.GetRequiredService<EmployeesDbContext>();
+        //        await employeesDb.Database.MigrateAsync();
+
+        //        var branchesDb = scope.ServiceProvider.GetRequiredService<BranchesDbContext>();
+        //        await branchesDb.Database.MigrateAsync();
+
+        //        var payrollDb = scope.ServiceProvider.GetRequiredService<PayrollDbContext>();
+        //        await payrollDb.Database.MigrateAsync();
+
+        //        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Identity.Domain.Entities.User>>();
+        //        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        //        await IdentitySeeder.SeedAsync(userManager, roleManager);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"Migration error: {ex.Message}");
+        //    }
+        //} 
+        #endregion
 
         //Hangfire
         app.UseHangfireDashboard("/hangfire");

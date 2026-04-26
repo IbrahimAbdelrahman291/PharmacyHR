@@ -12,15 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Employees.Infrastructure.Migrations
 {
     [DbContext(typeof(EmployeesDbContext))]
-    [Migration("20260422083403_AddEmployeeTables")]
-    partial class AddEmployeeTables
+    [Migration("20260425184615_InitialEmployeesMigration")]
+    partial class InitialEmployeesMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.6")
+                .HasAnnotation("ProductVersion", "10.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);

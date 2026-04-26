@@ -12,5 +12,9 @@ namespace Payroll.Domain.Interfaces
         Task<bool> AddAsync(MonthlyEmployeeData data);
         Task<bool> UpdateAsync(MonthlyEmployeeData data);
         Task<IList<MonthlyEmployeeData>> GetAllCurrentMonthAsync(int? branchId);
+        Task<bool> DeleteDiscountAsync(int id);
+        Task<bool> DeleteContractDiscountAsync(int id);
+        Task<bool> DeleteBonusAsync(int id);
+        Task<bool> DeleteCashBorrowAsync(int id);
     }
 }

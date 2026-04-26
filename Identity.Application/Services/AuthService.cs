@@ -30,7 +30,8 @@ namespace Identity.Application.Services
             var user = await _authRepository.FindByUsernameAsync(request.Username);
             if (user is null)
                 return Result<LoginResponseDto>.Failure("Invalid username or password");
-
+            if (!user.IsActive)
+                return Result<LoginResponseDto>.Failure("Account is disabled");
             var isPasswordValid = await _authRepository.CheckPasswordAsync(user, request.Password);
             if (!isPasswordValid)
                 return Result<LoginResponseDto>.Failure("Invalid username or password");
@@ -69,7 +70,8 @@ namespace Identity.Application.Services
             var user = new User
             {
                 UserName = dto.Username,
-                Name = dto.Name
+                Name = dto.Name,
+                IsActive = true,
             };
 
             var result = await _authRepository.CreateUserAsync(user, dto.Password, dto.Role);
@@ -141,7 +143,8 @@ namespace Identity.Application.Services
                     Id = user.Id,
                     Username = user.UserName ?? string.Empty,
                     Name = user.Name,
-                    Role = roles.FirstOrDefault() ?? string.Empty
+                    Role = roles.FirstOrDefault() ?? string.Empty,
+                    IsActive = user.IsActive,
                 });
             }
 
@@ -152,6 +155,13 @@ namespace Identity.Application.Services
                 Page = page,
                 PageSize = pageSize
             });
+        }
+        public async Task<Result<bool>> ToggleUserAsync(string userId)
+        {
+            var result = await _authRepository.ToggleUserAsync(userId);
+            if (!result)
+                return Result<bool>.Failure("User not found");
+            return Result<bool>.Success(true);
         }
     }
 }

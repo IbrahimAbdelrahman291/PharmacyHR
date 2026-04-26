@@ -15,6 +15,10 @@ namespace Payroll.Application.Interfaces
         Task<Result<bool>> AddContractDiscountAsync(AddDiscountDto dto);
         Task<Result<bool>> AddBonusAsync(AddBonusDto dto);
         Task<Result<bool>> AddCashBorrowAsync(AddBorrowDto dto);
+        Task<Result<bool>> DeleteDiscountAsync(int id);
+        Task<Result<bool>> DeleteContractDiscountAsync(int id);
+        Task<Result<bool>> DeleteBonusAsync(int id);
+        Task<Result<bool>> DeleteCashBorrowAsync(int id);
 
     }
 }

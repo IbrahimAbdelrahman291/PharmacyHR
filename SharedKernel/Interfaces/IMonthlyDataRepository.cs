@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace SharedKernel.Interfaces
 {
     public interface IMonthlyDataRepository
@@ -10,15 +7,18 @@ namespace SharedKernel.Interfaces
         Task AddHolidayHoursAsync(int employeeId, double hours);
         Task AddForgetedHoursAsync(int employeeId, double hours);
         Task UpdateHoursOverTimeAsync(int employeeId, double hours);
-        Task AddDiscountAsync(int employeeId, double amount);
-        Task AddContractDiscountAsync(int employeeId, double amount);
-        Task AddBonusAsync(int employeeId, double amount);
+        Task AddDiscountAsync(int employeeId, double amount, string reason, string? notes);
+        Task AddContractDiscountAsync(int employeeId, double amount, string reason, string? notes);
+        Task AddBonusAsync(int employeeId, double amount, string reason, string? notes);
         Task AddBorrowAsync(int employeeId, double amount);
-        Task AddCashBorrowAsync(int employeeId, double amount);
+        Task AddCashBorrowAsync(int employeeId, double amount, string reason, string? notes);
         Task UpdateSalaryAsync(int employeeId, double totalSalary);
         Task UpdateSalaryPerHourAsync(int employeeId, double salaryPerHour);
         Task UpdateInsurenceAsync(int employeeId, double amount);
         Task CreateMonthlyDataAsync(int employeeId, string role, double? totalSalary, double? salaryPerHour, double target);
-
+        Task<bool> DeleteDiscountAsync(int id);
+        Task<bool> DeleteContractDiscountAsync(int id);
+        Task<bool> DeleteBonusAsync(int id);
+        Task<bool> DeleteCashBorrowAsync(int id);
     }
 }

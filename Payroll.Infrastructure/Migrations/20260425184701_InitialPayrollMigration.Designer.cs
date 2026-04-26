@@ -12,8 +12,8 @@ using Payroll.Infrastructure.Data;
 namespace Payroll.Infrastructure.Migrations
 {
     [DbContext(typeof(PayrollDbContext))]
-    [Migration("20260425080754_AddRoleToMonthlyData")]
-    partial class AddRoleToMonthlyData
+    [Migration("20260425184701_InitialPayrollMigration")]
+    partial class InitialPayrollMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

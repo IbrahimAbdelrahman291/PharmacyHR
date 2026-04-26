@@ -59,5 +59,14 @@ namespace Identity.API.Controllers
 
             return Ok(result.Value);
         }
+        [HttpPut("users/{userId}/toggle")]
+        [Authorize(Roles = UserRoles.Admin)]
+        public async Task<IActionResult> ToggleUser(string userId)
+        {
+            var result = await _authService.ToggleUserAsync(userId);
+            if (!result.IsSuccess)
+                return NotFound(new { message = result.Error });
+            return Ok(new { message = "User status updated successfully" });
+        }
     }
 }

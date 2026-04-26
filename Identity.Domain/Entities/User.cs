@@ -10,5 +10,7 @@ namespace Identity.Domain.Entities
         public string Name { get; set; } = string.Empty;
         public int? EmployeeId { get; set; }
         public int? BranchId { get; set; }
+        public bool IsActive { get; set; } = true;
+
     }
 }

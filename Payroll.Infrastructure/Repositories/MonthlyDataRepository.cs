@@ -19,6 +19,10 @@ namespace Payroll.Infrastructure.Repositories
             var egyptNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, egyptTimeZone);
 
             return await _context.MonthlyEmployeeData
+                .Include(x => x.Discounts)
+                .Include(x => x.ContractDiscounts)
+                .Include(x => x.Bonuses)
+                .Include(x => x.CashBorrows)
                 .FirstOrDefaultAsync(x => x.EmployeeId == employeeId
                     && x.Month == egyptNow.Month
                     && x.Year == egyptNow.Year);
@@ -129,28 +133,76 @@ namespace Payroll.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task AddDiscountAsync(int employeeId, double amount)
+        public async Task AddDiscountAsync(int employeeId, double amount, string reason, string? notes)
         {
             var data = await GetCurrentAsync(employeeId);
             if (data is null) return;
+
+            var egyptTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time");
+            var egyptNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, egyptTimeZone);
+
+            var discount = new Discount
+            {
+                MonthlyEmployeeDataId = data.Id,
+                Amount = amount,
+                ReasonOfDiscount = reason,
+                Notes = notes,
+                Year = egyptNow.Year,
+                Month = egyptNow.Month,
+                Date = egyptNow
+            };
+
+            await _context.Discounts.AddAsync(discount);
             data.TotalDiscounts = (data.TotalDiscounts ?? 0) + amount;
             await RecalculateNetSalaryAsync(data);
             await _context.SaveChangesAsync();
         }
 
-        public async Task AddContractDiscountAsync(int employeeId, double amount)
+        public async Task AddContractDiscountAsync(int employeeId, double amount, string reason, string? notes)
         {
             var data = await GetCurrentAsync(employeeId);
             if (data is null) return;
+
+            var egyptTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time");
+            var egyptNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, egyptTimeZone);
+
+            var contractDiscount = new ContractDiscount
+            {
+                MonthlyEmployeeDataId = data.Id,
+                Amount = amount,
+                ReasonOfDiscount = reason,
+                Notes = notes,
+                Year = egyptNow.Year,
+                Month = egyptNow.Month,
+                Date = egyptNow
+            };
+
+            await _context.ContractDiscounts.AddAsync(contractDiscount);
             data.TotalContractDiscount = (data.TotalContractDiscount ?? 0) + amount;
             await RecalculateNetSalaryAsync(data);
             await _context.SaveChangesAsync();
         }
 
-        public async Task AddBonusAsync(int employeeId, double amount)
+        public async Task AddBonusAsync(int employeeId, double amount, string reason, string? notes)
         {
             var data = await GetCurrentAsync(employeeId);
             if (data is null) return;
+
+            var egyptTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time");
+            var egyptNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, egyptTimeZone);
+
+            var bonus = new Bonus
+            {
+                MonthlyEmployeeDataId = data.Id,
+                Amount = amount,
+                Reason = reason,
+                Notes = notes,
+                Year = egyptNow.Year,
+                Month = egyptNow.Month,
+                DateOfBonus = egyptNow
+            };
+
+            await _context.Bonuses.AddAsync(bonus);
             data.TotalBouns = (data.TotalBouns ?? 0) + amount;
             await RecalculateNetSalaryAsync(data);
             await _context.SaveChangesAsync();
@@ -165,10 +217,26 @@ namespace Payroll.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task AddCashBorrowAsync(int employeeId, double amount)
+        public async Task AddCashBorrowAsync(int employeeId, double amount, string reason, string? notes)
         {
             var data = await GetCurrentAsync(employeeId);
             if (data is null) return;
+
+            var egyptTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time");
+            var egyptNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, egyptTimeZone);
+
+            var cashBorrow = new CashBorrow
+            {
+                MonthlyEmployeeDataId = data.Id,
+                Amount = amount,
+                Reason = reason,
+                Notes = notes,
+                Year = egyptNow.Year,
+                Month = egyptNow.Month,
+                DateOfBorrow = egyptNow
+            };
+
+            await _context.CashBorrows.AddAsync(cashBorrow);
             data.TotalCashBorrows = (data.TotalCashBorrows ?? 0) + amount;
             await RecalculateNetSalaryAsync(data);
             await _context.SaveChangesAsync();
@@ -206,6 +274,10 @@ namespace Payroll.Infrastructure.Repositories
 
         public async Task<MonthlyEmployeeData?> GetByMonthAndYearAsync(int employeeId, int month, int year)
             => await _context.MonthlyEmployeeData
+                .Include(x => x.Discounts)
+                .Include(x => x.ContractDiscounts)
+                .Include(x => x.Bonuses)
+                .Include(x => x.CashBorrows)
                 .FirstOrDefaultAsync(x => x.EmployeeId == employeeId
                     && x.Month == month
                     && x.Year == year);
@@ -232,6 +304,74 @@ namespace Payroll.Infrastructure.Repositories
             return await _context.MonthlyEmployeeData
                 .Where(x => x.Month == egyptNow.Month && x.Year == egyptNow.Year)
                 .ToListAsync();
+        }
+
+        public async Task<bool> DeleteDiscountAsync(int id)
+        {
+            var discount = await _context.Discounts.FindAsync(id);
+            if (discount is null) return false;
+
+            var data = await _context.MonthlyEmployeeData.FindAsync(discount.MonthlyEmployeeDataId);
+            if (data is not null)
+            {
+                data.TotalDiscounts = (data.TotalDiscounts ?? 0) - discount.Amount;
+                await RecalculateNetSalaryAsync(data);
+            }
+
+            _context.Discounts.Remove(discount);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteContractDiscountAsync(int id)
+        {
+            var discount = await _context.ContractDiscounts.FindAsync(id);
+            if (discount is null) return false;
+
+            var data = await _context.MonthlyEmployeeData.FindAsync(discount.MonthlyEmployeeDataId);
+            if (data is not null)
+            {
+                data.TotalContractDiscount = (data.TotalContractDiscount ?? 0) - discount.Amount;
+                await RecalculateNetSalaryAsync(data);
+            }
+
+            _context.ContractDiscounts.Remove(discount);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteBonusAsync(int id)
+        {
+            var bonus = await _context.Bonuses.FindAsync(id);
+            if (bonus is null) return false;
+
+            var data = await _context.MonthlyEmployeeData.FindAsync(bonus.MonthlyEmployeeDataId);
+            if (data is not null)
+            {
+                data.TotalBouns = (data.TotalBouns ?? 0) - bonus.Amount;
+                await RecalculateNetSalaryAsync(data);
+            }
+
+            _context.Bonuses.Remove(bonus);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteCashBorrowAsync(int id)
+        {
+            var cashBorrow = await _context.CashBorrows.FindAsync(id);
+            if (cashBorrow is null) return false;
+
+            var data = await _context.MonthlyEmployeeData.FindAsync(cashBorrow.MonthlyEmployeeDataId);
+            if (data is not null)
+            {
+                data.TotalCashBorrows = (data.TotalCashBorrows ?? 0) - cashBorrow.Amount;
+                await RecalculateNetSalaryAsync(data);
+            }
+
+            _context.CashBorrows.Remove(cashBorrow);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

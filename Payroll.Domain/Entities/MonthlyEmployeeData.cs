@@ -24,6 +24,11 @@ namespace Payroll.Domain.Entities
         public int? Holidaies { get; set; }
         public double? NetSalary { get; set; }
         public string Role { get; set; } = string.Empty; // static, changable, delivery
+        // navigation properties
+        public ICollection<Discount> Discounts { get; set; } = new List<Discount>();
+        public ICollection<ContractDiscount> ContractDiscounts { get; set; } = new List<ContractDiscount>();
+        public ICollection<Bonus> Bonuses { get; set; } = new List<Bonus>();
+        public ICollection<CashBorrow> CashBorrows { get; set; } = new List<CashBorrow>();
 
     }
 }

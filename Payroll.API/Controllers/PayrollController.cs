@@ -92,5 +92,44 @@ namespace Payroll.API.Controllers
 
             return Ok(new { message = "Cash borrow added successfully" });
         }
+        [HttpDelete("discount/{id}")]
+        [Authorize(Roles = UserRoles.HR)]
+        public async Task<IActionResult> DeleteDiscount(int id)
+        {
+            var result = await _service.DeleteDiscountAsync(id);
+            if (!result.IsSuccess)
+                return NotFound(new { message = result.Error });
+            return Ok(new { message = "Discount deleted successfully" });
+        }
+
+        [HttpDelete("contract-discount/{id}")]
+        [Authorize(Roles = UserRoles.HR)]
+        public async Task<IActionResult> DeleteContractDiscount(int id)
+        {
+            var result = await _service.DeleteContractDiscountAsync(id);
+            if (!result.IsSuccess)
+                return NotFound(new { message = result.Error });
+            return Ok(new { message = "Contract discount deleted successfully" });
+        }
+
+        [HttpDelete("bonus/{id}")]
+        [Authorize(Roles = UserRoles.HR)]
+        public async Task<IActionResult> DeleteBonus(int id)
+        {
+            var result = await _service.DeleteBonusAsync(id);
+            if (!result.IsSuccess)
+                return NotFound(new { message = result.Error });
+            return Ok(new { message = "Bonus deleted successfully" });
+        }
+
+        [HttpDelete("cash-borrow/{id}")]
+        [Authorize(Roles = UserRoles.HR)]
+        public async Task<IActionResult> DeleteCashBorrow(int id)
+        {
+            var result = await _service.DeleteCashBorrowAsync(id);
+            if (!result.IsSuccess)
+                return NotFound(new { message = result.Error });
+            return Ok(new { message = "Cash borrow deleted successfully" });
+        }
     }
 }

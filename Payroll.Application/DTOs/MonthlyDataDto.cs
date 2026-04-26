@@ -24,5 +24,9 @@ namespace Payroll.Application.DTOs
         public double? TotalCashBorrows { get; set; }
         public int? Holidaies { get; set; }
         public double? NetSalary { get; set; }
+        public IList<DiscountItemDto> Discounts { get; set; } = new List<DiscountItemDto>();
+        public IList<DiscountItemDto> ContractDiscounts { get; set; } = new List<DiscountItemDto>();
+        public IList<BonusItemDto> Bonuses { get; set; } = new List<BonusItemDto>();
+        public IList<BorrowItemDto> CashBorrows { get; set; } = new List<BorrowItemDto>();
     }
 }

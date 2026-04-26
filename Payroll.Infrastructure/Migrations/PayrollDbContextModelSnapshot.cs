@@ -54,6 +54,8 @@ namespace Payroll.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("MonthlyEmployeeDataId");
+
                     b.ToTable("Bonuses");
                 });
 
@@ -124,6 +126,8 @@ namespace Payroll.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("MonthlyEmployeeDataId");
+
                     b.ToTable("CashBorrows");
                 });
 
@@ -159,6 +163,8 @@ namespace Payroll.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("MonthlyEmployeeDataId");
+
                     b.ToTable("ContractDiscounts");
                 });
 
@@ -193,6 +199,8 @@ namespace Payroll.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MonthlyEmployeeDataId");
 
                     b.ToTable("Discounts");
                 });
@@ -266,6 +274,53 @@ namespace Payroll.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("MonthlyEmployeeData");
+                });
+
+            modelBuilder.Entity("Payroll.Domain.Entities.Bonus", b =>
+                {
+                    b.HasOne("Payroll.Domain.Entities.MonthlyEmployeeData", null)
+                        .WithMany("Bonuses")
+                        .HasForeignKey("MonthlyEmployeeDataId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Payroll.Domain.Entities.CashBorrow", b =>
+                {
+                    b.HasOne("Payroll.Domain.Entities.MonthlyEmployeeData", null)
+                        .WithMany("CashBorrows")
+                        .HasForeignKey("MonthlyEmployeeDataId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Payroll.Domain.Entities.ContractDiscount", b =>
+                {
+                    b.HasOne("Payroll.Domain.Entities.MonthlyEmployeeData", null)
+                        .WithMany("ContractDiscounts")
+                        .HasForeignKey("MonthlyEmployeeDataId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Payroll.Domain.Entities.Discount", b =>
+                {
+                    b.HasOne("Payroll.Domain.Entities.MonthlyEmployeeData", null)
+                        .WithMany("Discounts")
+                        .HasForeignKey("MonthlyEmployeeDataId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Payroll.Domain.Entities.MonthlyEmployeeData", b =>
+                {
+                    b.Navigation("Bonuses");
+
+                    b.Navigation("CashBorrows");
+
+                    b.Navigation("ContractDiscounts");
+
+                    b.Navigation("Discounts");
                 });
 #pragma warning restore 612, 618
         }

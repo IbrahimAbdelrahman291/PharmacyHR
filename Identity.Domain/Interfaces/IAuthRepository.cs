@@ -15,5 +15,7 @@ namespace Identity.Domain.Interfaces
         Task<User?> FindByIdAsync(string userId);
         Task<IList<User>> GetAllUsersAsync(int page, int pageSize);
         Task<int> GetTotalUsersCountAsync();
+        Task<bool> ToggleUserAsync(string userId);
+
     }
 }

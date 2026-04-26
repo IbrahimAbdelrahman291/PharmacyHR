@@ -45,6 +45,15 @@ namespace Identity.Infrastructure.Repositories
             return _userManager.Users
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
+                .Select(u => new User
+                {
+                    Id = u.Id,
+                    UserName = u.UserName,
+                    Name = u.Name,
+                    EmployeeId = u.EmployeeId,
+                    BranchId = u.BranchId,
+                    IsActive = u.IsActive
+                })
                 .ToList();
         }
 
@@ -65,6 +74,14 @@ namespace Identity.Infrastructure.Repositories
             if (!result.Succeeded) return false;
 
             await _userManager.AddToRoleAsync(user, role);
+            return true;
+        }
+        public async Task<bool> ToggleUserAsync(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user is null) return false;
+            user.IsActive = !user.IsActive;
+            await _userManager.UpdateAsync(user);
             return true;
         }
     }

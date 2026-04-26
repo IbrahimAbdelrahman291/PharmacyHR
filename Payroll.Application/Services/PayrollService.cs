@@ -63,26 +63,60 @@ namespace Payroll.Application.Services
 
         public async Task<Result<bool>> AddDiscountAsync(AddDiscountDto dto)
         {
-            await _sharedRepository.AddDiscountAsync(dto.EmployeeId, dto.Amount);
+            await _sharedRepository.AddDiscountAsync(dto.EmployeeId, dto.Amount, dto.ReasonOfDiscount, dto.Notes);
             return Result<bool>.Success(true);
         }
 
         public async Task<Result<bool>> AddContractDiscountAsync(AddDiscountDto dto)
         {
-            await _sharedRepository.AddContractDiscountAsync(dto.EmployeeId, dto.Amount);
+            await _sharedRepository.AddContractDiscountAsync(dto.EmployeeId, dto.Amount, dto.ReasonOfDiscount, dto.Notes);
             return Result<bool>.Success(true);
         }
 
         public async Task<Result<bool>> AddBonusAsync(AddBonusDto dto)
         {
-            await _sharedRepository.AddBonusAsync(dto.EmployeeId, dto.Amount);
+            await _sharedRepository.AddBonusAsync(dto.EmployeeId, dto.Amount, dto.Reason, dto.Notes);
             return Result<bool>.Success(true);
         }
+
         public async Task<Result<bool>> AddCashBorrowAsync(AddBorrowDto dto)
         {
-            await _sharedRepository.AddCashBorrowAsync(dto.EmployeeId, dto.Amount);
+            await _sharedRepository.AddCashBorrowAsync(dto.EmployeeId, dto.Amount, dto.Reason, dto.Notes);
             return Result<bool>.Success(true);
         }
+
+        public async Task<Result<bool>> DeleteDiscountAsync(int id)
+        {
+            var result = await _sharedRepository.DeleteDiscountAsync(id);
+            if (!result)
+                return Result<bool>.Failure("Discount not found");
+            return Result<bool>.Success(true);
+        }
+
+        public async Task<Result<bool>> DeleteContractDiscountAsync(int id)
+        {
+            var result = await _sharedRepository.DeleteContractDiscountAsync(id);
+            if (!result)
+                return Result<bool>.Failure("Contract discount not found");
+            return Result<bool>.Success(true);
+        }
+
+        public async Task<Result<bool>> DeleteBonusAsync(int id)
+        {
+            var result = await _sharedRepository.DeleteBonusAsync(id);
+            if (!result)
+                return Result<bool>.Failure("Bonus not found");
+            return Result<bool>.Success(true);
+        }
+
+        public async Task<Result<bool>> DeleteCashBorrowAsync(int id)
+        {
+            var result = await _sharedRepository.DeleteCashBorrowAsync(id);
+            if (!result)
+                return Result<bool>.Failure("Cash borrow not found");
+            return Result<bool>.Success(true);
+        }
+
         private MonthlyDataDto MapToDto(Payroll.Domain.Entities.MonthlyEmployeeData data) => new()
         {
             EmployeeId = data.EmployeeId,
@@ -102,7 +136,39 @@ namespace Payroll.Application.Services
             TotalBorrows = data.TotalBorrows,
             TotalCashBorrows = data.TotalCashBorrows,
             Holidaies = data.Holidaies,
-            NetSalary = data.NetSalary
+            NetSalary = data.NetSalary,
+            Discounts = data.Discounts.Select(d => new DiscountItemDto
+            {
+                Id = d.Id,
+                Amount = d.Amount,
+                ReasonOfDiscount = d.ReasonOfDiscount,
+                Notes = d.Notes,
+                Date = d.Date
+            }).ToList(),
+            ContractDiscounts = data.ContractDiscounts.Select(d => new DiscountItemDto
+            {
+                Id = d.Id,
+                Amount = d.Amount,
+                ReasonOfDiscount = d.ReasonOfDiscount,
+                Notes = d.Notes,
+                Date = d.Date
+            }).ToList(),
+            Bonuses = data.Bonuses.Select(b => new BonusItemDto
+            {
+                Id = b.Id,
+                Amount = b.Amount,
+                Reason = b.Reason,
+                Notes = b.Notes,
+                DateOfBonus = b.DateOfBonus
+            }).ToList(),
+            CashBorrows = data.CashBorrows.Select(c => new BorrowItemDto
+            {
+                Id = c.Id,
+                Amount = c.Amount,
+                Reason = c.Reason,
+                Notes = c.Notes,
+                DateOfBorrow = c.DateOfBorrow
+            }).ToList()
         };
     }
 }
