@@ -9,14 +9,14 @@ namespace Employees.Application.Services
 {
     public class EmployeeService : IEmployeeService
     {
-        private readonly IEmployeeRepository _employeeRepository;
+        private readonly Domain.Interfaces.IEmployeeRepository _employeeRepository;
         private readonly IBranchRepository _branchRepository;
         private readonly IAuthRepository _authRepository;
 
         private readonly SharedKernel.Interfaces.IMonthlyDataRepository _monthlyDataRepository;
 
         public EmployeeService(
-            IEmployeeRepository employeeRepository,
+            Domain.Interfaces.IEmployeeRepository employeeRepository,
             IBranchRepository branchRepository,
             IAuthRepository authRepository,
             SharedKernel.Interfaces.IMonthlyDataRepository monthlyDataRepository)

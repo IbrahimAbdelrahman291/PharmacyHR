@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Employees.Infrastructure.Repositories
 {
-    public class EmployeeRepository : IEmployeeRepository
+    public class EmployeeRepository : IEmployeeRepository, SharedKernel.Interfaces.IEmployeeRepository
     {
         private readonly EmployeesDbContext _context;
 
@@ -63,6 +63,12 @@ namespace Employees.Infrastructure.Repositories
             _context.EmployeeHistories.Update(history);
             await _context.SaveChangesAsync();
             return true;
+        }
+        public async Task<(int Id, string Name, int BranchId)?> GetEmployeeBasicInfoAsync(int employeeId)
+        {
+            var employee = await _context.Employees.FindAsync(employeeId);
+            if (employee is null) return null;
+            return (employee.Id, employee.Name, employee.BranchId);
         }
     }
 }

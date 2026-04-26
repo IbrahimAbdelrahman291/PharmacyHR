@@ -116,7 +116,60 @@ namespace Payroll.Application.Services
                 return Result<bool>.Failure("Cash borrow not found");
             return Result<bool>.Success(true);
         }
+        public async Task<Result<bool>> BulkDiscountAsync(BulkDiscountDto dto)
+        {
+            await _sharedRepository.BulkAddDiscountAsync(dto.EmployeeIds, dto.Amount, dto.ReasonOfDiscount, dto.Notes);
+            return Result<bool>.Success(true);
+        }
 
+        public async Task<Result<bool>> BulkBonusAsync(BulkBonusDto dto)
+        {
+            await _sharedRepository.BulkAddBonusAsync(dto.EmployeeIds, dto.Amount, dto.Reason, dto.Notes);
+            return Result<bool>.Success(true);
+        }
+        private readonly SharedKernel.Interfaces.IEmployeeRepository _employeeRepository;
+
+        public PayrollService(
+            Payroll.Domain.Interfaces.IMonthlyDataRepository repository,
+            SharedKernel.Interfaces.IMonthlyDataRepository sharedRepository,
+            SharedKernel.Interfaces.IEmployeeRepository employeeRepository)
+        {
+            _repository = repository;
+            _sharedRepository = sharedRepository;
+            _employeeRepository = employeeRepository;
+        }
+
+        public async Task<Result<IList<MonthlyDataWithEmployeeDto>>> GetAllMonthlyDataAsync(int month, int year, int? branchId)
+        {
+            var allData = await _repository.GetAllByMonthAndYearAsync(month, year, branchId);
+
+            var result = new List<MonthlyDataWithEmployeeDto>();
+            foreach (var data in allData)
+            {
+                var employeeInfo = await _employeeRepository.GetEmployeeBasicInfoAsync(data.EmployeeId);
+
+                if (branchId.HasValue && employeeInfo?.BranchId != branchId)
+                    continue;
+
+                result.Add(new MonthlyDataWithEmployeeDto
+                {
+                    EmployeeId = data.EmployeeId,
+                    EmployeeName = employeeInfo?.Name ?? string.Empty,
+                    BranchId = employeeInfo?.BranchId ?? 0,
+                    Month = data.Month,
+                    Year = data.Year,
+                    TotalSalary = data.TotalSalary,
+                    TotalDiscounts = data.TotalDiscounts,
+                    TotalContractDiscount = data.TotalContractDiscount,
+                    TotalBouns = data.TotalBouns,
+                    TotalBorrows = data.TotalBorrows,
+                    TotalCashBorrows = data.TotalCashBorrows,
+                    NetSalary = data.NetSalary
+                });
+            }
+
+            return Result<IList<MonthlyDataWithEmployeeDto>>.Success(result);
+        }
         private MonthlyDataDto MapToDto(Payroll.Domain.Entities.MonthlyEmployeeData data) => new()
         {
             EmployeeId = data.EmployeeId,

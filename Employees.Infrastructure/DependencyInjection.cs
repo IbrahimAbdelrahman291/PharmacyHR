@@ -21,6 +21,8 @@ namespace Employees.Infrastructure
 
             services.AddScoped<IEvaluationCriteriaRepository, EvaluationCriteriaRepository>();
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<SharedKernel.Interfaces.IEmployeeRepository, EmployeeRepository>();
+
 
             return services;
         }

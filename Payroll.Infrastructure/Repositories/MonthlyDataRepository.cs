@@ -373,5 +373,80 @@ namespace Payroll.Infrastructure.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
+        public async Task BulkAddDiscountAsync(IList<int> employeeIds, double amount, string reason, string? notes)
+        {
+            var egyptTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time");
+            var egyptNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, egyptTimeZone);
+
+            var monthlyData = await _context.MonthlyEmployeeData
+                .Where(x => employeeIds.Contains(x.EmployeeId)
+                    && x.Month == egyptNow.Month
+                    && x.Year == egyptNow.Year)
+                .ToListAsync();
+
+            var discounts = monthlyData.Select(data => new Discount
+            {
+                MonthlyEmployeeDataId = data.Id,
+                Amount = amount,
+                ReasonOfDiscount = reason,
+                Notes = notes,
+                Year = egyptNow.Year,
+                Month = egyptNow.Month,
+                Date = egyptNow
+            }).ToList();
+
+            await _context.Discounts.AddRangeAsync(discounts);
+
+            foreach (var data in monthlyData)
+            {
+                data.TotalDiscounts = (data.TotalDiscounts ?? 0) + amount;
+                await RecalculateNetSalaryAsync(data);
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task BulkAddBonusAsync(IList<int> employeeIds, double amount, string reason, string? notes)
+        {
+            var egyptTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time");
+            var egyptNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, egyptTimeZone);
+
+            var monthlyData = await _context.MonthlyEmployeeData
+                .Where(x => employeeIds.Contains(x.EmployeeId)
+                    && x.Month == egyptNow.Month
+                    && x.Year == egyptNow.Year)
+                .ToListAsync();
+
+            var bonuses = monthlyData.Select(data => new Bonus
+            {
+                MonthlyEmployeeDataId = data.Id,
+                Amount = amount,
+                Reason = reason,
+                Notes = notes,
+                Year = egyptNow.Year,
+                Month = egyptNow.Month,
+                DateOfBonus = egyptNow
+            }).ToList();
+
+            await _context.Bonuses.AddRangeAsync(bonuses);
+
+            foreach (var data in monthlyData)
+            {
+                data.TotalBouns = (data.TotalBouns ?? 0) + amount;
+                await RecalculateNetSalaryAsync(data);
+            }
+
+            await _context.SaveChangesAsync();
+        }
+        public async Task<IList<MonthlyEmployeeData>> GetAllByMonthAndYearAsync(int month, int year, int? branchId)
+        {
+            var query = _context.MonthlyEmployeeData
+                .Where(x => x.Month == month && x.Year == year);
+
+            if (branchId.HasValue)
+                query = query.Where(x => x.EmployeeId == branchId.Value);
+
+            return await query.ToListAsync();
+        }
     }
 }

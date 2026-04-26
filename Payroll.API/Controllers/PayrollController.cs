@@ -131,5 +131,34 @@ namespace Payroll.API.Controllers
                 return NotFound(new { message = result.Error });
             return Ok(new { message = "Cash borrow deleted successfully" });
         }
+        [HttpPost("discount/bulk")]
+        [Authorize(Roles = UserRoles.HR)]
+        public async Task<IActionResult> BulkDiscount([FromBody] BulkDiscountDto dto)
+        {
+            var result = await _service.BulkDiscountAsync(dto);
+            if (!result.IsSuccess)
+                return NotFound(new { message = result.Error });
+            return Ok(new { message = "Bulk discount added successfully" });
+        }
+
+        [HttpPost("bonus/bulk")]
+        [Authorize(Roles = UserRoles.HR)]
+        public async Task<IActionResult> BulkBonus([FromBody] BulkBonusDto dto)
+        {
+            var result = await _service.BulkBonusAsync(dto);
+            if (!result.IsSuccess)
+                return NotFound(new { message = result.Error });
+            return Ok(new { message = "Bulk bonus added successfully" });
+        }
+        [HttpGet("monthly-data")]
+        [Authorize(Roles = UserRoles.Accountant)]
+        public async Task<IActionResult> GetAllMonthlyData([FromQuery] int month,[FromQuery] int year,[FromQuery] int? branchId = null)
+        {
+            var result = await _service.GetAllMonthlyDataAsync(month, year, branchId);
+            if (!result.IsSuccess)
+                return NotFound(new { message = result.Error });
+
+            return Ok(result.Value);
+        }
     }
 }

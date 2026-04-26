@@ -1,0 +1,11 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace SharedKernel.Interfaces
+{
+    public interface IEmployeeRepository
+    {
+        Task<(int Id, string Name, int BranchId)?> GetEmployeeBasicInfoAsync(int employeeId);
+    }
+}
