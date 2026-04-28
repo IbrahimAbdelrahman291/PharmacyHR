@@ -12,8 +12,6 @@ namespace Employees.Application.DTOs
         public string? theNameOfJob { get; set; }
         public string? BankName { get; set; }
         public string? BankAccount { get; set; }
-        public TimeOnly? CheckInTime { get; set; }
-        public TimeOnly? CheckOutTime { get; set; }
         public double? ShiftHours { get; set; }
         public int BranchId { get; set; }
         public string BranchName { get; set; } = string.Empty;

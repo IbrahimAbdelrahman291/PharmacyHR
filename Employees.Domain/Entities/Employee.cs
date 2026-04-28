@@ -12,8 +12,6 @@ namespace Employees.Domain.Entities
         public string? theNameOfJob { get; set; }
         public string? BankName { get; set; }
         public string? BankAccount { get; set; }
-        public TimeOnly? CheckInTime { get; set; }
-        public TimeOnly? CheckOutTime { get; set; }
         public double? ShiftHours { get; set; }
         public string UserId { get; set; } = string.Empty;
         public int BranchId { get; set; }

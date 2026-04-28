@@ -15,8 +15,6 @@ namespace Employees.Application.DTOs
         public double? SalaryPerHour { get; set; }  // للـ Changable/Delivery بس
         public string? BankName { get; set; }
         public string? BankAccount { get; set; }
-        public TimeOnly? CheckInTime { get; set; }
-        public TimeOnly? CheckOutTime { get; set; }
         public double? ShiftHours { get; set; }
         public int BranchId { get; set; }
         public DateTime HiringDate { get; set; }

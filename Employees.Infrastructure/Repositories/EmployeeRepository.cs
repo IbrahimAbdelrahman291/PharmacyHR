@@ -70,5 +70,37 @@ namespace Employees.Infrastructure.Repositories
             if (employee is null) return null;
             return (employee.Id, employee.Name, employee.BranchId, employee.BankName, employee.BankAccount);
         }
+
+        public async Task<bool> AddScheduleAsync(EmployeeSchedule schedule)
+        {
+            await _context.EmployeeSchedules.AddAsync(schedule);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> UpdateScheduleAsync(EmployeeSchedule schedule)
+        {
+            _context.EmployeeSchedules.Update(schedule);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteScheduleAsync(int id)
+        {
+            var schedule = await _context.EmployeeSchedules.FindAsync(id);
+            if (schedule is null) return false;
+            _context.EmployeeSchedules.Remove(schedule);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<IList<EmployeeSchedule>> GetSchedulesByEmployeeIdAsync(int employeeId)
+            => await _context.EmployeeSchedules
+                .Where(s => s.EmployeeId == employeeId)
+                .ToListAsync();
+
+        public async Task<EmployeeSchedule?> GetScheduleByDayAsync(int employeeId, DayOfWeek dayOfWeek)
+            => await _context.EmployeeSchedules
+                .FirstOrDefaultAsync(s => s.EmployeeId == employeeId && s.DayOfWeek == dayOfWeek);
     }
 }

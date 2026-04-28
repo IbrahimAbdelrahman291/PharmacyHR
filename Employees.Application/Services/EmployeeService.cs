@@ -44,8 +44,6 @@ namespace Employees.Application.Services
                 theNameOfJob = dto.theNameOfJob,
                 BankName = dto.BankName,
                 BankAccount = dto.BankAccount,
-                CheckInTime = dto.CheckInTime,
-                CheckOutTime = dto.CheckOutTime,
                 ShiftHours = dto.ShiftHours,
                 BranchId = dto.BranchId,
                 UserId = string.Empty
@@ -101,8 +99,6 @@ namespace Employees.Application.Services
                 theNameOfJob = employee.theNameOfJob,
                 BankName = employee.BankName,
                 BankAccount = employee.BankAccount,
-                CheckInTime = employee.CheckInTime,
-                CheckOutTime = employee.CheckOutTime,
                 ShiftHours = employee.ShiftHours,
                 BranchId = employee.BranchId,
                 BranchName = branch?.Name ?? string.Empty
@@ -126,8 +122,6 @@ namespace Employees.Application.Services
                     theNameOfJob = employee.theNameOfJob,
                     BankName = employee.BankName,
                     BankAccount = employee.BankAccount,
-                    CheckInTime = employee.CheckInTime,
-                    CheckOutTime = employee.CheckOutTime,
                     ShiftHours = employee.ShiftHours,
                     BranchId = employee.BranchId,
                     BranchName = branch?.Name ?? string.Empty
@@ -152,8 +146,6 @@ namespace Employees.Application.Services
             if (dto.theNameOfJob is not null) employee.theNameOfJob = dto.theNameOfJob;
             if (dto.BankName is not null) employee.BankName = dto.BankName;
             if (dto.BankAccount is not null) employee.BankAccount = dto.BankAccount;
-            if (dto.CheckInTime.HasValue) employee.CheckInTime = dto.CheckInTime;
-            if (dto.CheckOutTime.HasValue) employee.CheckOutTime = dto.CheckOutTime;
             if (dto.ShiftHours.HasValue) employee.ShiftHours = dto.ShiftHours;
             if (dto.BranchId.HasValue) employee.BranchId = dto.BranchId.Value;
 

@@ -15,5 +15,7 @@ namespace Employees.Infrastructure.Data
         public DbSet<EvaluationCriteria> EvaluationCriterias { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<EmployeeHistory> EmployeeHistories { get; set; }
+        public DbSet<EmployeeSchedule> EmployeeSchedules { get; set; }
+
     }
 }

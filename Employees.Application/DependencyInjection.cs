@@ -14,6 +14,8 @@ namespace Employees.Application
         {
             services.AddScoped<IEvaluationCriteriaService, EvaluationCriteriaService>();
             services.AddScoped<IEmployeeService, EmployeeService>();
+            services.AddScoped<IEmployeeScheduleService, EmployeeScheduleService>();
+
 
             return services;
         }

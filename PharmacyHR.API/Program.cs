@@ -1,21 +1,17 @@
 using Branches.Application;
 using Branches.Infrastructure;
-using Branches.Infrastructure.Data;
 using Employees.Application;
 using Employees.Infrastructure;
-using Employees.Infrastructure.Data;
 using Hangfire;
 using Identity.Application;
 using Identity.Infrastructure;
 using Identity.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Payroll.Application;
 using Payroll.Application.Interfaces;
 using Payroll.Infrastructure;
-using Payroll.Infrastructure.Data;
 using System.Text;
 using Attendance.Application;
 using Attendance.Infrastructure;
@@ -32,6 +28,7 @@ public partial class Program
             .AddApplicationPart(typeof(Employees.API.Controllers.EvaluationCriteriaController).Assembly)
             .AddApplicationPart(typeof(Branches.API.Controllers.BranchesController).Assembly)
             .AddApplicationPart(typeof(Employees.API.Controllers.EmployeesController).Assembly)
+            .AddApplicationPart(typeof(Employees.API.Controllers.EmployeeScheduleController).Assembly)
             .AddApplicationPart(typeof(Payroll.API.Controllers.PayrollController).Assembly)
             .AddApplicationPart(typeof(Attendance.API.Controllers.AttendanceController).Assembly);
 
@@ -52,6 +49,7 @@ public partial class Program
         // Branches Module
         builder.Services.AddBranchesInfrastructure(builder.Configuration);
         builder.Services.AddBranchesApplication();
+
         // Payroll Module
         builder.Services.AddPayrollInfrastructure(builder.Configuration);
         builder.Services.AddPayrollApplication();

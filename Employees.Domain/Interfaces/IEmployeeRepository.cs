@@ -14,5 +14,10 @@ namespace Employees.Domain.Interfaces
         Task<bool> UpdateAsync(Employee employee);
         Task<EmployeeHistory?> GetHistoryByEmployeeIdAsync(int employeeId);
         Task<bool> UpdateHistoryAsync(EmployeeHistory history);
+        Task<bool> AddScheduleAsync(EmployeeSchedule schedule);
+        Task<bool> UpdateScheduleAsync(EmployeeSchedule schedule);
+        Task<bool> DeleteScheduleAsync(int id);
+        Task<IList<EmployeeSchedule>> GetSchedulesByEmployeeIdAsync(int employeeId);
+        Task<EmployeeSchedule?> GetScheduleByDayAsync(int employeeId, DayOfWeek dayOfWeek);
     }
 }
