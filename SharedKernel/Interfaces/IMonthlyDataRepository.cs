@@ -15,11 +15,11 @@ namespace SharedKernel.Interfaces
         Task UpdateSalaryAsync(int employeeId, double totalSalary);
         Task UpdateSalaryPerHourAsync(int employeeId, double salaryPerHour);
         Task UpdateInsurenceAsync(int employeeId, double amount);
-        Task CreateMonthlyDataAsync(int employeeId, string role, double? totalSalary, double? salaryPerHour, double target);
         Task<bool> DeleteDiscountAsync(int id);
         Task<bool> DeleteContractDiscountAsync(int id);
         Task<bool> DeleteBonusAsync(int id);
         Task<bool> DeleteCashBorrowAsync(int id);
+        Task CreateMonthlyDataAsync(int employeeId, string role, double? totalSalary, double? salaryPerHour, double target, int branchId);
         Task BulkAddDiscountAsync(IList<int> employeeIds, double amount, string reason, string? notes);
         Task BulkAddBonusAsync(IList<int> employeeIds, double amount, string reason, string? notes);
     }

@@ -64,11 +64,11 @@ namespace Employees.Infrastructure.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
-        public async Task<(int Id, string Name, int BranchId)?> GetEmployeeBasicInfoAsync(int employeeId)
+        public async Task<(int Id, string Name, int BranchId, string? BankName, string? BankAccount)?> GetEmployeeBasicInfoAsync(int employeeId)
         {
             var employee = await _context.Employees.FindAsync(employeeId);
             if (employee is null) return null;
-            return (employee.Id, employee.Name, employee.BranchId);
+            return (employee.Id, employee.Name, employee.BranchId, employee.BankName, employee.BankAccount);
         }
     }
 }

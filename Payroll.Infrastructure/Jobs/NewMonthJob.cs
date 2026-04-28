@@ -36,6 +36,7 @@ namespace Payroll.Infrastructure.Jobs
                 var newData = new Payroll.Domain.Entities.MonthlyEmployeeData
                 {
                     EmployeeId = data.EmployeeId,
+                    BranchId = data.BranchId,
                     Month = egyptNow.Month,
                     Year = egyptNow.Year,
                     Target = data.Target,

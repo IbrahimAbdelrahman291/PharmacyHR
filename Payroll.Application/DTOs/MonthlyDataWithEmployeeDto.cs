@@ -9,6 +9,7 @@ namespace Payroll.Application.DTOs
         public int EmployeeId { get; set; }
         public string EmployeeName { get; set; } = string.Empty;
         public int BranchId { get; set; }
+        public string BranchName { get; set; } = string.Empty;
         public int Month { get; set; }
         public int Year { get; set; }
         public double? TotalSalary { get; set; }
@@ -18,5 +19,7 @@ namespace Payroll.Application.DTOs
         public double? TotalBorrows { get; set; }
         public double? TotalCashBorrows { get; set; }
         public double? NetSalary { get; set; }
+        public string? BankName { get; set; }
+        public string? BankAccount { get; set; }
     }
 }

@@ -10,13 +10,19 @@ namespace Payroll.Application.Services
     {
         private readonly Payroll.Domain.Interfaces.IMonthlyDataRepository _repository;
         private readonly SharedKernel.Interfaces.IMonthlyDataRepository _sharedRepository;
+        private readonly SharedKernel.Interfaces.IEmployeeRepository _employeeRepository;
+        private readonly SharedKernel.Interfaces.IBranchRepository _branchRepository;
 
         public PayrollService(
             Payroll.Domain.Interfaces.IMonthlyDataRepository repository,
-            SharedKernel.Interfaces.IMonthlyDataRepository sharedRepository)
+            SharedKernel.Interfaces.IMonthlyDataRepository sharedRepository,
+            SharedKernel.Interfaces.IEmployeeRepository employeeRepository,
+            SharedKernel.Interfaces.IBranchRepository branchRepository)
         {
             _repository = repository;
             _sharedRepository = sharedRepository;
+            _employeeRepository = employeeRepository;
+            _branchRepository = branchRepository;
         }
 
         public async Task<Result<MonthlyDataDto>> GetCurrentMonthAsync(int employeeId)
@@ -116,6 +122,7 @@ namespace Payroll.Application.Services
                 return Result<bool>.Failure("Cash borrow not found");
             return Result<bool>.Success(true);
         }
+
         public async Task<Result<bool>> BulkDiscountAsync(BulkDiscountDto dto)
         {
             await _sharedRepository.BulkAddDiscountAsync(dto.EmployeeIds, dto.Amount, dto.ReasonOfDiscount, dto.Notes);
@@ -127,17 +134,6 @@ namespace Payroll.Application.Services
             await _sharedRepository.BulkAddBonusAsync(dto.EmployeeIds, dto.Amount, dto.Reason, dto.Notes);
             return Result<bool>.Success(true);
         }
-        private readonly SharedKernel.Interfaces.IEmployeeRepository _employeeRepository;
-
-        public PayrollService(
-            Payroll.Domain.Interfaces.IMonthlyDataRepository repository,
-            SharedKernel.Interfaces.IMonthlyDataRepository sharedRepository,
-            SharedKernel.Interfaces.IEmployeeRepository employeeRepository)
-        {
-            _repository = repository;
-            _sharedRepository = sharedRepository;
-            _employeeRepository = employeeRepository;
-        }
 
         public async Task<Result<IList<MonthlyDataWithEmployeeDto>>> GetAllMonthlyDataAsync(int month, int year, int? branchId)
         {
@@ -147,15 +143,16 @@ namespace Payroll.Application.Services
             foreach (var data in allData)
             {
                 var employeeInfo = await _employeeRepository.GetEmployeeBasicInfoAsync(data.EmployeeId);
-
-                if (branchId.HasValue && employeeInfo?.BranchId != branchId)
-                    continue;
+                var branchInfo = await _branchRepository.GetBranchByIdAsync(data.BranchId);
 
                 result.Add(new MonthlyDataWithEmployeeDto
                 {
                     EmployeeId = data.EmployeeId,
                     EmployeeName = employeeInfo?.Name ?? string.Empty,
-                    BranchId = employeeInfo?.BranchId ?? 0,
+                    BranchId = data.BranchId,
+                    BranchName = branchInfo?.Name ?? string.Empty,
+                    BankName = employeeInfo?.BankName,
+                    BankAccount = employeeInfo?.BankAccount,
                     Month = data.Month,
                     Year = data.Year,
                     TotalSalary = data.TotalSalary,
@@ -170,6 +167,7 @@ namespace Payroll.Application.Services
 
             return Result<IList<MonthlyDataWithEmployeeDto>>.Success(result);
         }
+
         private MonthlyDataDto MapToDto(Payroll.Domain.Entities.MonthlyEmployeeData data) => new()
         {
             EmployeeId = data.EmployeeId,

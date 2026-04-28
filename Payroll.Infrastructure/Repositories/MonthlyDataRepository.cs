@@ -56,46 +56,6 @@ namespace Payroll.Infrastructure.Repositories
             }
         }
 
-        public async Task CreateMonthlyDataAsync(int employeeId, string role, double? totalSalary, double? salaryPerHour, double target)
-        {
-            var egyptTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time");
-            var egyptNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, egyptTimeZone);
-
-            var data = new MonthlyEmployeeData
-            {
-                EmployeeId = employeeId,
-                Role = role.ToLower(),
-                Month = egyptNow.Month,
-                Year = egyptNow.Year,
-                Target = target,
-                Holidaies = 7,
-                Hours = 0,
-                HoursOverTime = 0,
-                ForgetedHours = 0,
-                HolidayHours = 0,
-                TotalDiscounts = 0,
-                TotalContractDiscount = 0,
-                TotalBouns = 0,
-                TotalBorrows = 0,
-                TotalCashBorrows = 0,
-                Insurence = 0
-            };
-
-            if (role.ToLower() == "static")
-            {
-                data.TotalSalary = totalSalary;
-                data.NetSalary = totalSalary ?? 0;
-            }
-            else
-            {
-                data.SalaryPerHour = salaryPerHour;
-                data.NetSalary = 0;
-            }
-
-            await _context.MonthlyEmployeeData.AddAsync(data);
-            await _context.SaveChangesAsync();
-        }
-
         public async Task AddHoursAsync(int employeeId, double hours)
         {
             var data = await GetCurrentAsync(employeeId);
@@ -444,9 +404,49 @@ namespace Payroll.Infrastructure.Repositories
                 .Where(x => x.Month == month && x.Year == year);
 
             if (branchId.HasValue)
-                query = query.Where(x => x.EmployeeId == branchId.Value);
+                query = query.Where(x => x.BranchId == branchId.Value);
 
             return await query.ToListAsync();
+        }
+        public async Task CreateMonthlyDataAsync(int employeeId, string role, double? totalSalary, double? salaryPerHour, double target, int branchId)
+        {
+            var egyptTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time");
+            var egyptNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, egyptTimeZone);
+
+            var data = new MonthlyEmployeeData
+            {
+                EmployeeId = employeeId,
+                Role = role.ToLower(),
+                BranchId = branchId,
+                Month = egyptNow.Month,
+                Year = egyptNow.Year,
+                Target = target,
+                Holidaies = 7,
+                Hours = 0,
+                HoursOverTime = 0,
+                ForgetedHours = 0,
+                HolidayHours = 0,
+                TotalDiscounts = 0,
+                TotalContractDiscount = 0,
+                TotalBouns = 0,
+                TotalBorrows = 0,
+                TotalCashBorrows = 0,
+                Insurence = 0
+            };
+
+            if (role.ToLower() == "static")
+            {
+                data.TotalSalary = totalSalary;
+                data.NetSalary = totalSalary ?? 0;
+            }
+            else
+            {
+                data.SalaryPerHour = salaryPerHour;
+                data.NetSalary = 0;
+            }
+
+            await _context.MonthlyEmployeeData.AddAsync(data);
+            await _context.SaveChangesAsync();
         }
     }
 }

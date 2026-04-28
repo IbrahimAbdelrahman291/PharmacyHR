@@ -17,6 +17,8 @@ using Payroll.Application.Interfaces;
 using Payroll.Infrastructure;
 using Payroll.Infrastructure.Data;
 using System.Text;
+using Attendance.Application;
+using Attendance.Infrastructure;
 
 public partial class Program
 {
@@ -30,7 +32,8 @@ public partial class Program
             .AddApplicationPart(typeof(Employees.API.Controllers.EvaluationCriteriaController).Assembly)
             .AddApplicationPart(typeof(Branches.API.Controllers.BranchesController).Assembly)
             .AddApplicationPart(typeof(Employees.API.Controllers.EmployeesController).Assembly)
-            .AddApplicationPart(typeof(Payroll.API.Controllers.PayrollController).Assembly);
+            .AddApplicationPart(typeof(Payroll.API.Controllers.PayrollController).Assembly)
+            .AddApplicationPart(typeof(Attendance.API.Controllers.AttendanceController).Assembly);
 
 
 
@@ -52,6 +55,10 @@ public partial class Program
         // Payroll Module
         builder.Services.AddPayrollInfrastructure(builder.Configuration);
         builder.Services.AddPayrollApplication();
+
+        // Attendance Module
+        builder.Services.AddAttendanceInfrastructure(builder.Configuration);
+        builder.Services.AddAttendanceApplication();
 
         // JWT Authentication
         builder.Services.AddAuthentication(options =>

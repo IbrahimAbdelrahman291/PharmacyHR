@@ -8,6 +8,7 @@ namespace Payroll.Domain.Entities
         public int EmployeeId { get; set; }
         public int Month { get; set; }
         public int Year { get; set; }
+        public int BranchId { get; set; }
         public double? Hours { get; set; }
         public double? HoursOverTime { get; set; }
         public double? ForgetedHours { get; set; }

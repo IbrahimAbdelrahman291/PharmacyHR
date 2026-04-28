@@ -21,6 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Attendance.API\Attendance.API.csproj" />
+    <ProjectReference Include="..\Attendance.Application\Attendance.Application.csproj" />
+    <ProjectReference Include="..\Attendance.Infrastructure\Attendance.Infrastructure.csproj" />
     <ProjectReference Include="..\Branches.API\Branches.API.csproj" />
     <ProjectReference Include="..\Branches.Application\Branches.Application.csproj" />
     <ProjectReference Include="..\Branches.Infrastructure\Branches.Infrastructure.csproj" />

@@ -76,7 +76,8 @@ namespace Employees.Application.Services
                 dto.Role,
                 dto.TotalSalary,
                 dto.SalaryPerHour,
-                target
+                target,
+                dto.BranchId
             );
             if (!userCreated)
                 return Result<bool>.Failure("Failed to create user");
