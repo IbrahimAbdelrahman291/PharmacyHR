@@ -102,5 +102,11 @@ namespace Employees.Infrastructure.Repositories
         public async Task<EmployeeSchedule?> GetScheduleByDayAsync(int employeeId, DayOfWeek dayOfWeek)
             => await _context.EmployeeSchedules
                 .FirstOrDefaultAsync(s => s.EmployeeId == employeeId && s.DayOfWeek == dayOfWeek);
+
+        public async Task<double?> GetShiftHoursAsync(int employeeId)
+        {
+            var employee = await _context.Employees.FindAsync(employeeId);
+            return employee?.ShiftHours;
+        }
     }
 }

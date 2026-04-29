@@ -167,7 +167,74 @@ namespace Payroll.Application.Services
 
             return Result<IList<MonthlyDataWithEmployeeDto>>.Success(result);
         }
+        public async Task<Result<IList<DeductionCalculatorResponseDto>>> CalculateDeductionsAsync(DeductionCalculatorRequestDto dto)
+        {
+            var result = new List<DeductionCalculatorResponseDto>();
 
+            foreach (var employeeId in dto.EmployeeIds)
+            {
+                var employeeInfo = await _employeeRepository.GetEmployeeBasicInfoAsync(employeeId);
+                if (employeeInfo is null) continue;
+
+                var monthlyData = await _repository.GetCurrentMonthAsync(employeeId);
+                if (monthlyData is null) continue;
+
+                double oneDay = 0;
+
+                if (monthlyData.Role == "static")
+                {
+                    oneDay = (monthlyData.TotalSalary ?? 0) / 26;
+                }
+                else if (monthlyData.Role == "changable")
+                {
+                    var shiftHours = await _employeeRepository.GetShiftHoursAsync(employeeId);
+                    oneDay = (shiftHours ?? 0) * (monthlyData.SalaryPerHour ?? 0) / 26;
+                }
+                else if (monthlyData.Role == "delivery")
+                {
+                    var shiftHours = await _employeeRepository.GetShiftHoursAsync(employeeId);
+                    oneDay = (shiftHours ?? 0) * (monthlyData.SalaryPerHour ?? 0);
+                }
+
+                result.Add(new DeductionCalculatorResponseDto
+                {
+                    EmployeeId = employeeId,
+                    EmployeeName = employeeInfo.Value.Name,
+                    Deductions = new DeductionValuesDto
+                    {
+                        HalfDay = oneDay / 2,
+                        OneDay = oneDay,
+                        TwoDays = oneDay * 2,
+                        ThreeDays = oneDay * 3,
+                        FiveDays = oneDay * 5,
+                        TenDays = oneDay * 10
+                    }
+                });
+            }
+
+            return Result<IList<DeductionCalculatorResponseDto>>.Success(result);
+        }
+
+        public async Task<Result<bool>> BulkVariedDiscountAsync(IList<BulkVariedItemDto> items)
+        {
+            foreach (var item in items)
+                await _sharedRepository.AddDiscountAsync(item.EmployeeId, item.Amount, item.Reason, item.Notes);
+            return Result<bool>.Success(true);
+        }
+
+        public async Task<Result<bool>> BulkVariedContractDiscountAsync(IList<BulkVariedItemDto> items)
+        {
+            foreach (var item in items)
+                await _sharedRepository.AddContractDiscountAsync(item.EmployeeId, item.Amount, item.Reason, item.Notes);
+            return Result<bool>.Success(true);
+        }
+
+        public async Task<Result<bool>> BulkVariedBonusAsync(IList<BulkVariedItemDto> items)
+        {
+            foreach (var item in items)
+                await _sharedRepository.AddBonusAsync(item.EmployeeId, item.Amount, item.Reason, item.Notes);
+            return Result<bool>.Success(true);
+        }
         private MonthlyDataDto MapToDto(Payroll.Domain.Entities.MonthlyEmployeeData data) => new()
         {
             EmployeeId = data.EmployeeId,

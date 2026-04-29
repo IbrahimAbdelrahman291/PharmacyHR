@@ -160,5 +160,45 @@ namespace Payroll.API.Controllers
 
             return Ok(result.Value);
         }
+
+        [HttpPost("deduction-calculator")]
+        [Authorize(Roles = UserRoles.HR)]
+        public async Task<IActionResult> CalculateDeductions([FromBody] DeductionCalculatorRequestDto dto)
+        {
+            var result = await _service.CalculateDeductionsAsync(dto);
+            if (!result.IsSuccess)
+                return NotFound(new { message = result.Error });
+            return Ok(result.Value);
+        }
+
+        [HttpPost("discount/bulk-varied")]
+        [Authorize(Roles = UserRoles.HR)]
+        public async Task<IActionResult> BulkVariedDiscount([FromBody] IList<BulkVariedItemDto> items)
+        {
+            var result = await _service.BulkVariedDiscountAsync(items);
+            if (!result.IsSuccess)
+                return NotFound(new { message = result.Error });
+            return Ok(new { message = "تم إضافة الخصومات بنجاح" });
+        }
+
+        [HttpPost("contract-discount/bulk-varied")]
+        [Authorize(Roles = UserRoles.HR)]
+        public async Task<IActionResult> BulkVariedContractDiscount([FromBody] IList<BulkVariedItemDto> items)
+        {
+            var result = await _service.BulkVariedContractDiscountAsync(items);
+            if (!result.IsSuccess)
+                return NotFound(new { message = result.Error });
+            return Ok(new { message = "تم إضافة خصومات التعاقد بنجاح" });
+        }
+
+        [HttpPost("bonus/bulk-varied")]
+        [Authorize(Roles = UserRoles.HR)]
+        public async Task<IActionResult> BulkVariedBonus([FromBody] IList<BulkVariedItemDto> items)
+        {
+            var result = await _service.BulkVariedBonusAsync(items);
+            if (!result.IsSuccess)
+                return NotFound(new { message = result.Error });
+            return Ok(new { message = "تم إضافة البونص بنجاح" });
+        }
     }
 }
