@@ -14,5 +14,7 @@ namespace Attendance.Domain.Interfaces
         Task<bool> UpdateAsync(WorkLog workLog);
         Task<IList<WorkLog>> GetAllAsync(int employeeId, int page, int pageSize);
         Task<int> GetTotalCountAsync(int employeeId);
+        Task<EmployeeSchedule?> GetScheduleByDayAsync(int employeeId, DayOfWeek dayOfWeek);
+
     }
 }

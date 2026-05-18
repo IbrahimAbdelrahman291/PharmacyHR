@@ -23,12 +23,34 @@ namespace Attendance.Application.Services
             _monthlyDataRepository = monthlyDataRepository;
         }
 
+        private readonly IEmployeeScheduleRepository _scheduleRepository;
+
+        public AttendanceService(
+            IWorkLogRepository workLogRepository,
+            IMonthlyDataRepository monthlyDataRepository,
+            IEmployeeScheduleRepository scheduleRepository)
+        {
+            _workLogRepository = workLogRepository;
+            _monthlyDataRepository = monthlyDataRepository;
+            _scheduleRepository = scheduleRepository;
+        }
+
         public async Task<Result<bool>> StartShiftAsync(int employeeId)
         {
             var egyptTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time");
             var egyptNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, egyptTimeZone);
             var egyptDate = DateOnly.FromDateTime(egyptNow);
             var egyptTime = TimeOnly.FromDateTime(egyptNow);
+
+            // تأكد إن اليوم موجود في الـ Schedule
+            var schedule = await _scheduleRepository.GetScheduleByDayAsync(employeeId, egyptDate.DayOfWeek);
+            if (schedule is null)
+                return Result<bool>.Failure("مش مسموح لك تسجل حضور النهارده");
+
+            // تأكد إن الوقت الحالي >= CheckInTime - 15 دقيقة
+            var allowedCheckIn = schedule.Value.CheckInTime.AddMinutes(-15);
+            if (egyptTime < allowedCheckIn)
+                return Result<bool>.Failure($"لسه مش متاح تسجل دلوقتي، موعد الحضور {schedule.Value.CheckInTime}");
 
             // تأكد مفيش شيفت مفتوح
             var openShift = await _workLogRepository.GetOpenShiftAsync(employeeId);
@@ -64,10 +86,18 @@ namespace Attendance.Application.Services
             if (workLog is null)
                 return Result<bool>.Failure("لا يوجد تسجيل حضور في هذا اليوم أو اليوم الذي يسبقه");
 
+            // جيب الـ Schedule بتاع يوم الشيفت
+            var schedule = await _scheduleRepository.GetEmployeeScheduleByDayAsync(employeeId, egyptDate.DayOfWeek);
+            if (schedule is not null)
+            {
+                var allowedCheckOut = schedule.Value.CheckOutTime.AddMinutes(15);
+                if (egyptTime > allowedCheckOut)
+                    return Result<bool>.Failure("اتواصل مع HR عشان تسجل انصرافك");
+            }
+
             // حساب TotalTime
             var startDateTime = workLog.Day.ToDateTime(workLog.Start);
-            var endDateTime = egyptNow;
-            var totalWorkTime = endDateTime - startDateTime;
+            var totalWorkTime = egyptNow - startDateTime;
 
             // لو أكتر من 24 ساعة → رفض
             if (totalWorkTime.TotalHours >= 24)
@@ -77,8 +107,6 @@ namespace Attendance.Application.Services
             workLog.TotalTime = totalWorkTime;
 
             await _workLogRepository.UpdateAsync(workLog);
-
-            // تحديث Hours في MonthlyData
             await _monthlyDataRepository.AddHoursAsync(employeeId, totalWorkTime.TotalHours);
 
             return Result<bool>.Success(true);

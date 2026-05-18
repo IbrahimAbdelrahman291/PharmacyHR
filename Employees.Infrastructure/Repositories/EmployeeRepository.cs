@@ -6,7 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Employees.Infrastructure.Repositories
 {
-    public class EmployeeRepository : IEmployeeRepository, SharedKernel.Interfaces.IEmployeeRepository
+    public class EmployeeRepository : IEmployeeRepository,
+    SharedKernel.Interfaces.IEmployeeRepository,
+    SharedKernel.Interfaces.IEmployeeScheduleRepository
     {
         private readonly EmployeesDbContext _context;
 
@@ -152,5 +154,13 @@ namespace Employees.Infrastructure.Repositories
 
         public async Task<Bank?> GetBankByIdAsync(int id)
             => await _context.Banks.FindAsync(id);
+
+        public async Task<(TimeOnly CheckInTime, TimeOnly CheckOutTime)?> GetEmployeeScheduleByDayAsync(int employeeId, DayOfWeek dayOfWeek)
+        {
+            var schedule = await _context.EmployeeSchedules
+                .FirstOrDefaultAsync(s => s.EmployeeId == employeeId && s.DayOfWeek == dayOfWeek);
+            if (schedule is null) return null;
+            return (schedule.CheckInTime, schedule.CheckOutTime);
+        }
     }
 }
