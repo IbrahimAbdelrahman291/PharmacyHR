@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Identity.Domain.Entities;
+﻿using Identity.Domain.Entities;
 using Identity.Domain.Interfaces;
+using Identity.Infrastructure.Data;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Identity.Infrastructure.Repositories
 {
@@ -8,9 +10,12 @@ namespace Identity.Infrastructure.Repositories
     {
         private readonly UserManager<User> _userManager;
 
-        public AuthRepository(UserManager<User> userManager)
+        private readonly IdentityDbContext _context;
+
+        public AuthRepository(UserManager<User> userManager, IdentityDbContext context)
         {
             _userManager = userManager;
+            _context = context;
         }
 
         public async Task<User?> FindByUsernameAsync(string username)
@@ -84,5 +89,23 @@ namespace Identity.Infrastructure.Repositories
             await _userManager.UpdateAsync(user);
             return true;
         }
+        public async Task<bool> AddAreaManagerBranchesAsync(string userId, IList<int> branchIds)
+        {
+            var branches = branchIds.Select(branchId => new AreaManagerBranch
+            {
+                UserId = userId,
+                BranchId = branchId
+            }).ToList();
+
+            await _context.AreaManagerBranches.AddRangeAsync(branches);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<IList<int>> GetAreaManagerBranchesAsync(string userId)
+            => await _context.AreaManagerBranches
+                .Where(x => x.UserId == userId)
+                .Select(x => x.BranchId)
+                .ToListAsync();
     }
 }

@@ -19,7 +19,9 @@ namespace Identity.Infrastructure.Data
                 UserRoles.Accountant,
                 UserRoles.Employee,
                 UserRoles.Control,
-                UserRoles.Manager
+                UserRoles.Manager,
+                UserRoles.AreaManager
+
             };
 
             foreach (var role in roles)

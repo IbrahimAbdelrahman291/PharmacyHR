@@ -10,10 +10,12 @@ namespace Employees.Domain.Entities
         public string Name { get; set; } = string.Empty;
         public string Role { get; set; } = string.Empty; // static, changable, delivery
         public string? theNameOfJob { get; set; }
-        public string? BankName { get; set; }
+        public int? BankId { get; set; }
         public string? BankAccount { get; set; }
         public double? ShiftHours { get; set; }
         public string UserId { get; set; } = string.Empty;
         public int BranchId { get; set; }
+        public Bank? Bank { get; set; }
+
     }
 }

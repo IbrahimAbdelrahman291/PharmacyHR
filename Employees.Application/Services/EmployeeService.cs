@@ -42,7 +42,7 @@ namespace Employees.Application.Services
                 Name = dto.Name,
                 Role = dto.Role.ToLower(),
                 theNameOfJob = dto.theNameOfJob,
-                BankName = dto.BankName,
+                BankId = dto.BankId,
                 BankAccount = dto.BankAccount,
                 ShiftHours = dto.ShiftHours,
                 BranchId = dto.BranchId,
@@ -90,6 +90,7 @@ namespace Employees.Application.Services
                 return Result<EmployeeDto>.Failure("Employee not found");
 
             var branch = await _branchRepository.GetBranchByIdAsync(employee.BranchId);
+            var bank = employee.BankId.HasValue ? await _employeeRepository.GetBankByIdAsync(employee.BankId.Value) : null;
 
             return Result<EmployeeDto>.Success(new EmployeeDto
             {
@@ -97,7 +98,8 @@ namespace Employees.Application.Services
                 Name = employee.Name,
                 Role = employee.Role,
                 theNameOfJob = employee.theNameOfJob,
-                BankName = employee.BankName,
+                BankId = employee.BankId,
+                BankName = bank?.Name,
                 BankAccount = employee.BankAccount,
                 ShiftHours = employee.ShiftHours,
                 BranchId = employee.BranchId,
@@ -105,22 +107,23 @@ namespace Employees.Application.Services
             });
         }
 
-        public async Task<Result<PaginatedResponse<EmployeeDto>>> GetAllAsync(int page, int pageSize, int? branchId)
+        public async Task<Result<PaginatedResponse<EmployeeDto>>> GetAllAsync(int page, int pageSize, int? branchId, int? bankId, string? role, string? name)
         {
-            var employees = await _employeeRepository.GetAllAsync(page, pageSize, branchId);
-            var totalCount = await _employeeRepository.GetTotalCountAsync(branchId);
-
+            var employees = await _employeeRepository.GetAllAsync(page, pageSize, branchId, bankId, role, name);
+            var totalCount = await _employeeRepository.GetTotalCountAsync(branchId, bankId, role, name);
             var dtos = new List<EmployeeDto>();
             foreach (var employee in employees)
             {
                 var branch = await _branchRepository.GetBranchByIdAsync(employee.BranchId);
+                var bank = employee.BankId.HasValue ? await _employeeRepository.GetBankByIdAsync(employee.BankId.Value) : null;
                 dtos.Add(new EmployeeDto
                 {
                     Id = employee.Id,
                     Name = employee.Name,
                     Role = employee.Role,
                     theNameOfJob = employee.theNameOfJob,
-                    BankName = employee.BankName,
+                    BankId = employee.BankId,
+                    BankName = bank?.Name,
                     BankAccount = employee.BankAccount,
                     ShiftHours = employee.ShiftHours,
                     BranchId = employee.BranchId,
@@ -144,7 +147,7 @@ namespace Employees.Application.Services
                 return Result<bool>.Failure("Employee not found");
 
             if (dto.theNameOfJob is not null) employee.theNameOfJob = dto.theNameOfJob;
-            if (dto.BankName is not null) employee.BankName = dto.BankName;
+            if (dto.BankId.HasValue) employee.BankId = dto.BankId;
             if (dto.BankAccount is not null) employee.BankAccount = dto.BankAccount;
             if (dto.ShiftHours.HasValue) employee.ShiftHours = dto.ShiftHours;
             if (dto.BranchId.HasValue) employee.BranchId = dto.BranchId.Value;

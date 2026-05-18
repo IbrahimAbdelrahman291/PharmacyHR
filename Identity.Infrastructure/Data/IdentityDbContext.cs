@@ -12,5 +12,7 @@ namespace Identity.Infrastructure.Data
         public IdentityDbContext(DbContextOptions<IdentityDbContext> options) : base(options)
         {
         }
+        public DbSet<AreaManagerBranch> AreaManagerBranches { get; set; }
+
     }
 }

@@ -10,6 +10,7 @@ namespace Employees.Application.DTOs
         public string Name { get; set; } = string.Empty;
         public string Role { get; set; } = string.Empty;
         public string? theNameOfJob { get; set; }
+        public int? BankId { get; set; }
         public string? BankName { get; set; }
         public string? BankAccount { get; set; }
         public double? ShiftHours { get; set; }

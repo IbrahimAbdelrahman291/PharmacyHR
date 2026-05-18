@@ -95,34 +95,6 @@ public partial class Program
 
         var app = builder.Build();
 
-        #region migrations
-        // Migrate databases and seed identity data
-        //using (var scope = app.Services.CreateScope())
-        //{
-        //    try
-        //    {
-        //        var identityDb = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
-        //        await identityDb.Database.MigrateAsync();
-
-        //        var employeesDb = scope.ServiceProvider.GetRequiredService<EmployeesDbContext>();
-        //        await employeesDb.Database.MigrateAsync();
-
-        //        var branchesDb = scope.ServiceProvider.GetRequiredService<BranchesDbContext>();
-        //        await branchesDb.Database.MigrateAsync();
-
-        //        var payrollDb = scope.ServiceProvider.GetRequiredService<PayrollDbContext>();
-        //        await payrollDb.Database.MigrateAsync();
-
-        //        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Identity.Domain.Entities.User>>();
-        //        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-        //        await IdentitySeeder.SeedAsync(userManager, roleManager);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine($"Migration error: {ex.Message}");
-        //    }
-        //} 
-        #endregion
 
         //Hangfire
         app.UseHangfireDashboard("/hangfire");

@@ -39,7 +39,7 @@ namespace Identity.Application.Services
             var roles = await _authRepository.GetRolesAsync(user);
             var role = roles.FirstOrDefault() ?? string.Empty;
 
-            var token = GenerateToken(user, role);
+            var token = await GenerateTokenAsync(user, role);
 
             return Result<LoginResponseDto>.Success(new LoginResponseDto
             {
@@ -61,7 +61,8 @@ namespace Identity.Application.Services
                 UserRoles.HR,
                 UserRoles.Accountant,
                 UserRoles.Control,
-                UserRoles.Manager
+                UserRoles.Manager,
+                UserRoles.AreaManager
             };
 
             if (!validRoles.Contains(dto.Role))
@@ -70,13 +71,16 @@ namespace Identity.Application.Services
             var user = new User
             {
                 UserName = dto.Username,
-                Name = dto.Name,
-                IsActive = true,
+                Name = dto.Name
             };
 
             var result = await _authRepository.CreateUserAsync(user, dto.Password, dto.Role);
             if (!result)
                 return Result<bool>.Failure("Failed to create user");
+
+            // لو AreaManager ضيف الفروع
+            if (dto.Role == UserRoles.AreaManager && dto.BranchIds is not null && dto.BranchIds.Any())
+                await _authRepository.AddAreaManagerBranchesAsync(user.Id, dto.BranchIds);
 
             return Result<bool>.Success(true);
         }
@@ -94,7 +98,7 @@ namespace Identity.Application.Services
             return Result<bool>.Success(true);
         }
 
-        private string GenerateToken(User user, string role)
+        private async Task<string> GenerateTokenAsync(User user, string role)
         {
             var claims = new List<Claim>
             {
@@ -112,6 +116,11 @@ namespace Identity.Application.Services
             if (role == UserRoles.Manager)
             {
                 claims.Add(new Claim("BranchId", user.BranchId?.ToString() ?? string.Empty));
+            }
+            if (role == UserRoles.AreaManager)
+            {
+                var branchIds = await _authRepository.GetAreaManagerBranchesAsync(user.Id);
+                claims.Add(new Claim("BranchIds", string.Join(",", branchIds)));
             }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(

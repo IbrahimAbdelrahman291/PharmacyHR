@@ -42,9 +42,15 @@ namespace Employees.API.Controllers
 
         [HttpGet]
         [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Admin},{UserRoles.Manager}")]
-        public async Task<IActionResult> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] int? branchId = null)
+        public async Task<IActionResult> GetAll(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] int? branchId = null,
+            [FromQuery] int? bankId = null,
+            [FromQuery] string? role = null,
+            [FromQuery] string? name = null)
         {
-            var result = await _service.GetAllAsync(page, pageSize, branchId);
+            var result = await _service.GetAllAsync(page, pageSize, branchId, bankId, role, name);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
 

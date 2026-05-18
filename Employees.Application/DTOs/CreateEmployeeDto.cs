@@ -13,7 +13,7 @@ namespace Employees.Application.DTOs
         public string? theNameOfJob { get; set; }
         public double? TotalSalary { get; set; }    // للـ Static بس
         public double? SalaryPerHour { get; set; }  // للـ Changable/Delivery بس
-        public string? BankName { get; set; }
+        public int? BankId { get; set; }
         public string? BankAccount { get; set; }
         public double? ShiftHours { get; set; }
         public int BranchId { get; set; }

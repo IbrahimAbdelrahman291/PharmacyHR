@@ -12,5 +12,7 @@ namespace Identity.Domain.Enums
         public const string Employee = "Employee";
         public const string Control = "Control";
         public const string Manager = "Manager";
+        public const string AreaManager = "AreaManager";
+
     }
 }

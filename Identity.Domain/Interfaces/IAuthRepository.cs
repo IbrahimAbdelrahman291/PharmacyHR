@@ -16,6 +16,7 @@ namespace Identity.Domain.Interfaces
         Task<IList<User>> GetAllUsersAsync(int page, int pageSize);
         Task<int> GetTotalUsersCountAsync();
         Task<bool> ToggleUserAsync(string userId);
-
+        Task<bool> AddAreaManagerBranchesAsync(string userId, IList<int> branchIds);
+        Task<IList<int>> GetAreaManagerBranchesAsync(string userId);
     }
 }

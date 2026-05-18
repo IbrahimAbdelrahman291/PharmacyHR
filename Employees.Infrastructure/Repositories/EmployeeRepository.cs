@@ -29,11 +29,21 @@ namespace Employees.Infrastructure.Repositories
         public async Task<Employee?> GetByIdAsync(int id)
             => await _context.Employees.FindAsync(id);
 
-        public async Task<IList<Employee>> GetAllAsync(int page, int pageSize, int? branchId)
+        public async Task<IList<Employee>> GetAllAsync(int page, int pageSize, int? branchId, int? bankId, string? role, string? name)
         {
             var query = _context.Employees.AsQueryable();
+
             if (branchId.HasValue)
-                query = query.Where(e => e.BranchId == branchId);
+                query = query.Where(e => e.BranchId == branchId.Value);
+
+            if (bankId.HasValue)
+                query = query.Where(e => e.BankId == bankId.Value);
+
+            if (!string.IsNullOrEmpty(role))
+                query = query.Where(e => e.Role.ToLower() == role.ToLower());
+
+            if (!string.IsNullOrEmpty(name))
+                query = query.Where(e => e.Name.Contains(name));
 
             return await query
                 .Skip((page - 1) * pageSize)
@@ -41,11 +51,22 @@ namespace Employees.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<int> GetTotalCountAsync(int? branchId)
+        public async Task<int> GetTotalCountAsync(int? branchId, int? bankId, string? role, string? name)
         {
             var query = _context.Employees.AsQueryable();
+
             if (branchId.HasValue)
-                query = query.Where(e => e.BranchId == branchId);
+                query = query.Where(e => e.BranchId == branchId.Value);
+
+            if (bankId.HasValue)
+                query = query.Where(e => e.BankId == bankId.Value);
+
+            if (!string.IsNullOrEmpty(role))
+                query = query.Where(e => e.Role.ToLower() == role.ToLower());
+
+            if (!string.IsNullOrEmpty(name))
+                query = query.Where(e => e.Name.Contains(name));
+
             return await query.CountAsync();
         }
 
@@ -66,9 +87,11 @@ namespace Employees.Infrastructure.Repositories
         }
         public async Task<(int Id, string Name, int BranchId, string? BankName, string? BankAccount)?> GetEmployeeBasicInfoAsync(int employeeId)
         {
-            var employee = await _context.Employees.FindAsync(employeeId);
+            var employee = await _context.Employees
+                .Include(e => e.Bank)
+                .FirstOrDefaultAsync(e => e.Id == employeeId);
             if (employee is null) return null;
-            return (employee.Id, employee.Name, employee.BranchId, employee.BankName, employee.BankAccount);
+            return (employee.Id, employee.Name, employee.BranchId, employee.Bank?.Name, employee.BankAccount);
         }
 
         public async Task<bool> AddScheduleAsync(EmployeeSchedule schedule)
@@ -108,5 +131,26 @@ namespace Employees.Infrastructure.Repositories
             var employee = await _context.Employees.FindAsync(employeeId);
             return employee?.ShiftHours;
         }
+        public async Task<bool> AddBankAsync(Bank bank)
+        {
+            await _context.Banks.AddAsync(bank);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteBankAsync(int id)
+        {
+            var bank = await _context.Banks.FindAsync(id);
+            if (bank is null) return false;
+            _context.Banks.Remove(bank);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<IList<Bank>> GetAllBanksAsync()
+            => await _context.Banks.ToListAsync();
+
+        public async Task<Bank?> GetBankByIdAsync(int id)
+            => await _context.Banks.FindAsync(id);
     }
 }
