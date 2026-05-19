@@ -61,5 +61,19 @@ namespace Attendance.API.Controllers
 
             return Ok(result.Value);
         }
+        [HttpGet("reports")]
+        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Control},{UserRoles.Manager}")]
+        public async Task<IActionResult> GetReport(
+            [FromQuery] DateOnly fromDate,
+            [FromQuery] DateOnly toDate,
+            [FromQuery] int? employeeId = null,
+            [FromQuery] int? branchId = null)
+        {
+            var result = await _service.GetReportAsync(fromDate, toDate, employeeId, branchId);
+            if (!result.IsSuccess)
+                return NotFound(new { message = result.Error });
+
+            return Ok(result.Value);
+        }
     }
 }

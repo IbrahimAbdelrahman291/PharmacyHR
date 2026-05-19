@@ -74,5 +74,15 @@ namespace Attendance.Infrastructure.Repositories
 
         public async Task<int> GetTotalCountAsync(int employeeId)
             => await _context.WorkLogs.CountAsync(w => w.EmployeeId == employeeId);
+        public async Task<IList<WorkLog>> GetReportAsync(DateOnly fromDate, DateOnly toDate, int? employeeId, int? branchId)
+        {
+            var query = _context.WorkLogs
+                .Where(w => w.Day >= fromDate && w.Day <= toDate);
+
+            if (employeeId.HasValue)
+                query = query.Where(w => w.EmployeeId == employeeId.Value);
+
+            return await query.OrderByDescending(w => w.Day).ToListAsync();
+        }
     }
 }

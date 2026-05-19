@@ -13,26 +13,22 @@ namespace Attendance.Application.Services
     public class AttendanceService : IAttendanceService
     {
         private readonly IWorkLogRepository _workLogRepository;
-        private readonly IMonthlyDataRepository _monthlyDataRepository;
-
-        public AttendanceService(
-            IWorkLogRepository workLogRepository,
-            IMonthlyDataRepository monthlyDataRepository)
-        {
-            _workLogRepository = workLogRepository;
-            _monthlyDataRepository = monthlyDataRepository;
-        }
-
-        private readonly IEmployeeScheduleRepository _scheduleRepository;
-
+        private readonly SharedKernel.Interfaces.IMonthlyDataRepository _monthlyDataRepository;
+        private readonly SharedKernel.Interfaces.IEmployeeScheduleRepository _scheduleRepository;
+        private readonly SharedKernel.Interfaces.IEmployeeRepository _employeeRepository;
+        private readonly SharedKernel.Interfaces.IBranchRepository _branchRepository;
         public AttendanceService(
             IWorkLogRepository workLogRepository,
             IMonthlyDataRepository monthlyDataRepository,
-            IEmployeeScheduleRepository scheduleRepository)
+            IEmployeeScheduleRepository scheduleRepository,
+            SharedKernel.Interfaces.IEmployeeRepository employeeRepository,
+            SharedKernel.Interfaces.IBranchRepository branchRepository)
         {
             _workLogRepository = workLogRepository;
             _monthlyDataRepository = monthlyDataRepository;
             _scheduleRepository = scheduleRepository;
+            _employeeRepository = employeeRepository;
+            _branchRepository = branchRepository;
         }
 
         public async Task<Result<bool>> StartShiftAsync(int employeeId)
@@ -43,7 +39,7 @@ namespace Attendance.Application.Services
             var egyptTime = TimeOnly.FromDateTime(egyptNow);
 
             // تأكد إن اليوم موجود في الـ Schedule
-            var schedule = await _scheduleRepository.GetScheduleByDayAsync(employeeId, egyptDate.DayOfWeek);
+            var schedule = await _scheduleRepository.GetEmployeeScheduleByDayAsync(employeeId, egyptDate.DayOfWeek);
             if (schedule is null)
                 return Result<bool>.Failure("مش مسموح لك تسجل حضور النهارده");
 
@@ -151,6 +147,37 @@ namespace Attendance.Application.Services
                 End = workLog.End,
                 TotalHours = workLog.TotalTime.TotalHours
             });
+        }
+        public async Task<Result<IList<AttendanceReportDto>>> GetReportAsync(DateOnly fromDate, DateOnly toDate, int? employeeId, int? branchId)
+        {
+            var workLogs = await _workLogRepository.GetReportAsync(fromDate, toDate, employeeId, branchId);
+
+            var result = new List<AttendanceReportDto>();
+            foreach (var workLog in workLogs)
+            {
+                var employeeInfo = await _employeeRepository.GetEmployeeBasicInfoAsync(workLog.EmployeeId);
+                if (employeeInfo is null) continue;
+
+                if (branchId.HasValue && employeeInfo.Value.BranchId != branchId.Value)
+                    continue;
+
+                var branchInfo = await _branchRepository.GetBranchByIdAsync(employeeInfo.Value.BranchId);
+                var schedule = await _scheduleRepository.GetEmployeeScheduleByDayAsync(workLog.EmployeeId, workLog.Day.DayOfWeek);
+
+                result.Add(new AttendanceReportDto
+                {
+                    EmployeeId = workLog.EmployeeId,
+                    EmployeeName = employeeInfo.Value.Name,
+                    BranchName = branchInfo?.Name ?? string.Empty,
+                    Day = workLog.Day,
+                    ScheduledCheckIn = schedule?.CheckInTime ?? TimeOnly.MinValue,
+                    ActualCheckIn = workLog.Start == TimeOnly.MinValue ? null : workLog.Start,
+                    ScheduledCheckOut = schedule?.CheckOutTime ?? TimeOnly.MinValue,
+                    ActualCheckOut = workLog.End == TimeOnly.MinValue ? null : workLog.End
+                });
+            }
+
+            return Result<IList<AttendanceReportDto>>.Success(result);
         }
     }
 }

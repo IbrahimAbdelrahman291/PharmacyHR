@@ -12,5 +12,6 @@ namespace Attendance.Application.Interfaces
         Task<Result<bool>> EndShiftAsync(int employeeId);
         Task<Result<PaginatedResponse<WorkLogDto>>> GetAllAsync(int employeeId, int page, int pageSize);
         Task<Result<WorkLogDto>> GetOpenShiftAsync(int employeeId);
+        Task<Result<IList<AttendanceReportDto>>> GetReportAsync(DateOnly fromDate, DateOnly toDate, int? employeeId, int? branchId);
     }
 }
