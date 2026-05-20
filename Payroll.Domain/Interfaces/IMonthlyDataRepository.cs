@@ -17,6 +17,10 @@ namespace Payroll.Domain.Interfaces
         Task<bool> DeleteBonusAsync(int id);
         Task<bool> DeleteCashBorrowAsync(int id);
         Task<IList<MonthlyEmployeeData>> GetAllByMonthAndYearAsync(int month, int year, int? branchId);
+        Task<IList<Discount>> GetDiscountsAsync(int employeeId, int? month, int? year);
+        Task<IList<ContractDiscount>> GetContractDiscountsAsync(int employeeId, int? month, int? year);
+        Task<IList<Bonus>> GetBonusesAsync(int employeeId, int? month, int? year);
+        Task<IList<CashBorrow>> GetCashBorrowsAsync(int employeeId, int? month, int? year);
 
     }
 }

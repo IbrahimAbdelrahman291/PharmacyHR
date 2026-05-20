@@ -235,6 +235,49 @@ namespace Payroll.Application.Services
                 await _sharedRepository.AddBonusAsync(item.EmployeeId, item.Amount, item.Reason, item.Notes);
             return Result<bool>.Success(true);
         }
+        public async Task<Result<PayrollDetailsDto>> GetDetailsAsync(int employeeId, int? month, int? year)
+        {
+            var discounts = await _repository.GetDiscountsAsync(employeeId, month, year);
+            var contractDiscounts = await _repository.GetContractDiscountsAsync(employeeId, month, year);
+            var bonuses = await _repository.GetBonusesAsync(employeeId, month, year);
+            var cashBorrows = await _repository.GetCashBorrowsAsync(employeeId, month, year);
+
+            return Result<PayrollDetailsDto>.Success(new PayrollDetailsDto
+            {
+                Discounts = discounts.Select(d => new DiscountItemDto
+                {
+                    Id = d.Id,
+                    Amount = d.Amount,
+                    ReasonOfDiscount = d.ReasonOfDiscount,
+                    Notes = d.Notes,
+                    Date = d.Date
+                }).ToList(),
+                ContractDiscounts = contractDiscounts.Select(d => new DiscountItemDto
+                {
+                    Id = d.Id,
+                    Amount = d.Amount,
+                    ReasonOfDiscount = d.ReasonOfDiscount,
+                    Notes = d.Notes,
+                    Date = d.Date
+                }).ToList(),
+                Bonuses = bonuses.Select(b => new BonusItemDto
+                {
+                    Id = b.Id,
+                    Amount = b.Amount,
+                    Reason = b.Reason,
+                    Notes = b.Notes,
+                    DateOfBonus = b.DateOfBonus
+                }).ToList(),
+                CashBorrows = cashBorrows.Select(c => new BorrowItemDto
+                {
+                    Id = c.Id,
+                    Amount = c.Amount,
+                    Reason = c.Reason,
+                    Notes = c.Notes,
+                    DateOfBorrow = c.DateOfBorrow
+                }).ToList()
+            });
+        }
         private MonthlyDataDto MapToDto(Payroll.Domain.Entities.MonthlyEmployeeData data) => new()
         {
             EmployeeId = data.EmployeeId,

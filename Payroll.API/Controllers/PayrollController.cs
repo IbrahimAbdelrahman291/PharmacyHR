@@ -200,5 +200,15 @@ namespace Payroll.API.Controllers
                 return NotFound(new { message = result.Error });
             return Ok(new { message = "تم إضافة البونص بنجاح" });
         }
+        [HttpGet("{employeeId}/details")]
+        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Admin},{UserRoles.Accountant},{UserRoles.Employee}")]
+        public async Task<IActionResult> GetDetails(int employeeId, [FromQuery] int? month = null, [FromQuery] int? year = null)
+        {
+            var result = await _service.GetDetailsAsync(employeeId, month, year);
+            if (!result.IsSuccess)
+                return NotFound(new { message = result.Error });
+
+            return Ok(result.Value);
+        }
     }
 }

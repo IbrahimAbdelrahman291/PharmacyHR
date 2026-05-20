@@ -26,5 +26,6 @@ namespace Payroll.Application.Interfaces
         Task<Result<bool>> BulkVariedDiscountAsync(IList<BulkVariedItemDto> items);
         Task<Result<bool>> BulkVariedContractDiscountAsync(IList<BulkVariedItemDto> items);
         Task<Result<bool>> BulkVariedBonusAsync(IList<BulkVariedItemDto> items);
+        Task<Result<PayrollDetailsDto>> GetDetailsAsync(int employeeId, int? month, int? year);
     }
 }

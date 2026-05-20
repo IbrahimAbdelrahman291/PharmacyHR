@@ -448,5 +448,64 @@ namespace Payroll.Infrastructure.Repositories
             await _context.MonthlyEmployeeData.AddAsync(data);
             await _context.SaveChangesAsync();
         }
+        public async Task<IList<Discount>> GetDiscountsAsync(int employeeId, int? month, int? year)
+        {
+            var query = _context.MonthlyEmployeeData
+                .Where(x => x.EmployeeId == employeeId);
+
+            if (month.HasValue && year.HasValue)
+                query = query.Where(x => x.Month == month && x.Year == year);
+
+            var monthlyDataIds = await query.Select(x => x.Id).ToListAsync();
+
+            return await _context.Discounts
+                .Where(d => monthlyDataIds.Contains(d.MonthlyEmployeeDataId))
+                .ToListAsync();
+        }
+
+        public async Task<IList<ContractDiscount>> GetContractDiscountsAsync(int employeeId, int? month, int? year)
+        {
+            var query = _context.MonthlyEmployeeData
+                .Where(x => x.EmployeeId == employeeId);
+
+            if (month.HasValue && year.HasValue)
+                query = query.Where(x => x.Month == month && x.Year == year);
+
+            var monthlyDataIds = await query.Select(x => x.Id).ToListAsync();
+
+            return await _context.ContractDiscounts
+                .Where(d => monthlyDataIds.Contains(d.MonthlyEmployeeDataId))
+                .ToListAsync();
+        }
+
+        public async Task<IList<Bonus>> GetBonusesAsync(int employeeId, int? month, int? year)
+        {
+            var query = _context.MonthlyEmployeeData
+                .Where(x => x.EmployeeId == employeeId);
+
+            if (month.HasValue && year.HasValue)
+                query = query.Where(x => x.Month == month && x.Year == year);
+
+            var monthlyDataIds = await query.Select(x => x.Id).ToListAsync();
+
+            return await _context.Bonuses
+                .Where(b => monthlyDataIds.Contains(b.MonthlyEmployeeDataId))
+                .ToListAsync();
+        }
+
+        public async Task<IList<CashBorrow>> GetCashBorrowsAsync(int employeeId, int? month, int? year)
+        {
+            var query = _context.MonthlyEmployeeData
+                .Where(x => x.EmployeeId == employeeId);
+
+            if (month.HasValue && year.HasValue)
+                query = query.Where(x => x.Month == month && x.Year == year);
+
+            var monthlyDataIds = await query.Select(x => x.Id).ToListAsync();
+
+            return await _context.CashBorrows
+                .Where(c => monthlyDataIds.Contains(c.MonthlyEmployeeDataId))
+                .ToListAsync();
+        }
     }
 }
