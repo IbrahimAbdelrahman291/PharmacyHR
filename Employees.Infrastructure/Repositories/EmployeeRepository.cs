@@ -162,5 +162,12 @@ namespace Employees.Infrastructure.Repositories
             if (schedule is null) return null;
             return (schedule.CheckInTime, schedule.CheckOutTime);
         }
+        public async Task<IList<(int EmployeeId, TimeOnly CheckInTime, TimeOnly CheckOutTime)>> GetAllEmployeesWithScheduleByDayAsync(DayOfWeek dayOfWeek)
+        {
+            return await _context.EmployeeSchedules
+                .Where(s => s.DayOfWeek == dayOfWeek)
+                .Select(s => new ValueTuple<int, TimeOnly, TimeOnly>(s.EmployeeId, s.CheckInTime, s.CheckOutTime))
+                .ToListAsync();
+        }
     }
 }

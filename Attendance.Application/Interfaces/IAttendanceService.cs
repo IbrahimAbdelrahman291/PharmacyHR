@@ -1,8 +1,5 @@
 ﻿using Attendance.Application.DTOs;
 using SharedKernel.Wrappers;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Attendance.Application.Interfaces
 {
@@ -10,8 +7,8 @@ namespace Attendance.Application.Interfaces
     {
         Task<Result<bool>> StartShiftAsync(int employeeId);
         Task<Result<bool>> EndShiftAsync(int employeeId);
-        Task<Result<PaginatedResponse<WorkLogDto>>> GetAllAsync(int employeeId, int page, int pageSize);
-        Task<Result<WorkLogDto>> GetOpenShiftAsync(int employeeId);
-        Task<Result<IList<AttendanceReportDto>>> GetReportAsync(DateOnly fromDate, DateOnly toDate, int? employeeId, int? branchId);
+        Task<Result<PaginatedResponse<AttendanceReportDto>>> GetReportAsync(string type, DateOnly fromDate, DateOnly toDate, int? employeeId, int? branchId, int page, int pageSize);
+        Task<Result<PaginatedResponse<AbsentReportDto>>> GetAbsentReportAsync(DateOnly fromDate, DateOnly toDate, int? branchId, int page, int pageSize);
+        Task<Result<PaginatedResponse<WorkLogDto>>> GetMyShiftsAsync(int employeeId, DateOnly fromDate, DateOnly toDate, int page, int pageSize);
     }
 }

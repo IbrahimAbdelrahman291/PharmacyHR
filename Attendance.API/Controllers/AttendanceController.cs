@@ -40,36 +40,69 @@ namespace Attendance.API.Controllers
             return Ok(new { message = "تم إنهاء الشيفت بنجاح" });
         }
 
-        [HttpGet("{employeeId}")]
-        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Manager},{UserRoles.Control}")]
-        public async Task<IActionResult> GetAll(int employeeId, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
-        {
-            var result = await _service.GetAllAsync(employeeId, page, pageSize);
-            if (!result.IsSuccess)
-                return NotFound(new { message = result.Error });
-
-            return Ok(result.Value);
-        }
-
-        [HttpGet("{employeeId}/open")]
-        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Manager},{UserRoles.Employee}")]
-        public async Task<IActionResult> GetOpenShift(int employeeId)
-        {
-            var result = await _service.GetOpenShiftAsync(employeeId);
-            if (!result.IsSuccess)
-                return NotFound(new { message = result.Error });
-
-            return Ok(result.Value);
-        }
         [HttpGet("reports")]
         [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Control},{UserRoles.Manager}")]
         public async Task<IActionResult> GetReport(
-            [FromQuery] DateOnly fromDate,
-            [FromQuery] DateOnly toDate,
+            [FromQuery] string type = "all",
+            [FromQuery] DateOnly? fromDate = null,
+            [FromQuery] DateOnly? toDate = null,
             [FromQuery] int? employeeId = null,
-            [FromQuery] int? branchId = null)
+            [FromQuery] int? branchId = null,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
         {
-            var result = await _service.GetReportAsync(fromDate, toDate, employeeId, branchId);
+            var egyptTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time");
+            var egyptNow = DateOnly.FromDateTime(TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, egyptTimeZone));
+
+            var from = fromDate ?? egyptNow;
+            var to = toDate ?? egyptNow;
+
+            var result = await _service.GetReportAsync(type, from, to, employeeId, branchId, page, pageSize);
+            if (!result.IsSuccess)
+                return NotFound(new { message = result.Error });
+
+            return Ok(result.Value);
+        }
+
+        [HttpGet("reports/absent")]
+        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Control},{UserRoles.Manager}")]
+        public async Task<IActionResult> GetAbsentReport(
+            [FromQuery] DateOnly? fromDate = null,
+            [FromQuery] DateOnly? toDate = null,
+            [FromQuery] int? branchId = null,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            var egyptTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time");
+            var egyptNow = DateOnly.FromDateTime(TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, egyptTimeZone));
+
+            var from = fromDate ?? egyptNow;
+            var to = toDate ?? egyptNow;
+
+            var result = await _service.GetAbsentReportAsync(from, to, branchId, page, pageSize);
+            if (!result.IsSuccess)
+                return NotFound(new { message = result.Error });
+
+            return Ok(result.Value);
+        }
+
+        [HttpGet("my-shifts")]
+        [Authorize(Roles = UserRoles.Employee)]
+        public async Task<IActionResult> GetMyShifts(
+            [FromQuery] DateOnly? fromDate = null,
+            [FromQuery] DateOnly? toDate = null,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            var employeeId = int.Parse(User.FindFirst("EmployeeId")!.Value);
+
+            var egyptTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time");
+            var egyptNow = DateOnly.FromDateTime(TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, egyptTimeZone));
+
+            var from = fromDate ?? egyptNow;
+            var to = toDate ?? egyptNow;
+
+            var result = await _service.GetMyShiftsAsync(employeeId, from, to, page, pageSize);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
 

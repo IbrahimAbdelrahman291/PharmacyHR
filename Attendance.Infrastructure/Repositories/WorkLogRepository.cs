@@ -3,7 +3,6 @@ using Attendance.Domain.Interfaces;
 using Attendance.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace Attendance.Infrastructure.Repositories
 {
     public class WorkLogRepository : IWorkLogRepository
@@ -21,13 +20,11 @@ namespace Attendance.Infrastructure.Repositories
             var egyptNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, egyptTimeZone);
             var egyptDate = DateOnly.FromDateTime(egyptNow);
 
-            // بيدور على شيفت مفتوح النهارده
             var workLog = await _context.WorkLogs
                 .FirstOrDefaultAsync(w => w.EmployeeId == employeeId
                     && w.Day == egyptDate
                     && w.End == TimeOnly.MinValue);
 
-            // لو مش لاقي → بيدور على شيفت مفتوح امبارح (Night Shift)
             if (workLog is null)
             {
                 var previousDate = egyptDate.AddDays(-1);
@@ -39,12 +36,6 @@ namespace Attendance.Infrastructure.Repositories
 
             return workLog;
         }
-
-        public async Task<WorkLog?> GetOpenShiftByDateAsync(int employeeId, DateOnly date)
-            => await _context.WorkLogs
-                .FirstOrDefaultAsync(w => w.EmployeeId == employeeId
-                    && w.Day == date
-                    && w.End == TimeOnly.MinValue);
 
         public async Task<bool> HasShiftOnDayAsync(int employeeId, DateOnly date)
             => await _context.WorkLogs
@@ -64,17 +55,7 @@ namespace Attendance.Infrastructure.Repositories
             return true;
         }
 
-        public async Task<IList<WorkLog>> GetAllAsync(int employeeId, int page, int pageSize)
-            => await _context.WorkLogs
-                .Where(w => w.EmployeeId == employeeId)
-                .OrderByDescending(w => w.Day)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-
-        public async Task<int> GetTotalCountAsync(int employeeId)
-            => await _context.WorkLogs.CountAsync(w => w.EmployeeId == employeeId);
-        public async Task<IList<WorkLog>> GetReportAsync(DateOnly fromDate, DateOnly toDate, int? employeeId, int? branchId)
+        public async Task<IList<WorkLog>> GetReportAsync(DateOnly fromDate, DateOnly toDate, int? employeeId)
         {
             var query = _context.WorkLogs
                 .Where(w => w.Day >= fromDate && w.Day <= toDate);
@@ -83,6 +64,17 @@ namespace Attendance.Infrastructure.Repositories
                 query = query.Where(w => w.EmployeeId == employeeId.Value);
 
             return await query.OrderByDescending(w => w.Day).ToListAsync();
+        }
+
+        public async Task<int> GetReportCountAsync(DateOnly fromDate, DateOnly toDate, int? employeeId)
+        {
+            var query = _context.WorkLogs
+                .Where(w => w.Day >= fromDate && w.Day <= toDate);
+
+            if (employeeId.HasValue)
+                query = query.Where(w => w.EmployeeId == employeeId.Value);
+
+            return await query.CountAsync();
         }
     }
 }

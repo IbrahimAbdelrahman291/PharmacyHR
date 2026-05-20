@@ -4,9 +4,6 @@ using Attendance.Domain.Entities;
 using Attendance.Domain.Interfaces;
 using SharedKernel.Interfaces;
 using SharedKernel.Wrappers;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Attendance.Application.Services
 {
@@ -17,6 +14,7 @@ namespace Attendance.Application.Services
         private readonly SharedKernel.Interfaces.IEmployeeScheduleRepository _scheduleRepository;
         private readonly SharedKernel.Interfaces.IEmployeeRepository _employeeRepository;
         private readonly SharedKernel.Interfaces.IBranchRepository _branchRepository;
+
         public AttendanceService(
             IWorkLogRepository workLogRepository,
             IMonthlyDataRepository monthlyDataRepository,
@@ -38,22 +36,18 @@ namespace Attendance.Application.Services
             var egyptDate = DateOnly.FromDateTime(egyptNow);
             var egyptTime = TimeOnly.FromDateTime(egyptNow);
 
-            // تأكد إن اليوم موجود في الـ Schedule
             var schedule = await _scheduleRepository.GetEmployeeScheduleByDayAsync(employeeId, egyptDate.DayOfWeek);
             if (schedule is null)
                 return Result<bool>.Failure("مش مسموح لك تسجل حضور النهارده");
 
-            // تأكد إن الوقت الحالي >= CheckInTime - 15 دقيقة
             var allowedCheckIn = schedule.Value.CheckInTime.AddMinutes(-15);
             if (egyptTime < allowedCheckIn)
                 return Result<bool>.Failure($"لسه مش متاح تسجل دلوقتي، موعد الحضور {schedule.Value.CheckInTime}");
 
-            // تأكد مفيش شيفت مفتوح
             var openShift = await _workLogRepository.GetOpenShiftAsync(employeeId);
             if (openShift is not null)
                 return Result<bool>.Failure("يوجد شيفت مفتوح بالفعل");
 
-            // تأكد مفيش شيفت مسجل النهارده
             var hasShiftToday = await _workLogRepository.HasShiftOnDayAsync(employeeId, egyptDate);
             if (hasShiftToday)
                 return Result<bool>.Failure("تم تسجيل بداية العمل بالفعل لهذا اليوم");
@@ -77,13 +71,11 @@ namespace Attendance.Application.Services
             var egyptDate = DateOnly.FromDateTime(egyptNow);
             var egyptTime = TimeOnly.FromDateTime(egyptNow);
 
-            // بيدور على شيفت مفتوح النهارده أو امبارح
             var workLog = await _workLogRepository.GetOpenShiftAsync(employeeId);
             if (workLog is null)
                 return Result<bool>.Failure("لا يوجد تسجيل حضور في هذا اليوم أو اليوم الذي يسبقه");
 
-            // جيب الـ Schedule بتاع يوم الشيفت
-            var schedule = await _scheduleRepository.GetEmployeeScheduleByDayAsync(employeeId, egyptDate.DayOfWeek);
+            var schedule = await _scheduleRepository.GetEmployeeScheduleByDayAsync(employeeId, workLog.Day.DayOfWeek);
             if (schedule is not null)
             {
                 var allowedCheckOut = schedule.Value.CheckOutTime.AddMinutes(15);
@@ -91,11 +83,9 @@ namespace Attendance.Application.Services
                     return Result<bool>.Failure("اتواصل مع HR عشان تسجل انصرافك");
             }
 
-            // حساب TotalTime
             var startDateTime = workLog.Day.ToDateTime(workLog.Start);
             var totalWorkTime = egyptNow - startDateTime;
 
-            // لو أكتر من 24 ساعة → رفض
             if (totalWorkTime.TotalHours >= 24)
                 return Result<bool>.Failure("تعذر تسجيل ساعاتك، يجب التواصل مع HR");
 
@@ -108,10 +98,107 @@ namespace Attendance.Application.Services
             return Result<bool>.Success(true);
         }
 
-        public async Task<Result<PaginatedResponse<WorkLogDto>>> GetAllAsync(int employeeId, int page, int pageSize)
+        public async Task<Result<PaginatedResponse<AttendanceReportDto>>> GetReportAsync(string type, DateOnly fromDate, DateOnly toDate, int? employeeId, int? branchId, int page, int pageSize)
         {
-            var workLogs = await _workLogRepository.GetAllAsync(employeeId, page, pageSize);
-            var totalCount = await _workLogRepository.GetTotalCountAsync(employeeId);
+            var workLogs = await _workLogRepository.GetReportAsync(fromDate, toDate, employeeId);
+            var totalCount = await _workLogRepository.GetReportCountAsync(fromDate, toDate, employeeId);
+
+            var result = new List<AttendanceReportDto>();
+            foreach (var workLog in workLogs)
+            {
+                var employeeInfo = await _employeeRepository.GetEmployeeBasicInfoAsync(workLog.EmployeeId);
+                if (employeeInfo is null) continue;
+
+                if (branchId.HasValue && employeeInfo.Value.BranchId != branchId.Value) continue;
+
+                var branchInfo = await _branchRepository.GetBranchByIdAsync(employeeInfo.Value.BranchId);
+                var schedule = await _scheduleRepository.GetEmployeeScheduleByDayAsync(workLog.EmployeeId, workLog.Day.DayOfWeek);
+
+                var scheduledCheckIn = schedule?.CheckInTime ?? TimeOnly.MinValue;
+                var scheduledCheckOut = schedule?.CheckOutTime ?? TimeOnly.MinValue;
+                var actualCheckIn = workLog.Start == TimeOnly.MinValue ? (TimeOnly?)null : workLog.Start;
+                var actualCheckOut = workLog.End == TimeOnly.MinValue ? (TimeOnly?)null : workLog.End;
+
+                // فلتر حسب النوع
+                if (type == "open" && actualCheckOut is not null) continue;
+                if (type == "late" && (actualCheckIn is null || actualCheckIn <= scheduledCheckIn)) continue;
+                if (type == "overtime" && (actualCheckOut is null || actualCheckOut <= scheduledCheckOut)) continue;
+
+                result.Add(new AttendanceReportDto
+                {
+                    EmployeeId = workLog.EmployeeId,
+                    EmployeeName = employeeInfo.Value.Name,
+                    BranchName = branchInfo?.Name ?? string.Empty,
+                    Day = workLog.Day,
+                    ScheduledCheckIn = scheduledCheckIn,
+                    ActualCheckIn = actualCheckIn,
+                    ScheduledCheckOut = scheduledCheckOut,
+                    ActualCheckOut = actualCheckOut
+                });
+            }
+
+            var paged = result.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            return Result<PaginatedResponse<AttendanceReportDto>>.Success(new PaginatedResponse<AttendanceReportDto>
+            {
+                Data = paged,
+                TotalCount = result.Count,
+                Page = page,
+                PageSize = pageSize
+            });
+        }
+
+        public async Task<Result<PaginatedResponse<AbsentReportDto>>> GetAbsentReportAsync(DateOnly fromDate, DateOnly toDate, int? branchId, int page, int pageSize)
+        {
+            var result = new List<AbsentReportDto>();
+            var currentDate = fromDate;
+
+            while (currentDate <= toDate)
+            {
+                var workLogs = await _workLogRepository.GetReportAsync(currentDate, currentDate, null);
+                var presentEmployeeIds = workLogs.Select(w => w.EmployeeId).ToHashSet();
+
+                var schedules = await _scheduleRepository.GetAllEmployeesWithScheduleByDayAsync(currentDate.DayOfWeek);
+
+                foreach (var schedule in schedules)
+                {
+                    if (presentEmployeeIds.Contains(schedule.EmployeeId)) continue;
+
+                    var employeeInfo = await _employeeRepository.GetEmployeeBasicInfoAsync(schedule.EmployeeId);
+                    if (employeeInfo is null) continue;
+                    if (branchId.HasValue && employeeInfo.Value.BranchId != branchId.Value) continue;
+
+                    var branchInfo = await _branchRepository.GetBranchByIdAsync(employeeInfo.Value.BranchId);
+
+                    result.Add(new AbsentReportDto
+                    {
+                        EmployeeId = schedule.EmployeeId,
+                        EmployeeName = employeeInfo.Value.Name,
+                        BranchName = branchInfo?.Name ?? string.Empty,
+                        Day = currentDate,
+                        ScheduledCheckIn = schedule.CheckInTime,
+                        ScheduledCheckOut = schedule.CheckOutTime
+                    });
+                }
+
+                currentDate = currentDate.AddDays(1);
+            }
+
+            var paged = result.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            return Result<PaginatedResponse<AbsentReportDto>>.Success(new PaginatedResponse<AbsentReportDto>
+            {
+                Data = paged,
+                TotalCount = result.Count,
+                Page = page,
+                PageSize = pageSize
+            });
+        }
+
+        public async Task<Result<PaginatedResponse<WorkLogDto>>> GetMyShiftsAsync(int employeeId, DateOnly fromDate, DateOnly toDate, int page, int pageSize)
+        {
+            var workLogs = await _workLogRepository.GetReportAsync(fromDate, toDate, employeeId);
+            var totalCount = await _workLogRepository.GetReportCountAsync(fromDate, toDate, employeeId);
 
             var dtos = workLogs.Select(w => new WorkLogDto
             {
@@ -121,7 +208,7 @@ namespace Attendance.Application.Services
                 Start = w.Start,
                 End = w.End,
                 TotalHours = w.TotalTime.TotalHours
-            }).ToList();
+            }).Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
             return Result<PaginatedResponse<WorkLogDto>>.Success(new PaginatedResponse<WorkLogDto>
             {
@@ -130,54 +217,6 @@ namespace Attendance.Application.Services
                 Page = page,
                 PageSize = pageSize
             });
-        }
-
-        public async Task<Result<WorkLogDto>> GetOpenShiftAsync(int employeeId)
-        {
-            var workLog = await _workLogRepository.GetOpenShiftAsync(employeeId);
-            if (workLog is null)
-                return Result<WorkLogDto>.Failure("لا يوجد شيفت مفتوح");
-
-            return Result<WorkLogDto>.Success(new WorkLogDto
-            {
-                Id = workLog.Id,
-                EmployeeId = workLog.EmployeeId,
-                Day = workLog.Day,
-                Start = workLog.Start,
-                End = workLog.End,
-                TotalHours = workLog.TotalTime.TotalHours
-            });
-        }
-        public async Task<Result<IList<AttendanceReportDto>>> GetReportAsync(DateOnly fromDate, DateOnly toDate, int? employeeId, int? branchId)
-        {
-            var workLogs = await _workLogRepository.GetReportAsync(fromDate, toDate, employeeId, branchId);
-
-            var result = new List<AttendanceReportDto>();
-            foreach (var workLog in workLogs)
-            {
-                var employeeInfo = await _employeeRepository.GetEmployeeBasicInfoAsync(workLog.EmployeeId);
-                if (employeeInfo is null) continue;
-
-                if (branchId.HasValue && employeeInfo.Value.BranchId != branchId.Value)
-                    continue;
-
-                var branchInfo = await _branchRepository.GetBranchByIdAsync(employeeInfo.Value.BranchId);
-                var schedule = await _scheduleRepository.GetEmployeeScheduleByDayAsync(workLog.EmployeeId, workLog.Day.DayOfWeek);
-
-                result.Add(new AttendanceReportDto
-                {
-                    EmployeeId = workLog.EmployeeId,
-                    EmployeeName = employeeInfo.Value.Name,
-                    BranchName = branchInfo?.Name ?? string.Empty,
-                    Day = workLog.Day,
-                    ScheduledCheckIn = schedule?.CheckInTime ?? TimeOnly.MinValue,
-                    ActualCheckIn = workLog.Start == TimeOnly.MinValue ? null : workLog.Start,
-                    ScheduledCheckOut = schedule?.CheckOutTime ?? TimeOnly.MinValue,
-                    ActualCheckOut = workLog.End == TimeOnly.MinValue ? null : workLog.End
-                });
-            }
-
-            return Result<IList<AttendanceReportDto>>.Success(result);
         }
     }
 }
