@@ -23,6 +23,8 @@ namespace Employees.Domain.Interfaces
         Task<bool> DeleteBankAsync(int id);
         Task<IList<Bank>> GetAllBanksAsync();
         Task<Bank?> GetBankByIdAsync(int id);
+        Task<bool> AddEmployeeBranchAsync(EmployeeBranch employeeBranch);
+        Task<IList<EmployeeBranch>> GetEmployeeBranchesAsync(int employeeId);
 
     }
 }

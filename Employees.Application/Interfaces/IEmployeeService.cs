@@ -11,5 +11,7 @@ namespace Employees.Application.Interfaces
         Task<Result<PaginatedResponse<EmployeeDto>>> GetAllAsync(int page, int pageSize, int? branchId, int? bankId, string? role, string? name); Task<Result<bool>> UpdateAsync(int id, UpdateEmployeeDto dto);
         Task<Result<EmployeeHistoryDto>> GetHistoryAsync(int employeeId);
         Task<Result<bool>> UpdateEndOfServiceAsync(int employeeId, UpdateEndOfServiceDto dto);
+        Task<Result<IList<EmployeeBranchDto>>> GetEmployeeBranchesAsync(int employeeId);
+
     }
 }

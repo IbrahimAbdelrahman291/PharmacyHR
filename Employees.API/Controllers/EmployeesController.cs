@@ -88,5 +88,15 @@ namespace Employees.API.Controllers
 
             return Ok(new { message = "End of service updated successfully" });
         }
+        [HttpGet("{id}/branches")]
+        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Admin},{UserRoles.Manager}")]
+        public async Task<IActionResult> GetEmployeeBranches(int id)
+        {
+            var result = await _service.GetEmployeeBranchesAsync(id);
+            if (!result.IsSuccess)
+                return NotFound(new { message = result.Error });
+
+            return Ok(result.Value);
+        }   
     }
 }

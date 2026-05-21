@@ -17,6 +17,7 @@ namespace Employees.Infrastructure.Data
         public DbSet<EmployeeHistory> EmployeeHistories { get; set; }
         public DbSet<EmployeeSchedule> EmployeeSchedules { get; set; }
         public DbSet<Bank> Banks { get; set; }
+        public DbSet<EmployeeBranch> EmployeeBranches { get; set; }
 
 
     }

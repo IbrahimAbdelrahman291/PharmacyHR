@@ -79,7 +79,12 @@ namespace Employees.Application.Services
             );
             if (!userCreated)
                 return Result<bool>.Failure("Failed to create user");
-
+            await _employeeRepository.AddEmployeeBranchAsync(new EmployeeBranch
+            {
+                EmployeeId = employee.Id,
+                BranchId = dto.BranchId,
+                StartDate = DateTime.UtcNow
+            });
             return Result<bool>.Success(true);
         }
 
@@ -151,7 +156,16 @@ namespace Employees.Application.Services
             if (dto.BankAccount is not null) employee.BankAccount = dto.BankAccount;
             if (dto.ShiftHours.HasValue) employee.ShiftHours = dto.ShiftHours;
             if (dto.BranchId.HasValue) employee.BranchId = dto.BranchId.Value;
-
+            if (dto.BranchId.HasValue && dto.BranchId.Value != employee.BranchId)
+            {
+                employee.BranchId = dto.BranchId.Value;
+                await _employeeRepository.AddEmployeeBranchAsync(new EmployeeBranch
+                {
+                    EmployeeId = employee.Id,
+                    BranchId = dto.BranchId.Value,
+                    StartDate = DateTime.UtcNow
+                });
+            }
             await _employeeRepository.UpdateAsync(employee);
             return Result<bool>.Success(true);
         }
@@ -191,6 +205,27 @@ namespace Employees.Application.Services
 
             await _employeeRepository.UpdateHistoryAsync(history);
             return Result<bool>.Success(true);
+        }
+
+        public async Task<Result<IList<EmployeeBranchDto>>> GetEmployeeBranchesAsync(int employeeId)
+        {
+            var branches = await _employeeRepository.GetEmployeeBranchesAsync(employeeId);
+
+            var dtos = new List<EmployeeBranchDto>();
+            foreach (var branch in branches)
+            {
+                var branchInfo = await _branchRepository.GetBranchByIdAsync(branch.BranchId);
+                dtos.Add(new EmployeeBranchDto
+                {
+                    Id = branch.Id,
+                    EmployeeId = branch.EmployeeId,
+                    BranchId = branch.BranchId,
+                    BranchName = branchInfo?.Name ?? string.Empty,
+                    StartDate = branch.StartDate
+                });
+            }
+
+            return Result<IList<EmployeeBranchDto>>.Success(dtos);
         }
 
     }

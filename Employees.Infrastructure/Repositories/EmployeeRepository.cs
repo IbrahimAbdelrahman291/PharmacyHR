@@ -169,5 +169,17 @@ namespace Employees.Infrastructure.Repositories
                 .Select(s => new ValueTuple<int, TimeOnly, TimeOnly>(s.EmployeeId, s.CheckInTime, s.CheckOutTime))
                 .ToListAsync();
         }
+        public async Task<bool> AddEmployeeBranchAsync(EmployeeBranch employeeBranch)
+        {
+            await _context.EmployeeBranches.AddAsync(employeeBranch);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<IList<EmployeeBranch>> GetEmployeeBranchesAsync(int employeeId)
+            => await _context.EmployeeBranches
+                .Where(e => e.EmployeeId == employeeId)
+                .OrderByDescending(e => e.StartDate)
+                .ToListAsync();
     }
 }
