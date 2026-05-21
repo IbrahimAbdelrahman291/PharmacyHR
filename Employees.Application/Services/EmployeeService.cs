@@ -155,7 +155,6 @@ namespace Employees.Application.Services
             if (dto.BankId.HasValue) employee.BankId = dto.BankId;
             if (dto.BankAccount is not null) employee.BankAccount = dto.BankAccount;
             if (dto.ShiftHours.HasValue) employee.ShiftHours = dto.ShiftHours;
-            if (dto.BranchId.HasValue) employee.BranchId = dto.BranchId.Value;
             if (dto.BranchId.HasValue && dto.BranchId.Value != employee.BranchId)
             {
                 employee.BranchId = dto.BranchId.Value;
