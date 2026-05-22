@@ -181,5 +181,23 @@ namespace Employees.Infrastructure.Repositories
                 .Where(e => e.EmployeeId == employeeId)
                 .OrderByDescending(e => e.StartDate)
                 .ToListAsync();
+        public async Task<bool> AddEvaluationAsync(QuarterlyEvaluation evaluation)
+        {
+            await _context.QuarterlyEvaluations.AddAsync(evaluation);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<IList<QuarterlyEvaluation>> GetEvaluationsAsync(int employeeId)
+            => await _context.QuarterlyEvaluations
+                .Include(e => e.EvaluationResults)
+                .Where(e => e.EmployeeId == employeeId)
+                .OrderByDescending(e => e.Year)
+                .ToListAsync();
+
+        public async Task<QuarterlyEvaluation?> GetEvaluationByIdAsync(int id)
+            => await _context.QuarterlyEvaluations
+                .Include(e => e.EvaluationResults)
+                .FirstOrDefaultAsync(e => e.Id == id);
     }
 }

@@ -25,6 +25,9 @@ namespace Employees.Domain.Interfaces
         Task<Bank?> GetBankByIdAsync(int id);
         Task<bool> AddEmployeeBranchAsync(EmployeeBranch employeeBranch);
         Task<IList<EmployeeBranch>> GetEmployeeBranchesAsync(int employeeId);
+        Task<bool> AddEvaluationAsync(QuarterlyEvaluation evaluation);
+        Task<IList<QuarterlyEvaluation>> GetEvaluationsAsync(int employeeId);
+        Task<QuarterlyEvaluation?> GetEvaluationByIdAsync(int id);
 
     }
 }
