@@ -199,5 +199,10 @@ namespace Employees.Infrastructure.Repositories
             => await _context.QuarterlyEvaluations
                 .Include(e => e.EvaluationResults)
                 .FirstOrDefaultAsync(e => e.Id == id);
+        public async Task<QuarterlyEvaluation?> GetEvaluationByQuarterAsync(int employeeId, string quarter, int year)
+            => await _context.QuarterlyEvaluations
+                .FirstOrDefaultAsync(e => e.EmployeeId == employeeId
+                    && e.Quarter == quarter
+                    && e.Year == year);
     }
 }

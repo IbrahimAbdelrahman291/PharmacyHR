@@ -28,6 +28,8 @@ namespace Employees.Domain.Interfaces
         Task<bool> AddEvaluationAsync(QuarterlyEvaluation evaluation);
         Task<IList<QuarterlyEvaluation>> GetEvaluationsAsync(int employeeId);
         Task<QuarterlyEvaluation?> GetEvaluationByIdAsync(int id);
+        Task<QuarterlyEvaluation?> GetEvaluationByQuarterAsync(int employeeId, string quarter, int year);
+
 
     }
 }

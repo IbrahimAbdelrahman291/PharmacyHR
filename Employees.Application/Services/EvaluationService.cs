@@ -26,6 +26,10 @@ namespace Employees.Application.Services
             if (dto.Results.Any(r => !validRatings.Contains(r.Rating)))
                 return Result<bool>.Failure("Invalid rating");
 
+            var existing = await _employeeRepository.GetEvaluationByQuarterAsync(dto.EmployeeId, dto.Quarter, dto.Year);
+            if (existing is not null)
+                return Result<bool>.Failure("يوجد تقييم بالفعل لهذا الربع والسنة");
+
             var evaluation = new QuarterlyEvaluation
             {
                 EmployeeId = dto.EmployeeId,
