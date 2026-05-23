@@ -51,19 +51,31 @@ namespace Employees.Application.Services
         {
             var evaluations = await _employeeRepository.GetEvaluationsAsync(employeeId);
 
-            var dtos = evaluations.Select(e => new EvaluationDto
+            var dtos = new List<EvaluationDto>();
+            foreach (var e in evaluations)
             {
-                Id = e.Id,
-                EmployeeId = e.EmployeeId,
-                EvaluatedBy = e.EvaluatedBy,
-                Quarter = e.Quarter,
-                Year = e.Year,
-                Results = e.EvaluationResults.Select(r => new EvaluationResultDto
+                var results = new List<EvaluationResultDto>();
+                foreach (var r in e.EvaluationResults)
                 {
-                    EvaluationCriteriaId = r.EvaluationCriteriaId,
-                    Rating = r.Rating
-                }).ToList()
-            }).ToList();
+                    var criteria = await _employeeRepository.GetEvaluationCriteriaByIdAsync(r.EvaluationCriteriaId);
+                    results.Add(new EvaluationResultDto
+                    {
+                        EvaluationCriteriaId = r.EvaluationCriteriaId,
+                        CriteriaName = criteria?.Name ?? string.Empty,
+                        Rating = r.Rating
+                    });
+                }
+
+                dtos.Add(new EvaluationDto
+                {
+                    Id = e.Id,
+                    EmployeeId = e.EmployeeId,
+                    EvaluatedBy = e.EvaluatedBy,
+                    Quarter = e.Quarter,
+                    Year = e.Year,
+                    Results = results
+                });
+            }
 
             return Result<IList<EvaluationDto>>.Success(dtos);
         }

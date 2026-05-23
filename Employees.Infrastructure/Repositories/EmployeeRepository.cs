@@ -204,5 +204,7 @@ namespace Employees.Infrastructure.Repositories
                 .FirstOrDefaultAsync(e => e.EmployeeId == employeeId
                     && e.Quarter == quarter
                     && e.Year == year);
+        public async Task<EvaluationCriteria?> GetEvaluationCriteriaByIdAsync(int id)
+            => await _context.EvaluationCriterias.FindAsync(id);
     }
 }

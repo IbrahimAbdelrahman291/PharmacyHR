@@ -34,6 +34,12 @@
     <Project Path="Payroll.Domain/Payroll.Domain.csproj" Id="e9025c53-2243-426b-b849-a67a1440fa4f" />
     <Project Path="Payroll.Infrastructure/Payroll.Infrastructure.csproj" Id="aeead700-7ffd-4f53-a0f2-8aaaabb2795d" />
   </Folder>
+  <Folder Name="/src/Modules/Requests/">
+    <Project Path="Requests.API/Requests.API.csproj" Id="7ebbb8c3-9389-4bf3-a956-85a8268f4338" />
+    <Project Path="Requests.Application/Requests.Application.csproj" Id="a3852c17-7bbd-4b9f-9722-91bf167c0884" />
+    <Project Path="Requests.Domain/Requests.Domain.csproj" Id="d731b26b-8111-46c1-9c0b-8a1a8d1d4702" />
+    <Project Path="Requests.Infrastructure/Requests.Infrastructure.csproj" Id="a58dfc8a-6638-45f9-a126-99e16e9eb789" />
+  </Folder>
   <Folder Name="/src/Shared/">
     <Project Path="SharedKernel/SharedKernel.csproj" />
   </Folder>

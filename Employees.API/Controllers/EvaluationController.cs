@@ -3,6 +3,7 @@ using Employees.Application.Interfaces;
 using Identity.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Employees.API.Controllers
 {
@@ -21,7 +22,7 @@ namespace Employees.API.Controllers
         [Authorize(Roles = UserRoles.AreaManager)]
         public async Task<IActionResult> AddEvaluation([FromBody] CreateEvaluationDto dto)
         {
-            var evaluatedBy = User.FindFirst("UserId")?.Value ?? string.Empty;
+            var evaluatedBy = User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
             var result = await _service.AddEvaluationAsync(dto, evaluatedBy);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
