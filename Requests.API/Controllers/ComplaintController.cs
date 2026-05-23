@@ -1,4 +1,5 @@
-﻿using Identity.Domain.Enums;
+﻿using System.Security.Claims;
+using Identity.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Requests.Application.DTOs;
@@ -30,14 +31,17 @@ namespace Requests.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = UserRoles.HR)]
+        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.AreaManager},{UserRoles.CEO}")]
         public async Task<IActionResult> GetAll(
             [FromQuery] int? employeeId = null,
             [FromQuery] bool? isSeenByHR = null,
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 10)
         {
-            var result = await _service.GetAllAsync(employeeId, isSeenByHR, page, pageSize);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            var role = User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
+
+            var result = await _service.GetAllAsync(employeeId, isSeenByHR, userId, role, page, pageSize);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
 
@@ -45,10 +49,13 @@ namespace Requests.API.Controllers
         }
 
         [HttpPut("{id}/respond")]
-        [Authorize(Roles = UserRoles.HR)]
+        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.AreaManager},{UserRoles.CEO}")]
         public async Task<IActionResult> Respond(int id, [FromBody] RespondComplaintDto dto)
         {
-            var result = await _service.RespondAsync(id, dto);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            var role = User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
+
+            var result = await _service.RespondAsync(id, dto, userId, role);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
 
@@ -56,18 +63,24 @@ namespace Requests.API.Controllers
         }
 
         [HttpGet("unseen-count")]
-        [Authorize(Roles = UserRoles.HR)]
+        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.AreaManager},{UserRoles.CEO}")]
         public async Task<IActionResult> GetUnseenCount()
         {
-            var result = await _service.GetUnseenCountAsync();
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            var role = User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
+
+            var result = await _service.GetUnseenCountAsync(userId, role);
             return Ok(new { count = result.Value });
         }
 
         [HttpPut("{id}/mark-seen")]
-        [Authorize(Roles = UserRoles.HR)]
+        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.AreaManager},{UserRoles.CEO}")]
         public async Task<IActionResult> MarkAsSeen(int id)
         {
-            var result = await _service.MarkAsSeenAsync(id);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            var role = User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
+
+            var result = await _service.MarkAsSeenAsync(id, userId, role);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
 

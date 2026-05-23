@@ -51,10 +51,15 @@ namespace Requests.Application.Services
             return Result<bool>.Success(true);
         }
 
-        public async Task<Result<PaginatedResponse<ComplaintDto>>> GetAllAsync(int? employeeId, bool? isSeenByHR, int page, int pageSize)
+        public async Task<Result<PaginatedResponse<ComplaintDto>>> GetAllAsync(int? employeeId, bool? isSeenByHR, string? recipientUserId, string role, int page, int pageSize)
         {
-            var complaints = await _repository.GetAllAsync(employeeId, isSeenByHR, page, pageSize);
-            var totalCount = await _repository.GetTotalCountAsync(employeeId, isSeenByHR);
+            string? filterUserId = null;
+
+            if (role == "AreaManager" || role == "CEO")
+                filterUserId = recipientUserId;
+
+            var complaints = await _repository.GetAllAsync(employeeId, isSeenByHR, filterUserId, page, pageSize);
+            var totalCount = await _repository.GetTotalCountAsync(employeeId, isSeenByHR, filterUserId);
 
             var dtos = new List<ComplaintDto>();
             foreach (var complaint in complaints)
@@ -83,33 +88,55 @@ namespace Requests.Application.Services
             });
         }
 
-        public async Task<Result<bool>> RespondAsync(int id, RespondComplaintDto dto)
+        public async Task<Result<bool>> RespondAsync(int id, RespondComplaintDto dto, string userId, string role)
         {
             var complaint = await _repository.GetByIdAsync(id);
             if (complaint is null)
                 return Result<bool>.Failure("Complaint not found");
 
+            if (role == "AreaManager" || role == "CEO")
+            {
+                if (complaint.RecipientUserId != userId)
+                    return Result<bool>.Failure("غير مسموح لك بالرد على هذه الشكوى");
+            }
+
             complaint.Response = dto.Response;
             complaint.Status = dto.Status;
-            complaint.IsSeenByHR = true;
+
+            if (role == "HR") complaint.IsSeenByHR = true;
+            else if (role == "AreaManager") complaint.IsSeenByAreaManager = true;
+            else if (role == "CEO") complaint.IsSeenByCEO = true;
 
             await _repository.UpdateAsync(complaint);
             return Result<bool>.Success(true);
         }
 
-        public async Task<Result<int>> GetUnseenCountAsync()
+        public async Task<Result<int>> GetUnseenCountAsync(string? recipientUserId, string role)
         {
-            var count = await _repository.GetUnseenCountAsync();
+            var count = await _repository.GetUnseenCountAsync(recipientUserId, role);
             return Result<int>.Success(count);
         }
 
-        public async Task<Result<bool>> MarkAsSeenAsync(int id)
+        public async Task<Result<bool>> MarkAsSeenAsync(int id, string userId, string role)
         {
             var complaint = await _repository.GetByIdAsync(id);
             if (complaint is null)
                 return Result<bool>.Failure("Complaint not found");
 
-            complaint.IsSeenByHR = true;
+            if (role == "HR") complaint.IsSeenByHR = true;
+            else if (role == "AreaManager")
+            {
+                if (complaint.RecipientUserId != userId)
+                    return Result<bool>.Failure("غير مسموح لك");
+                complaint.IsSeenByAreaManager = true;
+            }
+            else if (role == "CEO")
+            {
+                if (complaint.RecipientUserId != userId)
+                    return Result<bool>.Failure("غير مسموح لك");
+                complaint.IsSeenByCEO = true;
+            }
+
             await _repository.UpdateAsync(complaint);
             return Result<bool>.Success(true);
         }

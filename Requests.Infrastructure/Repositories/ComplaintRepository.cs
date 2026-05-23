@@ -21,7 +21,7 @@ namespace Requests.Infrastructure.Repositories
             return true;
         }
 
-        public async Task<IList<ComplaintRequest>> GetAllAsync(int? employeeId, bool? isSeenByHR, int page, int pageSize)
+        public async Task<IList<ComplaintRequest>> GetAllAsync(int? employeeId, bool? isSeenByHR, string? recipientUserId, int page, int pageSize)
         {
             var query = _context.ComplaintRequests.AsQueryable();
 
@@ -30,6 +30,9 @@ namespace Requests.Infrastructure.Repositories
 
             if (isSeenByHR.HasValue)
                 query = query.Where(c => c.IsSeenByHR == isSeenByHR.Value);
+
+            if (!string.IsNullOrEmpty(recipientUserId))
+                query = query.Where(c => c.RecipientUserId == recipientUserId);
 
             return await query
                 .OrderByDescending(c => c.Date)
@@ -38,7 +41,7 @@ namespace Requests.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<int> GetTotalCountAsync(int? employeeId, bool? isSeenByHR)
+        public async Task<int> GetTotalCountAsync(int? employeeId, bool? isSeenByHR, string? recipientUserId)
         {
             var query = _context.ComplaintRequests.AsQueryable();
 
@@ -48,7 +51,24 @@ namespace Requests.Infrastructure.Repositories
             if (isSeenByHR.HasValue)
                 query = query.Where(c => c.IsSeenByHR == isSeenByHR.Value);
 
+            if (!string.IsNullOrEmpty(recipientUserId))
+                query = query.Where(c => c.RecipientUserId == recipientUserId);
+
             return await query.CountAsync();
+        }
+
+        public async Task<int> GetUnseenCountAsync(string? recipientUserId, string role)
+        {
+            var query = _context.ComplaintRequests.AsQueryable();
+
+            if (role == "HR")
+                return await query.CountAsync(c => !c.IsSeenByHR);
+            else if (role == "AreaManager" && !string.IsNullOrEmpty(recipientUserId))
+                return await query.CountAsync(c => c.RecipientUserId == recipientUserId && !c.IsSeenByAreaManager);
+            else if (role == "CEO" && !string.IsNullOrEmpty(recipientUserId))
+                return await query.CountAsync(c => c.RecipientUserId == recipientUserId && !c.IsSeenByCEO);
+
+            return 0;
         }
 
         public async Task<ComplaintRequest?> GetByIdAsync(int id)
