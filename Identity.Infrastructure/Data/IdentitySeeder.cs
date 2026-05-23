@@ -20,7 +20,8 @@ namespace Identity.Infrastructure.Data
                 UserRoles.Employee,
                 UserRoles.Control,
                 UserRoles.Manager,
-                UserRoles.AreaManager
+                UserRoles.AreaManager,
+                UserRoles.CEO
 
             };
 
