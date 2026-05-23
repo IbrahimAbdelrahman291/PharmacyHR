@@ -11,13 +11,16 @@ namespace Requests.Application.Services
     {
         private readonly IComplaintRepository _repository;
         private readonly IEmployeeRepository _employeeRepository;
+        private readonly IAuthRepository _authRepository;
 
         public ComplaintService(
             IComplaintRepository repository,
-            IEmployeeRepository employeeRepository)
+            IEmployeeRepository employeeRepository,
+            IAuthRepository authRepository)
         {
             _repository = repository;
             _employeeRepository = employeeRepository;
+            _authRepository = authRepository;
         }
 
         public async Task<Result<bool>> AddAsync(int employeeId, CreateComplaintDto dto)
@@ -26,11 +29,19 @@ namespace Requests.Application.Services
             if (!validRecipients.Contains(dto.RecipientRole))
                 return Result<bool>.Failure("Invalid recipient");
 
+            string? recipientUserId = null;
+            if (dto.RecipientRole == "AreaManager")
+            {
+                var employeeInfo = await _employeeRepository.GetEmployeeBasicInfoAsync(employeeId);
+                recipientUserId = await _authRepository.GetAreaManagerByBranchIdAsync(employeeInfo!.Value.BranchId);
+            }
+
             var complaint = new ComplaintRequest
             {
                 EmployeeId = employeeId,
                 Content = dto.Content,
                 RecipientRole = dto.RecipientRole,
+                RecipientUserId = recipientUserId,
                 Status = "Pending",
                 Date = DateTime.UtcNow,
                 IsSeenByHR = false

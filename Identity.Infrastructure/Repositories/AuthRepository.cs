@@ -107,5 +107,12 @@ namespace Identity.Infrastructure.Repositories
                 .Where(x => x.UserId == userId)
                 .Select(x => x.BranchId)
                 .ToListAsync();
+        public async Task<string?> GetAreaManagerByBranchIdAsync(int branchId)
+        {
+            var areaManagerBranch = await _context.AreaManagerBranches
+                .FirstOrDefaultAsync(x => x.BranchId == branchId);
+
+            return areaManagerBranch?.UserId;
+        }
     }
 }

@@ -30,7 +30,7 @@ namespace Employees.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = UserRoles.Admin)]
+        [Authorize($"{UserRoles.HR},{UserRoles.Admin},{UserRoles.AreaManager}")]
         public async Task<IActionResult> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
             var result = await _service.GetAllAsync(page, pageSize);
