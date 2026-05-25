@@ -21,7 +21,7 @@ namespace Requests.Infrastructure.Repositories
             return true;
         }
 
-        public async Task<IList<ComplaintRequest>> GetAllAsync(int? employeeId, bool? isSeenByHR, string? recipientUserId, int page, int pageSize)
+        public async Task<IList<ComplaintRequest>> GetAllAsync(int? employeeId, bool? isSeenByHR, string? recipientUserId, string? recipientRole, int page, int pageSize)
         {
             var query = _context.ComplaintRequests.AsQueryable();
 
@@ -33,6 +33,9 @@ namespace Requests.Infrastructure.Repositories
 
             if (!string.IsNullOrEmpty(recipientUserId))
                 query = query.Where(c => c.RecipientUserId == recipientUserId);
+
+            if (!string.IsNullOrEmpty(recipientRole))
+                query = query.Where(c => c.RecipientRole == recipientRole);
 
             return await query
                 .OrderByDescending(c => c.Date)
@@ -65,8 +68,8 @@ namespace Requests.Infrastructure.Repositories
                 return await query.CountAsync(c => !c.IsSeenByHR);
             else if (role == "AreaManager" && !string.IsNullOrEmpty(recipientUserId))
                 return await query.CountAsync(c => c.RecipientUserId == recipientUserId && !c.IsSeenByAreaManager);
-            else if (role == "CEO" && !string.IsNullOrEmpty(recipientUserId))
-                return await query.CountAsync(c => c.RecipientUserId == recipientUserId && !c.IsSeenByCEO);
+            else if (role == "CEO")
+                return await query.CountAsync(c => c.RecipientRole == "CEO" && !c.IsSeenByCEO);
 
             return 0;
         }
@@ -83,5 +86,7 @@ namespace Requests.Infrastructure.Repositories
 
         public async Task<int> GetUnseenCountAsync()
             => await _context.ComplaintRequests.CountAsync(c => !c.IsSeenByHR);
+
+        
     }
 }

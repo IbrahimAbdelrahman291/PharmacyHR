@@ -8,7 +8,7 @@ namespace Requests.Domain.Interfaces
     public interface IComplaintRepository
     {
         Task<bool> AddAsync(ComplaintRequest complaint);
-        Task<IList<ComplaintRequest>> GetAllAsync(int? employeeId, bool? isSeenByHR, string? recipientUserId, int page, int pageSize);
+        Task<IList<ComplaintRequest>> GetAllAsync(int? employeeId, bool? isSeenByHR, string? recipientUserId, string? recipientRole, int page, int pageSize);
         Task<int> GetTotalCountAsync(int? employeeId, bool? isSeenByHR, string? recipientUserId);
         Task<int> GetUnseenCountAsync(string? recipientUserId, string role);
         Task<ComplaintRequest?> GetByIdAsync(int id);

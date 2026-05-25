@@ -31,7 +31,7 @@ namespace Requests.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.AreaManager},{UserRoles.CEO}")]
+        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.AreaManager},{UserRoles.CEO},{UserRoles.Employee}")]
         public async Task<IActionResult> GetAll(
             [FromQuery] int? employeeId = null,
             [FromQuery] bool? isSeenByHR = null,

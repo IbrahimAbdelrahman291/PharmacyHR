@@ -54,11 +54,14 @@ namespace Requests.Application.Services
         public async Task<Result<PaginatedResponse<ComplaintDto>>> GetAllAsync(int? employeeId, bool? isSeenByHR, string? recipientUserId, string role, int page, int pageSize)
         {
             string? filterUserId = null;
+            string? filterRole = null;
 
-            if (role == "AreaManager" || role == "CEO")
+            if (role == "AreaManager")
                 filterUserId = recipientUserId;
+            else if (role == "CEO")
+                filterRole = "CEO";
 
-            var complaints = await _repository.GetAllAsync(employeeId, isSeenByHR, filterUserId, page, pageSize);
+            var complaints = await _repository.GetAllAsync(employeeId, isSeenByHR, filterUserId, filterRole, page, pageSize);
             var totalCount = await _repository.GetTotalCountAsync(employeeId, isSeenByHR, filterUserId);
 
             var dtos = new List<ComplaintDto>();
