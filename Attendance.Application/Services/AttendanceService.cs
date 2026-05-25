@@ -75,30 +75,41 @@ namespace Attendance.Application.Services
             var egyptNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, egyptTimeZone);
             var egyptDate = DateOnly.FromDateTime(egyptNow);
             var egyptTime = TimeOnly.FromDateTime(egyptNow);
-
             var workLog = await _workLogRepository.GetOpenShiftAsync(employeeId);
+            
             if (workLog is null)
                 return Result<bool>.Failure("لا يوجد تسجيل حضور في هذا اليوم أو اليوم الذي يسبقه");
 
             var schedule = await _scheduleRepository.GetEmployeeScheduleByDayAsync(employeeId, workLog.Day.DayOfWeek);
-            if (schedule is not null)
-            {
-                var allowedCheckOut = schedule.Value.CheckOutTime.AddMinutes(15);
-                if (egyptTime > allowedCheckOut)
-                    return Result<bool>.Failure("اتواصل مع HR عشان تسجل انصرافك");
-            }
-
+            var CheckOutTime = schedule.Value.CheckOutTime;
             var startDateTime = workLog.Day.ToDateTime(workLog.Start);
-            var totalWorkTime = egyptNow - startDateTime;
+            var endDateTime = workLog.Day.ToDateTime(CheckOutTime);
+            var allowedCheckOut = schedule.Value.CheckOutTime.AddMinutes(15);
+            var totalWorkTime = endDateTime - startDateTime;
+            var endShift = workLog.Day.ToDateTime(egyptTime);
+            var totalTime = endShift - startDateTime;
 
-            if (totalWorkTime.TotalHours >= 24)
+            if (totalTime.TotalHours >= 24)
                 return Result<bool>.Failure("تعذر تسجيل ساعاتك، يجب التواصل مع HR");
 
+            if (schedule is not null)
+            {
+                if (egyptTime > allowedCheckOut) 
+                {
+                    workLog.End = CheckOutTime;
+                    workLog.TotalTime = endDateTime - startDateTime;
+                    await _workLogRepository.UpdateAsync(workLog);
+                    await _monthlyDataRepository.AddHoursAsync(employeeId, totalWorkTime.TotalHours);
+
+                    return Result<bool>.Success(true);
+                }
+            }
+            
             workLog.End = egyptTime;
-            workLog.TotalTime = totalWorkTime;
+            workLog.TotalTime = totalTime;
 
             await _workLogRepository.UpdateAsync(workLog);
-            await _monthlyDataRepository.AddHoursAsync(employeeId, totalWorkTime.TotalHours);
+            await _monthlyDataRepository.AddHoursAsync(employeeId, totalTime.TotalHours);
 
             return Result<bool>.Success(true);
         }
