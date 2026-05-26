@@ -11,5 +11,7 @@ namespace Requests.Infrastructure.Data
         public RequestsDbContext(DbContextOptions<RequestsDbContext> options) : base(options) { }
 
         public DbSet<ComplaintRequest> ComplaintRequests { get; set; }
+        public DbSet<ForgetedHoursRequest> ForgetedHoursRequests { get; set; }
+
     }
 }

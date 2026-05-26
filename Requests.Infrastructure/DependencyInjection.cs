@@ -17,6 +17,7 @@ namespace Requests.Infrastructure
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<IComplaintRepository, ComplaintRepository>();
+            services.AddScoped<IForgetedHoursRepository, ForgetedHoursRepository>();
 
             return services;
         }
