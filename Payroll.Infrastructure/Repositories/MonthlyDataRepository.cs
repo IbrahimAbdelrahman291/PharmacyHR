@@ -507,5 +507,19 @@ namespace Payroll.Infrastructure.Repositories
                 .Where(c => monthlyDataIds.Contains(c.MonthlyEmployeeDataId))
                 .ToListAsync();
         }
+
+        public async Task<int?> GetHolidaysInCurrentMonthAsync(int employeeId)
+        {
+            var egyptTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time");
+            var egyptNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, egyptTimeZone);
+
+            var Holiydays = await _context.MonthlyEmployeeData
+                .Where(x => x.EmployeeId == employeeId)
+                .Select(x => x.Holidaies)
+                .FirstOrDefaultAsync();
+
+            return Holiydays;
+
+        }
     }
 }

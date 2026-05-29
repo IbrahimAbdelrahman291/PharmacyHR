@@ -5,7 +5,7 @@ namespace SharedKernel.Interfaces
 {
     public interface IMonthlyDataRepository
     {
-        Task<MonthlyEmployeeData?> GetCurrentMonthAsync(int employeeId);
+        Task<int?> GetHolidaysInCurrentMonthAsync(int employeeId);
         Task AddHoursAsync(int employeeId, double hours);
         Task AddHolidayHoursAsync(int employeeId, double hours);
         Task AddForgetedHoursAsync(int employeeId, double hours);

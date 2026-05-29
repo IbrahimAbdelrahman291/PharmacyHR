@@ -35,11 +35,11 @@ namespace Requests.Application.Services
             var totalDays = (dto.ToDate.DayNumber - dto.FromDate.DayNumber) + 1;
 
             // تأكد إن الرصيد كافي
-            var monthlyData = await _monthlyDataRepository.GetCurrentMonthAsync(employeeId);
-            if (monthlyData is null)
+            var Holiday = await _monthlyDataRepository.GetHolidaysInCurrentMonthAsync(employeeId);
+            if (Holiday is null)
                 return Result<bool>.Failure("لا توجد بيانات شهرية للموظف");
 
-            if ((monthlyData.Holidaies ?? 0) < totalDays)
+            if ((Holiday ?? 0) < totalDays)
                 return Result<bool>.Failure("رصيد الإجازات غير كافي");
 
             // جيب الـ Area Manager المسؤل عن الفرع
