@@ -12,6 +12,7 @@ namespace Requests.Application
         {
             services.AddScoped<IComplaintService, ComplaintService>();
             services.AddScoped<IForgetedHoursService, ForgetedHoursService>();
+            services.AddScoped<IHolidayService, HolidayService>();
             return services;
         }
     }

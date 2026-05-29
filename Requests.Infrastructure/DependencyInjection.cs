@@ -18,6 +18,7 @@ namespace Requests.Infrastructure
 
             services.AddScoped<IComplaintRepository, ComplaintRepository>();
             services.AddScoped<IForgetedHoursRepository, ForgetedHoursRepository>();
+            services.AddScoped<IHolidayRepository, HolidayRepository>();
 
             return services;
         }

@@ -12,6 +12,6 @@ namespace Requests.Infrastructure.Data
 
         public DbSet<ComplaintRequest> ComplaintRequests { get; set; }
         public DbSet<ForgetedHoursRequest> ForgetedHoursRequests { get; set; }
-
+        public DbSet<HolidayRequest> HolidayRequests { get; set; }
     }
 }
