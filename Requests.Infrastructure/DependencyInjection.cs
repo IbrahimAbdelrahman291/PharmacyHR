@@ -3,7 +3,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Requests.Domain.Interfaces;
 using Requests.Infrastructure.Data;
+using Requests.Infrastructure.Jobs;
 using Requests.Infrastructure.Repositories;
+using SharedKernel.Interfaces;
 
 namespace Requests.Infrastructure
 {
@@ -19,6 +21,8 @@ namespace Requests.Infrastructure
             services.AddScoped<IComplaintRepository, ComplaintRepository>();
             services.AddScoped<IForgetedHoursRepository, ForgetedHoursRepository>();
             services.AddScoped<IHolidayRepository, HolidayRepository>();
+            services.AddScoped<IBorrowRepository, BorrowRepository>();
+            services.AddScoped<IInstallmentBorrowJob, InstallmentBorrowJob>();
 
             return services;
         }

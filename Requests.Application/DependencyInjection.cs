@@ -13,6 +13,7 @@ namespace Requests.Application
             services.AddScoped<IComplaintService, ComplaintService>();
             services.AddScoped<IForgetedHoursService, ForgetedHoursService>();
             services.AddScoped<IHolidayService, HolidayService>();
+            services.AddScoped<IBorrowService, BorrowService>();
             return services;
         }
     }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Requests.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using Requests.Infrastructure.Data;
 namespace Requests.Infrastructure.Migrations
 {
     [DbContext(typeof(RequestsDbContext))]
-    partial class RequestsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260530190432_AddBorrowRequests")]
+    partial class AddBorrowRequests
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

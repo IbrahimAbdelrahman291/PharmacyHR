@@ -1,16 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Payroll.Domain.Entities;
 using Payroll.Infrastructure.Data;
+using SharedKernel.Interfaces;
 
 namespace Payroll.Infrastructure.Repositories
 {
     public class MonthlyDataRepository : Payroll.Domain.Interfaces.IMonthlyDataRepository, SharedKernel.Interfaces.IMonthlyDataRepository
     {
         private readonly PayrollDbContext _context;
+        private readonly IEmployeeRepository _employeeRepository;
 
-        public MonthlyDataRepository(PayrollDbContext context)
+        public MonthlyDataRepository(PayrollDbContext context, IEmployeeRepository employeeRepository)
         {
             _context = context;
+            _employeeRepository = employeeRepository;
         }
 
         private async Task<MonthlyEmployeeData?> GetCurrentAsync(int employeeId)
@@ -520,6 +523,51 @@ namespace Payroll.Infrastructure.Repositories
 
             return Holiydays;
 
+        }
+
+        public async Task<double?> GetTotalSalaryForInstallmentBorrow(int employeeId)
+        {
+
+            var employeeRole = _employeeRepository.GetRoleName(employeeId);
+
+            var egyptTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time");
+            var egyptNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, egyptTimeZone);
+
+            double? totalSalary = 0;
+            double? Quarter = 0;
+            double? ShiftHours = 0;
+            double? SalaryPerHour = 0;
+            if (employeeRole is not null)
+            {
+                if (employeeRole == "static")
+                {
+                    totalSalary = await _context.MonthlyEmployeeData
+                        .Where(x => x.EmployeeId == employeeId)
+                        .Select(x => x.TotalSalary)
+                        .FirstOrDefaultAsync();
+                    Quarter = totalSalary / 4;
+                }
+                else if (employeeRole == "changable")
+                {
+                    ShiftHours = await _context.MonthlyEmployeeData.Where(x => x.EmployeeId == employeeId).Select(x => x.Target).FirstOrDefaultAsync();;
+                    SalaryPerHour = await _context.MonthlyEmployeeData.Where(y => y.EmployeeId == employeeId).Select(y => y.SalaryPerHour).FirstOrDefaultAsync();
+
+                    totalSalary = (ShiftHours * SalaryPerHour) / 26;
+                    Quarter = totalSalary / 4;
+                }
+                else if (employeeRole == "delivery") 
+                {
+                    ShiftHours = await _context.MonthlyEmployeeData.Where(x => x.EmployeeId == employeeId).Select(x => x.Target).FirstOrDefaultAsync(); ;
+                    SalaryPerHour = await _context.MonthlyEmployeeData.Where(y => y.EmployeeId == employeeId).Select(y => y.SalaryPerHour).FirstOrDefaultAsync();
+
+                    totalSalary = (ShiftHours * SalaryPerHour);
+                    Quarter = totalSalary / 4;
+                }
+            }
+
+            
+
+            return Quarter;
         }
     }
 }

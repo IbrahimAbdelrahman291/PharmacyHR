@@ -202,6 +202,7 @@ namespace Payroll.Application.Services
                     EmployeeName = employeeInfo.Value.Name,
                     Deductions = new DeductionValuesDto
                     {
+                        QuarterDay = oneDay / 4,
                         HalfDay = oneDay / 2,
                         OneDay = oneDay,
                         TwoDays = oneDay * 2,

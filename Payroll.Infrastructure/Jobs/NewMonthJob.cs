@@ -1,6 +1,7 @@
-﻿using Payroll.Application.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using Payroll.Application.Interfaces;
 using Payroll.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
+using SharedKernel.Interfaces;
 
 
 namespace Payroll.Infrastructure.Jobs
@@ -8,10 +9,12 @@ namespace Payroll.Infrastructure.Jobs
     public class NewMonthJob : INewMonthJob
     {
         private readonly PayrollDbContext _context;
+        private readonly IInstallmentBorrowJob _installmentBorrowJob;
 
-        public NewMonthJob(PayrollDbContext context)
+        public NewMonthJob(PayrollDbContext context, IInstallmentBorrowJob installmentBorrowJob)
         {
             _context = context;
+            _installmentBorrowJob = installmentBorrowJob;
         }
 
         public async Task ExecuteAsync()
@@ -57,6 +60,7 @@ namespace Payroll.Infrastructure.Jobs
 
                 await _context.MonthlyEmployeeData.AddAsync(newData);
             }
+            await _installmentBorrowJob.ProcessAsync();
 
             await _context.SaveChangesAsync();
         }

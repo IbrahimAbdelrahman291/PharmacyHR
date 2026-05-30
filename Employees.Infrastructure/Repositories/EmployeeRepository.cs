@@ -206,5 +206,11 @@ namespace Employees.Infrastructure.Repositories
                     && e.Year == year);
         public async Task<EvaluationCriteria?> GetEvaluationCriteriaByIdAsync(int id)
             => await _context.EvaluationCriterias.FindAsync(id);
+
+        public string? GetRoleName(int employeeId)
+        {
+            var employeeRole = _context.Employees.Where(x => x.Id == employeeId).Select(x => x.Role).FirstOrDefault();
+            return employeeRole;
+        }
     }
 }

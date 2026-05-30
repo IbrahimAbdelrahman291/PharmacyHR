@@ -33,9 +33,8 @@ public partial class Program
             .AddApplicationPart(typeof(Employees.API.Controllers.EmployeeScheduleController).Assembly)
             .AddApplicationPart(typeof(Payroll.API.Controllers.PayrollController).Assembly)
             .AddApplicationPart(typeof(Attendance.API.Controllers.AttendanceController).Assembly)
-            .AddApplicationPart(typeof(Requests.API.Controllers.ComplaintController).Assembly);
-
-
+            .AddApplicationPart(typeof(Requests.API.Controllers.ComplaintController).Assembly)
+            .AddApplicationPart(typeof(Requests.API.Controllers.BorrowController).Assembly);
 
 
         // Swagger
