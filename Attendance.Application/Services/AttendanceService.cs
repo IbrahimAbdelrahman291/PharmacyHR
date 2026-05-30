@@ -88,30 +88,40 @@ namespace Attendance.Application.Services
             var totalWorkTime = endDateTime - startDateTime;
             var endShift = workLog.Day.ToDateTime(egyptTime);
             var totalTime = endShift - startDateTime;
+            var allowCheckOutEmergency = workLog.Start.AddMinutes(15);
+
+            
 
             if (totalTime.TotalHours >= 24)
                 return Result<bool>.Failure("تعذر تسجيل ساعاتك، يجب التواصل مع HR");
 
-            if (schedule is not null)
+            if (egyptTime >= allowCheckOutEmergency)
             {
-                if (egyptTime > allowedCheckOut) 
+                if (schedule is not null)
                 {
-                    workLog.End = CheckOutTime;
-                    workLog.TotalTime = endDateTime - startDateTime;
-                    await _workLogRepository.UpdateAsync(workLog);
-                    await _monthlyDataRepository.AddHoursAsync(employeeId, totalWorkTime.TotalHours);
+                    if (egyptTime > allowedCheckOut)
+                    {
+                        workLog.End = CheckOutTime;
+                        workLog.TotalTime = endDateTime - startDateTime;
+                        await _workLogRepository.UpdateAsync(workLog);
+                        await _monthlyDataRepository.AddHoursAsync(employeeId, totalWorkTime.TotalHours);
 
-                    return Result<bool>.Success(true);
+                        return Result<bool>.Success(true);
+                    }
                 }
+
+                workLog.End = egyptTime;
+                workLog.TotalTime = totalTime;
+
+                await _workLogRepository.UpdateAsync(workLog);
+                await _monthlyDataRepository.AddHoursAsync(employeeId, totalTime.TotalHours);
+
+                return Result<bool>.Success(true);
             }
-            
-            workLog.End = egyptTime;
-            workLog.TotalTime = totalTime;
-
-            await _workLogRepository.UpdateAsync(workLog);
-            await _monthlyDataRepository.AddHoursAsync(employeeId, totalTime.TotalHours);
-
-            return Result<bool>.Success(true);
+            else 
+            {
+                return Result<bool>.Failure("لا يمكنك انهاء الشيفت الان");
+            }
         }
 
         public async Task<Result<PaginatedResponse<AttendanceReportDto>>> GetReportAsync(string type, DateOnly fromDate, DateOnly toDate, int? employeeId, int? branchId, int page, int pageSize)
