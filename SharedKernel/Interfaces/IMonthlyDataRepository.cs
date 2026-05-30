@@ -23,7 +23,7 @@ namespace SharedKernel.Interfaces
         Task<bool> DeleteContractDiscountAsync(int id);
         Task<bool> DeleteBonusAsync(int id);
         Task<bool> DeleteCashBorrowAsync(int id);
-        Task CreateMonthlyDataAsync(int employeeId, string role, double? totalSalary, double? salaryPerHour, double target, int branchId);
+        Task CreateMonthlyDataAsync(int employeeId, string role, double? totalSalary, double? salaryPerHour, double target, int branchId,double? insurence, int Holidaies);
         Task BulkAddDiscountAsync(IList<int> employeeIds, double amount, string reason, string? notes);
         Task BulkAddBonusAsync(IList<int> employeeIds, double amount, string reason, string? notes);
     }

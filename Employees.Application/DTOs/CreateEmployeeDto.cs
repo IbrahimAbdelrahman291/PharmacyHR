@@ -22,5 +22,7 @@ namespace Employees.Application.DTOs
         public int GraduationYear { get; set; }
         public string? NationalId { get; set; }
         public string? PhoneNumber { get; set; }
+        public double? Insurence { get; set; }
+        public int Holidaies { get; set; }
     }
 }

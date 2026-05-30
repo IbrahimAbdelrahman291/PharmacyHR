@@ -411,7 +411,7 @@ namespace Payroll.Infrastructure.Repositories
 
             return await query.ToListAsync();
         }
-        public async Task CreateMonthlyDataAsync(int employeeId, string role, double? totalSalary, double? salaryPerHour, double target, int branchId)
+        public async Task CreateMonthlyDataAsync(int employeeId, string role, double? totalSalary, double? salaryPerHour, double target, int branchId,double? insurence, int Holidaies)
         {
             var egyptTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time");
             var egyptNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, egyptTimeZone);
@@ -424,7 +424,7 @@ namespace Payroll.Infrastructure.Repositories
                 Month = egyptNow.Month,
                 Year = egyptNow.Year,
                 Target = target,
-                Holidaies = 7,
+                Holidaies = Holidaies,
                 Hours = 0,
                 HoursOverTime = 0,
                 ForgetedHours = 0,
@@ -434,7 +434,7 @@ namespace Payroll.Infrastructure.Repositories
                 TotalBouns = 0,
                 TotalBorrows = 0,
                 TotalCashBorrows = 0,
-                Insurence = 0
+                Insurence = insurence
             };
 
             if (role.ToLower() == "static")

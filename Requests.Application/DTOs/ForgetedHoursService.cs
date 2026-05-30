@@ -24,7 +24,7 @@ namespace Requests.Application.DTOs
 
         public async Task<Result<bool>> AddAsync(int employeeId, CreateForgetedHoursDto dto)
         {
-            var validReasons = new[] { "انقطاع النت", "انقطاع الكهرباء", "أسباب أخرى" };
+            var validReasons = new[] { "انقطاع الانترنت", "انقطاع التيار الكهربي", "أخرى", "سهو البصمة" };
             if (!validReasons.Contains(dto.Reason))
                 return Result<bool>.Failure("Invalid reason");
 

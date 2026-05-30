@@ -3,6 +3,7 @@ using Employees.Application.Interfaces;
 using Identity.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 using System.Runtime.InteropServices;
 
 namespace Employees.API.Controllers
@@ -19,7 +20,7 @@ namespace Employees.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = UserRoles.Admin)]
+        [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.HR}")]
         public async Task<IActionResult> Add([FromBody] CreateEvaluationCriteriaDto dto)
         {
             var result = await _service.AddAsync(dto);
@@ -41,7 +42,7 @@ namespace Employees.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = UserRoles.Admin)]
+        [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.HR}")]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _service.DeleteAsync(id);
