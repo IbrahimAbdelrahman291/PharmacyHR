@@ -28,7 +28,7 @@ namespace Requests.Application.Services
             var egyptTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time");
             var egyptNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, egyptTimeZone);
 
-            // تأكد إن الطلب في الفترة المسموح بيها (10 لـ 25)
+            //تأكد إن الطلب في الفترة المسموح بيها(10 لـ 25)
             if (egyptNow.Day < 10 || egyptNow.Day > 25)
                 return Result<bool>.Failure("يمكن تقديم طلب السلفة من يوم 10 إلى يوم 25 فقط");
 
