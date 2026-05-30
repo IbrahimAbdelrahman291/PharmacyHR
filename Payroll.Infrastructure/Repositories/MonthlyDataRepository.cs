@@ -65,12 +65,12 @@ namespace Payroll.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task AddHolidayHoursAsync(int employeeId, double hours)
+        public async Task AddHolidayHoursAsync(int employeeId, double hours, int TotalDays)
         {
             var data = await GetCurrentAsync(employeeId);
             if (data is null) return;
             data.HolidayHours = (data.HolidayHours ?? 0) + hours;
-            data.Holidaies = (data.Holidaies ?? 0) - 1;
+            data.Holidaies = (data.Holidaies ?? 0) - TotalDays;
             await RecalculateNetSalaryAsync(data);
             await _context.SaveChangesAsync();
         }

@@ -149,7 +149,7 @@ namespace Requests.Application.Services
                 // ضيف ساعات الإجازة
                 var shiftHours = await _employeeRepository.GetShiftHoursAsync(request.EmployeeId);
                 var totalHolidayHours = (shiftHours ?? 0) * request.TotalDays;
-                await _monthlyDataRepository.AddHolidayHoursAsync(request.EmployeeId, totalHolidayHours);
+                await _monthlyDataRepository.AddHolidayHoursAsync(request.EmployeeId, totalHolidayHours, request.TotalDays);
             }
             else
             {

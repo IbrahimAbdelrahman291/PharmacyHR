@@ -7,7 +7,7 @@ namespace SharedKernel.Interfaces
     {
         Task<int?> GetHolidaysInCurrentMonthAsync(int employeeId);
         Task AddHoursAsync(int employeeId, double hours);
-        Task AddHolidayHoursAsync(int employeeId, double hours);
+        Task AddHolidayHoursAsync(int employeeId, double hours, int TotalDays);
         Task AddForgetedHoursAsync(int employeeId, double hours);
         Task UpdateHoursOverTimeAsync(int employeeId, double hours);
         Task AddDiscountAsync(int employeeId, double amount, string reason, string? notes);
