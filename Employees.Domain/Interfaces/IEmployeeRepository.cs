@@ -30,6 +30,9 @@ namespace Employees.Domain.Interfaces
         Task<QuarterlyEvaluation?> GetEvaluationByIdAsync(int id);
         Task<QuarterlyEvaluation?> GetEvaluationByQuarterAsync(int employeeId, string quarter, int year);
         Task<EvaluationCriteria?> GetEvaluationCriteriaByIdAsync(int id);
+        Task<bool> AddCustodyAsync(PersonalCustody custody);
+        Task<bool> DeleteCustodyAsync(int id);
+        Task<IList<PersonalCustody>> GetCustodiesByEmployeeIdAsync(int employeeId);
 
     }
 }

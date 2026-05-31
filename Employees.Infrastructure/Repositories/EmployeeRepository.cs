@@ -212,5 +212,26 @@ namespace Employees.Infrastructure.Repositories
             var employeeRole = _context.Employees.Where(x => x.Id == employeeId).Select(x => x.Role).FirstOrDefault();
             return employeeRole;
         }
+        public async Task<bool> AddCustodyAsync(PersonalCustody custody)
+        {
+            await _context.PersonalCustodies.AddAsync(custody);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteCustodyAsync(int id)
+        {
+            var custody = await _context.PersonalCustodies.FindAsync(id);
+            if (custody is null) return false;
+            _context.PersonalCustodies.Remove(custody);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<IList<PersonalCustody>> GetCustodiesByEmployeeIdAsync(int employeeId)
+            => await _context.PersonalCustodies
+                .Where(c => c.EmployeeId == employeeId)
+                .OrderByDescending(c => c.CreatedAt)
+                .ToListAsync();
     }
 }

@@ -17,7 +17,7 @@ namespace Employees.Application
             services.AddScoped<IEmployeeScheduleService, EmployeeScheduleService>();
             services.AddScoped<IBankService, BankService>();
             services.AddScoped<IEvaluationService, EvaluationService>();
-
+            services.AddScoped<IPersonalCustodyService, PersonalCustodyService>();
 
             return services;
         }

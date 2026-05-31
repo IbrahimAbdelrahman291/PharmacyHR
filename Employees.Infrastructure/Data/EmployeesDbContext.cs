@@ -20,6 +20,7 @@ namespace Employees.Infrastructure.Data
         public DbSet<EmployeeBranch> EmployeeBranches { get; set; }
         public DbSet<QuarterlyEvaluation> QuarterlyEvaluations { get; set; }
         public DbSet<EvaluationResult> EvaluationResults { get; set; }
+        public DbSet<PersonalCustody> PersonalCustodies { get; set; }
 
     }
 }
