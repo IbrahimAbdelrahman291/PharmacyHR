@@ -91,7 +91,7 @@ namespace Payroll.Infrastructure.Repositories
         {
             var data = await GetCurrentAsync(employeeId);
             if (data is null) return;
-            data.HoursOverTime = hours;
+            data.HoursOverTime = (data.HoursOverTime ?? 0) + hours;
             await RecalculateNetSalaryAsync(data);
             await _context.SaveChangesAsync();
         }
