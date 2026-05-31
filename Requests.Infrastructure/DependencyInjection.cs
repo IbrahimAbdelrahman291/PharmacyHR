@@ -23,7 +23,7 @@ namespace Requests.Infrastructure
             services.AddScoped<IHolidayRepository, HolidayRepository>();
             services.AddScoped<IBorrowRepository, BorrowRepository>();
             services.AddScoped<IInstallmentBorrowJob, InstallmentBorrowJob>();
-
+            services.AddScoped<IOvertimeRepository, OvertimeRepository>();
             return services;
         }
     }

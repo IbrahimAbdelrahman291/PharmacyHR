@@ -15,5 +15,6 @@ namespace Requests.Infrastructure.Data
         public DbSet<HolidayRequest> HolidayRequests { get; set; }
         public DbSet<BorrowRequest> BorrowRequests { get; set; }
         public DbSet<InstallmentBorrow> InstallmentBorrows { get; set; }
+        public DbSet<OvertimeRequest> OvertimeRequests { get; set; }
     }
 }
