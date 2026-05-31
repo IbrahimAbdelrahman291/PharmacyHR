@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Employees.Application.DTOs
@@ -24,5 +25,6 @@ namespace Employees.Application.DTOs
         public string? PhoneNumber { get; set; }
         public double? Insurence { get; set; }
         public int Holidaies { get; set; }
+        public string? EmployeeType { get; set; }
     }
 }

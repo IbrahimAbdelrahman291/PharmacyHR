@@ -46,7 +46,8 @@ namespace Employees.Application.Services
                 BankAccount = dto.BankAccount,
                 ShiftHours = dto.ShiftHours,
                 BranchId = dto.BranchId,
-                UserId = string.Empty
+                UserId = string.Empty,
+                EmployeeType = dto.EmployeeType
             };
 
             var history = new EmployeeHistory
@@ -167,6 +168,11 @@ namespace Employees.Application.Services
                     StartDate = DateTime.UtcNow
                 });
             }
+            if (dto.EmployeeType is not null)
+            {
+                employee.EmployeeType = dto.EmployeeType;
+            }
+
             await _employeeRepository.UpdateAsync(employee);
             return Result<bool>.Success(true);
         }

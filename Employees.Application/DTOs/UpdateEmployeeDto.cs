@@ -11,5 +11,6 @@ namespace Employees.Application.DTOs
         public string? BankAccount { get; set; }
         public double? ShiftHours { get; set; }
         public int? BranchId { get; set; }
+        public string? EmployeeType { get; set; }
     }
 }
