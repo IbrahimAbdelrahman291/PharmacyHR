@@ -8,7 +8,8 @@ namespace Employees.Infrastructure.Repositories
 {
     public class EmployeeRepository : IEmployeeRepository,
     SharedKernel.Interfaces.IEmployeeRepository,
-    SharedKernel.Interfaces.IEmployeeScheduleRepository
+    SharedKernel.Interfaces.IEmployeeScheduleRepository,
+    SharedKernel.Interfaces.IEmployeeTypeRepository
     {
         private readonly EmployeesDbContext _context;
 
@@ -233,5 +234,13 @@ namespace Employees.Infrastructure.Repositories
                 .Where(c => c.EmployeeId == employeeId)
                 .OrderByDescending(c => c.CreatedAt)
                 .ToListAsync();
+
+        public async Task UpdateEmployeeTypeAsync(int employeeId, string type)
+        {
+            var employee = await _context.Employees.FindAsync(employeeId);
+            if (employee is null) return;
+            employee.EmployeeType = type;
+            await _context.SaveChangesAsync();
+        }
     }
 }

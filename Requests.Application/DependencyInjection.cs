@@ -15,6 +15,8 @@ namespace Requests.Application
             services.AddScoped<IHolidayService, HolidayService>();
             services.AddScoped<IBorrowService, BorrowService>();
             services.AddScoped<IOvertimeService, OvertimeService>();
+            services.AddScoped<IResignationService, ResignationService>();
+            services.AddScoped<IAppointmentService, AppointmentService>();
             return services;
         }
     }

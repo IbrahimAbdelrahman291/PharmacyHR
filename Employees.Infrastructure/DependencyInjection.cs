@@ -23,7 +23,7 @@ namespace Employees.Infrastructure
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<SharedKernel.Interfaces.IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<SharedKernel.Interfaces.IEmployeeScheduleRepository, EmployeeRepository>();
-
+            services.AddScoped<SharedKernel.Interfaces.IEmployeeTypeRepository, EmployeeRepository>();
 
             return services;
         }

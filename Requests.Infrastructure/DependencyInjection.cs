@@ -24,6 +24,8 @@ namespace Requests.Infrastructure
             services.AddScoped<IBorrowRepository, BorrowRepository>();
             services.AddScoped<IInstallmentBorrowJob, InstallmentBorrowJob>();
             services.AddScoped<IOvertimeRepository, OvertimeRepository>();
+            services.AddScoped<IResignationRepository, ResignationRepository>();
+            services.AddScoped<IAppointmentRepository, AppointmentRepository>();
             return services;
         }
     }

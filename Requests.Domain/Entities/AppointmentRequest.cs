@@ -1,0 +1,14 @@
+﻿using SharedKernel.Common;
+
+namespace Requests.Domain.Entities
+{
+    public class AppointmentRequest : BaseEntity
+    {
+        public int EmployeeId { get; set; }
+        public string AreaManagerUserId { get; set; } = string.Empty;
+        public DateTime RequestDate { get; set; }
+        public string Status { get; set; } = "Pending";
+        public string? RejectionReason { get; set; }
+        public bool IsSeenByHR { get; set; } = false;
+    }
+}

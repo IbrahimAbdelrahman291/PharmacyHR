@@ -16,6 +16,7 @@ namespace Employees.Domain.Entities
         public string UserId { get; set; } = string.Empty;
         public int BranchId { get; set; }
         public Bank? Bank { get; set; }
+        public string? EmployeeType { get; set; } // "تحت التدريب", "تم التعيين"
 
     }
 }

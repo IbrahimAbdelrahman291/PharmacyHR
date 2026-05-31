@@ -16,5 +16,7 @@ namespace Requests.Infrastructure.Data
         public DbSet<BorrowRequest> BorrowRequests { get; set; }
         public DbSet<InstallmentBorrow> InstallmentBorrows { get; set; }
         public DbSet<OvertimeRequest> OvertimeRequests { get; set; }
+        public DbSet<ResignationRequest> ResignationRequests { get; set; }
+        public DbSet<AppointmentRequest> AppointmentRequests { get; set; }
     }
 }
