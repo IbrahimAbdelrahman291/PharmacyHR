@@ -30,7 +30,7 @@ namespace Requests.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = UserRoles.HR)]
+        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.AreaManager}")]
         public async Task<IActionResult> GetAll(
             [FromQuery] bool? isSeenByHR = null,
             [FromQuery] int page = 1,

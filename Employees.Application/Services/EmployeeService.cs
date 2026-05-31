@@ -135,7 +135,9 @@ namespace Employees.Application.Services
                     BankAccount = employee.BankAccount,
                     ShiftHours = employee.ShiftHours,
                     BranchId = employee.BranchId,
-                    BranchName = branch?.Name ?? string.Empty
+                    BranchName = branch?.Name ?? string.Empty,
+                    EmployeeType = employee.EmployeeType ?? string.Empty
+
                 });
             }
 
