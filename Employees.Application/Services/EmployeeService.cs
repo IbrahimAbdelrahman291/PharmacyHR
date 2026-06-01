@@ -47,7 +47,8 @@ namespace Employees.Application.Services
                 ShiftHours = dto.ShiftHours,
                 BranchId = dto.BranchId,
                 UserId = string.Empty,
-                EmployeeType = dto.EmployeeType
+                EmployeeType = dto.EmployeeType,
+                Status = "Active"
             };
 
             var history = new EmployeeHistory
@@ -112,7 +113,8 @@ namespace Employees.Application.Services
                 ShiftHours = employee.ShiftHours,
                 BranchId = employee.BranchId,
                 BranchName = branch?.Name ?? string.Empty,
-                EmployeeType = employee.EmployeeType ?? string.Empty    
+                EmployeeType = employee.EmployeeType ?? string.Empty,
+                Status = employee.Status,
             });
         }
 
@@ -175,6 +177,10 @@ namespace Employees.Application.Services
             {
                 employee.EmployeeType = dto.EmployeeType;
             }
+            if (dto.Status is not null)
+            {
+                employee.Status = dto.Status;
+            }
 
             await _employeeRepository.UpdateAsync(employee);
             return Result<bool>.Success(true);
@@ -214,6 +220,14 @@ namespace Employees.Application.Services
             history.EndOfServiceType = dto.EndOfServiceType;
 
             await _employeeRepository.UpdateHistoryAsync(history);
+
+            // تحديث Status الموظف لـ Stopped
+            var employee = await _employeeRepository.GetByIdAsync(employeeId);
+            if (employee is not null)
+            {
+                employee.Status = "Stopped";
+                await _employeeRepository.UpdateAsync(employee);
+            }
             return Result<bool>.Success(true);
         }
 

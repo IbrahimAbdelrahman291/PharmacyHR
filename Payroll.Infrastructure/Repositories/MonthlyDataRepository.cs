@@ -403,8 +403,12 @@ namespace Payroll.Infrastructure.Repositories
         }
         public async Task<IList<MonthlyEmployeeData>> GetAllByMonthAndYearAsync(int month, int year, int? branchId)
         {
+            var activeEmployeeIds = await _employeeRepository.GetActiveEmployeeIdsAsync();
+
             var query = _context.MonthlyEmployeeData
-                .Where(x => x.Month == month && x.Year == year);
+                .Where(x => x.Month == month
+                    && x.Year == year
+                    && activeEmployeeIds.Contains(x.EmployeeId));
 
             if (branchId.HasValue)
                 query = query.Where(x => x.BranchId == branchId.Value);

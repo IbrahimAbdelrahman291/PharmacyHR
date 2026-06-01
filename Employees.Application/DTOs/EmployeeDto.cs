@@ -17,5 +17,6 @@ namespace Employees.Application.DTOs
         public int BranchId { get; set; }
         public string BranchName { get; set; } = string.Empty;
         public string? EmployeeType { get; set; }
+        public string? Status { get; set; }
     }
 }

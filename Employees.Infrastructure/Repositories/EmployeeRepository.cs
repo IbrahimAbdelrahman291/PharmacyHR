@@ -242,5 +242,10 @@ namespace Employees.Infrastructure.Repositories
             employee.EmployeeType = type;
             await _context.SaveChangesAsync();
         }
+        public async Task<IList<int>> GetActiveEmployeeIdsAsync()
+            => await _context.Employees
+                .Where(e => e.Status == "Active")
+                .Select(e => e.Id)
+                .ToListAsync();
     }
 }

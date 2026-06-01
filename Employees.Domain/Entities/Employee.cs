@@ -17,6 +17,8 @@ namespace Employees.Domain.Entities
         public int BranchId { get; set; }
         public Bank? Bank { get; set; }
         public string? EmployeeType { get; set; } // "تحت التدريب", "تم التعيين"
+        public string Status { get; set; } = "Active"; // Active, Stopped
+
 
     }
 }

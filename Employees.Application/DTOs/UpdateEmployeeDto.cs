@@ -12,5 +12,6 @@ namespace Employees.Application.DTOs
         public double? ShiftHours { get; set; }
         public int? BranchId { get; set; }
         public string? EmployeeType { get; set; }
+        public string? Status { get; set; }
     }
 }
