@@ -39,12 +39,13 @@ namespace Payroll.Infrastructure.Jobs
                 var newData = new Payroll.Domain.Entities.MonthlyEmployeeData
                 {
                     EmployeeId = data.EmployeeId,
+                    Role = data.Role,
                     BranchId = data.BranchId,
                     Month = egyptNow.Month,
                     Year = egyptNow.Year,
                     Target = data.Target,
                     Insurence = data.Insurence,
-                    Holidaies = (previousMonth.Year < egyptNow.Year) ? 7 : data.Holidaies,
+                    Holidaies = (previousMonth.Year < egyptNow.Year) ? 14 : data.Holidaies,
                     Hours = 0,
                     HoursOverTime = 0,
                     ForgetedHours = 0,
@@ -54,8 +55,10 @@ namespace Payroll.Infrastructure.Jobs
                     TotalBouns = 0,
                     TotalBorrows = 0,
                     TotalCashBorrows = 0,
-                    TotalSalary = data.TotalSalary,
-                    SalaryPerHour = data.SalaryPerHour
+                    TotalSalary = data.Role == "static" ? data.TotalSalary : 0,
+                    SalaryPerHour = data.Role != "static" ? data.SalaryPerHour : null,
+                    NetSalary = data.Role == "static" ? data.TotalSalary : 0,
+                    
                 };
 
                 await _context.MonthlyEmployeeData.AddAsync(newData);
