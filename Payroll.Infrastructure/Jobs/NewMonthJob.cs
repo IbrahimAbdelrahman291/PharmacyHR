@@ -63,9 +63,9 @@ namespace Payroll.Infrastructure.Jobs
 
                 await _context.MonthlyEmployeeData.AddAsync(newData);
             }
-            await _installmentBorrowJob.ProcessAsync();
 
             await _context.SaveChangesAsync();
+            await _installmentBorrowJob.ProcessAsync();
         }
     }
 }
