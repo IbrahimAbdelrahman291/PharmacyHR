@@ -48,7 +48,7 @@ namespace Employees.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Manager},{UserRoles.Employee}")]
+        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.AreaManager},{UserRoles.Employee}")]
         public async Task<IActionResult> GetSchedules(int employeeId)
         {
             var result = await _service.GetSchedulesByEmployeeIdAsync(employeeId);

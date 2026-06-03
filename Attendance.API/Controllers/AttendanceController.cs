@@ -41,7 +41,7 @@ namespace Attendance.API.Controllers
         }
 
         [HttpGet("reports")]
-        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Control},{UserRoles.Manager}")]
+        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Control}")]
         public async Task<IActionResult> GetReport(
             [FromQuery] string type = "all",
             [FromQuery] DateOnly? fromDate = null,
@@ -65,7 +65,7 @@ namespace Attendance.API.Controllers
         }
 
         [HttpGet("reports/absent")]
-        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Control},{UserRoles.Manager}")]
+        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Control}")]
         public async Task<IActionResult> GetAbsentReport(
             [FromQuery] DateOnly? fromDate = null,
             [FromQuery] DateOnly? toDate = null,
