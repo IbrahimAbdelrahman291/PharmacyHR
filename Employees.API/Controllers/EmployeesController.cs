@@ -68,7 +68,7 @@ namespace Employees.API.Controllers
             return Ok(new { message = "Employee updated successfully" });
         }
         [HttpGet("{id}/history")]
-        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Employee}")]
+        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Admin},{UserRoles.AreaManager},{UserRoles.Employee}")]
         public async Task<IActionResult> GetHistory(int id)
         {
             var result = await _service.GetHistoryAsync(id);
@@ -89,7 +89,7 @@ namespace Employees.API.Controllers
             return Ok(new { message = "End of service updated successfully" });
         }
         [HttpGet("{id}/branches")]
-        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Admin},{UserRoles.Manager}")]
+        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Admin}")]
         public async Task<IActionResult> GetEmployeeBranches(int id)
         {
             var result = await _service.GetEmployeeBranchesAsync(id);
