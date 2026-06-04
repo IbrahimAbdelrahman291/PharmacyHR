@@ -1,3 +1,5 @@
+using Attendance.Application;
+using Attendance.Infrastructure;
 using Branches.Application;
 using Branches.Infrastructure;
 using Employees.Application;
@@ -8,15 +10,15 @@ using Identity.Infrastructure;
 using Identity.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Payroll.Application;
 using Payroll.Application.Interfaces;
 using Payroll.Infrastructure;
-using System.Text;
-using Attendance.Application;
-using Attendance.Infrastructure;
+using PharmacyHR.API.News;
 using Requests.Application;
 using Requests.Infrastructure;
+using System.Text;
 
 public partial class Program
 {
@@ -67,6 +69,14 @@ public partial class Program
         //Request Module
         builder.Services.AddRequestsInfrastructure(builder.Configuration);
         builder.Services.AddRequestsApplication();
+
+        // News Module
+        builder.Services.AddDbContext<NewsDbContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+        builder.Services.AddHttpClient<INewsProvider, FreeNewsApiProvider>();
+        builder.Services.AddScoped<NewsSyncJob>();
+
 
         // JWT Authentication
         builder.Services.AddAuthentication(options =>
@@ -120,7 +130,13 @@ public partial class Program
             "0 0 1 * *",
             recurringOptions
         );
-
+        // News Sync Job - كل 6 ساعات
+        RecurringJob.AddOrUpdate<NewsSyncJob>(
+            "news-sync-job",
+            job => job.ExecuteAsync(),
+            "0 */1 * * *",
+            recurringOptions
+        );
 
         // Seed Identity Data
         #region Data seeding Identity
