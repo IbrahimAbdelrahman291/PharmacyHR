@@ -15,7 +15,7 @@ namespace PharmacyHR.API.News
 
         public async Task<IList<NewsArticleResult>> FetchNewsAsync(string keyword)
         {
-            var url = $"{BaseUrl}?q={Uri.EscapeDataString(keyword)}&language=ar&page_size=10&api_key={ApiKey}";
+            var url = $"{BaseUrl}?q={Uri.EscapeDataString(keyword)}&language=en&page_size=10&api_key={ApiKey}";
             var response = await _httpClient.GetAsync(url);
 
             if (!response.IsSuccessStatusCode)
