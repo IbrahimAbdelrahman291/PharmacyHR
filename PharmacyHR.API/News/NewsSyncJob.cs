@@ -27,6 +27,8 @@ namespace PharmacyHR.API.News
 
                 foreach (var article in articles)
                 {
+                    if (string.IsNullOrWhiteSpace(article.Url))
+                        continue;
                     // منع التكرار بالـ URL
                     var exists = await _context.NewsArticles
                         .AnyAsync(x => x.Url == article.Url);
