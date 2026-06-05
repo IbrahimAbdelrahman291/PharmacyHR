@@ -43,5 +43,11 @@ namespace PharmacyHR.API.News
                 pageSize
             });
         }
+        [HttpPost("sync")]
+        public async Task<IActionResult> Sync([FromServices] NewsSyncJob job)
+        {
+            await job.ExecuteAsync();
+            return Ok();
+        }
     }
 }
