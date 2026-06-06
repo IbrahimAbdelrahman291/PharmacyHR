@@ -130,7 +130,7 @@ public partial class Program
             "0 0 1 * *",
             recurringOptions
         );
-        // News Sync Job - كل 6 ساعات
+        // News Sync Job - كل 1 ساعة
         RecurringJob.AddOrUpdate<NewsSyncJob>(
             "news-sync-job",
             job => job.ExecuteAsync(),

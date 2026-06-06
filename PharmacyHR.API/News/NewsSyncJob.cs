@@ -11,12 +11,7 @@ namespace PharmacyHR.API.News
         {
             "pharmacy",
             "medicine",
-            "drug",
-            "pharmaceutical",
-            "healthcare",
-            "FDA",
-            "clinical trial",
-            "drug shortage"
+            "FDA"
         };
 
         public NewsSyncJob(
