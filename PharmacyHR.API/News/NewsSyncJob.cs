@@ -22,13 +22,17 @@ namespace PharmacyHR.API.News
 
         public async Task ExecuteAsync()
         {
-            var tasks = Keywords
-                .Select(keyword => _newsProvider.FetchNewsAsync(keyword));
+            var articles = new List<NewsArticleResult>();
 
-            var results = await Task.WhenAll(tasks);
+            foreach (var keyword in Keywords)
+            {
+                var result = await _newsProvider.FetchNewsAsync(keyword);
+                articles.AddRange(result);
 
-            var articles = results
-                .SelectMany(x => x)
+                await Task.Delay(2000);
+            }
+
+            articles = articles
                 .Where(x => !string.IsNullOrWhiteSpace(x.Url))
                 .GroupBy(x => x.Url)
                 .Select(x => x.First())

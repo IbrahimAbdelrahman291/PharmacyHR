@@ -33,7 +33,10 @@ namespace PharmacyHR.API.News
             var response =
                 await _httpClient.GetAsync(url);
 
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                return new List<NewsArticleResult>();
+            }
 
             var json =
                 await response.Content.ReadAsStringAsync();
@@ -56,7 +59,9 @@ namespace PharmacyHR.API.News
 
                     Description = string.Empty,
 
-                    Url = x.Uuid ?? Guid.NewGuid().ToString(),
+                    Url = x.OriginalUrl ?? string.Empty,
+
+                    ImageUrl = x.Thumbnail,
 
                     Source = x.Publisher ?? string.Empty,
 

@@ -4,6 +4,7 @@ namespace PharmacyHR.API.News
 {
     public class FreeNewsApiArticle
     {
+
         [JsonPropertyName("uuid")]
         public string? Uuid { get; set; }
 
@@ -12,6 +13,12 @@ namespace PharmacyHR.API.News
 
         [JsonPropertyName("publisher")]
         public string? Publisher { get; set; }
+
+        [JsonPropertyName("thumbnail")]
+        public string? Thumbnail { get; set; }
+
+        [JsonPropertyName("original_url")]
+        public string? OriginalUrl { get; set; }
 
         [JsonPropertyName("published_at")]
         public DateTime PublishedAt { get; set; }
