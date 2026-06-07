@@ -24,27 +24,16 @@ namespace PharmacyHR.API.News
         {
             var articles = new List<NewsArticleResult>();
 
-            foreach (var keyword in Keywords)
-            {
-                var result = await _newsProvider.FetchNewsAsync(keyword);
-                articles.AddRange(result);
+            var result = await _newsProvider.FetchNewsAsync("medicine");
+            articles.AddRange(result);
 
-                await Task.Delay(2000);
-            }
-
-            articles = articles
-                .Where(x => !string.IsNullOrWhiteSpace(x.Url))
-                .GroupBy(x => x.Url)
-                .Select(x => x.First())
-                .ToList();
-
-            var existingUrls = await _context.NewsArticles
+            var existingUuids = await _context.NewsArticles
                 .AsNoTracking()
-                .Select(x => x.Url)
+                .Select(x => x.Uuid)
                 .ToHashSetAsync();
 
             var newArticles = articles
-                .Where(x => !existingUrls.Contains(x.Url))
+                .Where(x => !existingUuids.Contains(x.Uuid))
                 .Select(article => new NewsArticle
                 {
                     Id = Guid.NewGuid(),
@@ -52,10 +41,6 @@ namespace PharmacyHR.API.News
                     Uuid = article.Uuid,
 
                     Title = article.Title,
-
-                    Description = article.Description,
-
-                    Url = article.Url,
 
                     ImageUrl = article.ImageUrl,
 
@@ -67,7 +52,7 @@ namespace PharmacyHR.API.News
                 })
                 .ToList();
 
-            if (newArticles.Count > 0)
+            if (newArticles.Any())
             {
                 await _context.NewsArticles.AddRangeAsync(newArticles);
                 await _context.SaveChangesAsync();

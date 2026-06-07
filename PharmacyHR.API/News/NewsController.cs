@@ -25,7 +25,7 @@ namespace PharmacyHR.API.News
             var query = _context.NewsArticles.AsQueryable();
 
             if (!string.IsNullOrEmpty(search))
-                query = query.Where(x => x.Title.Contains(search) || x.Description.Contains(search));
+                query = query.Where(x => x.Title.Contains(search));
 
             var totalCount = await query.CountAsync();
 
@@ -42,6 +42,28 @@ namespace PharmacyHR.API.News
                 page,
                 pageSize
             });
+        }
+        [HttpGet("{uuid}")]
+        public async Task<IActionResult> GetById(string uuid)
+        {
+            var article = await _context.NewsArticles
+                .FirstOrDefaultAsync(x => x.Uuid == uuid);
+
+            if (article == null)
+                return NotFound();
+
+            using var httpClient = new HttpClient();
+
+            var url = $"https://api.freenewsapi.io/v1/details?uuid={uuid}";
+
+            var response = await httpClient.GetAsync(url);
+
+            if (!response.IsSuccessStatusCode)
+                return Ok(article);
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            return Content(json, "application/json");
         }
         [HttpPost("sync")]
         public async Task<IActionResult> Sync([FromServices] NewsSyncJob job)

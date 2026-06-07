@@ -55,13 +55,9 @@ namespace PharmacyHR.API.News
             return result.Data
                 .Select(x => new NewsArticleResult
                 {
-                    Uuid = x.Uuid ?? string.Empty,
+                    Uuid = x.Uuid!,
 
                     Title = x.Title ?? string.Empty,
-
-                    Description = string.Empty,
-
-                    Url = x.OriginalUrl ?? string.Empty,
 
                     ImageUrl = x.Thumbnail,
 

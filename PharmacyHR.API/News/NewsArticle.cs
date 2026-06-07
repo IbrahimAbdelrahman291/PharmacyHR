@@ -8,10 +8,6 @@
 
         public string Title { get; set; } = null!;
 
-        public string Description { get; set; } = string.Empty;
-
-        public string Url { get; set; } = null!;
-
         public string? ImageUrl { get; set; }
 
         public string Source { get; set; } = null!;

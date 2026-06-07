@@ -8,7 +8,7 @@ namespace PharmacyHR.API.News
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<NewsArticle>()
-                .HasIndex(x => x.Url)
+                .HasIndex(x => x.Uuid)
                 .IsUnique();
 
             base.OnModelCreating(modelBuilder);
