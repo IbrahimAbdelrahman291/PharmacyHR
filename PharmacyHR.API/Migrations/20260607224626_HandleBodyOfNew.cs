@@ -29,7 +29,10 @@ namespace PharmacyHR.API.Migrations
                 nullable: false,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(max)");
-
+            migrationBuilder.Sql(@"
+                UPDATE NewsArticles
+                SET Uuid = NEWID()
+                WHERE Uuid IS NULL OR Uuid = ''");
             migrationBuilder.CreateIndex(
                 name: "IX_NewsArticles_Uuid",
                 table: "NewsArticles",
