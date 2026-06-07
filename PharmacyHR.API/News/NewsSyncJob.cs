@@ -48,12 +48,21 @@ namespace PharmacyHR.API.News
                 .Select(article => new NewsArticle
                 {
                     Id = Guid.NewGuid(),
+
+                    Uuid = article.Uuid,
+
                     Title = article.Title,
+
                     Description = article.Description,
+
                     Url = article.Url,
+
                     ImageUrl = article.ImageUrl,
+
                     Source = article.Source,
+
                     PublishedAt = article.PublishedAt,
+
                     CreatedAt = DateTime.UtcNow
                 })
                 .ToList();
