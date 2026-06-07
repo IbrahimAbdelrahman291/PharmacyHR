@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Requests.Application.DTOs;
 using Requests.Application.Interfaces;
+using SharedKernel.Interfaces;
 
 namespace Requests.API.Controllers
 {
@@ -12,10 +13,12 @@ namespace Requests.API.Controllers
     public class AppointmentController : ControllerBase
     {
         private readonly IAppointmentService _service;
+        private readonly IAduitService _aduitService;
 
-        public AppointmentController(IAppointmentService service)
+        public AppointmentController(IAppointmentService service, SharedKernel.Interfaces.IAduitService aduitService)
         {
             _service = service;
+            _aduitService = aduitService;
         }
 
         [HttpPost]
@@ -26,6 +29,13 @@ namespace Requests.API.Controllers
             var result = await _service.AddAsync(userId, dto);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
+
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+
+
+            await _aduitService.LogDetailsAsync(userId, userName, $"اضافة طلب تعيين جديد خاص بالموظف {dto.EmployeeId}");
+
+
             return Ok(new { message = "تم إرسال طلب التعيين بنجاح" });
         }
 
@@ -49,6 +59,13 @@ namespace Requests.API.Controllers
             var result = await _service.ApproveOrRejectAsync(id, dto);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+
+
+            await _aduitService.LogDetailsAsync(userId, userName, dto.IsApproved ? $"تم قبول طلب تعين الموظف {id}" : $"تم رفض طلب تعين الموظف {id}");
+
             return Ok(new { message = dto.IsApproved ? "تم قبول الطلب وتم تعيين الموظف" : "تم رفض الطلب" });
         }
 

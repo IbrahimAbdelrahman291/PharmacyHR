@@ -4,6 +4,7 @@ using Employees.Domain.Entities;
 using Employees.Domain.Interfaces;
 using SharedKernel.Interfaces;
 using SharedKernel.Wrappers;
+using System.Security.Claims;
 
 namespace Employees.Application.Services
 {
@@ -14,17 +15,21 @@ namespace Employees.Application.Services
         private readonly IAuthRepository _authRepository;
 
         private readonly SharedKernel.Interfaces.IMonthlyDataRepository _monthlyDataRepository;
+        private readonly IAduitService _auditService;
 
         public EmployeeService(
             Domain.Interfaces.IEmployeeRepository employeeRepository,
             IBranchRepository branchRepository,
             IAuthRepository authRepository,
-            SharedKernel.Interfaces.IMonthlyDataRepository monthlyDataRepository)
+            SharedKernel.Interfaces.IMonthlyDataRepository monthlyDataRepository,
+            SharedKernel.Interfaces.IAduitService auditService
+            )
         {
             _employeeRepository = employeeRepository;
             _branchRepository = branchRepository;
             _authRepository = authRepository;
             _monthlyDataRepository = monthlyDataRepository;
+            _auditService = auditService;
         }
 
         public async Task<Result<bool>> CreateAsync(CreateEmployeeDto dto)
@@ -153,7 +158,7 @@ namespace Employees.Application.Services
             });
         }
 
-        public async Task<Result<bool>> UpdateAsync(int id, UpdateEmployeeDto dto)
+        public async Task<Result<bool>> UpdateAsync(int id, UpdateEmployeeDto dto, string userId, string userName)
         {
             var employee = await _employeeRepository.GetByIdAsync(id);
             if (employee is null)
@@ -181,6 +186,9 @@ namespace Employees.Application.Services
             {
                 employee.Status = dto.Status;
             }
+
+            await _auditService.LogDetailsAsync(userId, userName, $"تعديل بيانات الموظف {employee.Name}");
+
 
             await _employeeRepository.UpdateAsync(employee);
             return Result<bool>.Success(true);

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Payroll.Application.DTOs;
 using Payroll.Application.Interfaces;
+using System.Security.Claims;
 
 namespace Payroll.API.Controllers
 {
@@ -11,10 +12,12 @@ namespace Payroll.API.Controllers
     public class PayrollController : ControllerBase
     {
         private readonly IPayrollService _service;
+        private readonly SharedKernel.Interfaces.IAduitService _auditService;
 
-        public PayrollController(IPayrollService service)
+        public PayrollController(IPayrollService service, SharedKernel.Interfaces.IAduitService auditService)
         {
             _service = service;
+            _auditService = auditService;
         }
 
         [HttpGet("{employeeId}/current")]
@@ -47,6 +50,13 @@ namespace Payroll.API.Controllers
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
 
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+            
+
+            await _auditService.LogDetailsAsync(userId, userName,$"تعديل داتا شهرية للموظف {employeeId}");
+
+
             return Ok(new { message = "Monthly data updated successfully" });
         }
 
@@ -57,6 +67,13 @@ namespace Payroll.API.Controllers
             var result = await _service.AddDiscountAsync(dto);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+
+
+            await _auditService.LogDetailsAsync(userId, userName, $"اضافة خصم للموظف بقيمة {dto.Amount} {dto.EmployeeId}");
+
 
             return Ok(new { message = "Discount added successfully" });
         }
@@ -69,6 +86,13 @@ namespace Payroll.API.Controllers
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
 
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+
+
+            await _auditService.LogDetailsAsync(userId, userName, $"اضافة خصم تعاقدات بقيمة {dto.Amount} للموظف {dto.EmployeeId}");
+
+
             return Ok(new { message = "Contract discount added successfully" });
         }
 
@@ -80,6 +104,13 @@ namespace Payroll.API.Controllers
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
 
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+
+
+            await _auditService.LogDetailsAsync(userId, userName, $"اضافة بونص بقية {dto.Amount} للموظف {dto.EmployeeId}");
+
+
             return Ok(new { message = "Bonus added successfully" });
         }
         [HttpPost("cash-borrow")]
@@ -90,6 +121,12 @@ namespace Payroll.API.Controllers
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
 
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+
+
+            await _auditService.LogDetailsAsync(userId, userName, $"اضافة سلفة نقدية بقية {dto.Amount} للموظف {dto.EmployeeId}");
+
             return Ok(new { message = "Cash borrow added successfully" });
         }
         [HttpDelete("discount/{id}")]
@@ -99,6 +136,13 @@ namespace Payroll.API.Controllers
             var result = await _service.DeleteDiscountAsync(id);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+
+
+            await _auditService.LogDetailsAsync(userId, userName, $"حذف خصم");
+
             return Ok(new { message = "Discount deleted successfully" });
         }
 
@@ -109,6 +153,13 @@ namespace Payroll.API.Controllers
             var result = await _service.DeleteContractDiscountAsync(id);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+
+
+            await _auditService.LogDetailsAsync(userId, userName, $"حذف خصم تعاقدات");
+
             return Ok(new { message = "Contract discount deleted successfully" });
         }
 
@@ -119,6 +170,13 @@ namespace Payroll.API.Controllers
             var result = await _service.DeleteBonusAsync(id);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+
+
+            await _auditService.LogDetailsAsync(userId, userName, $"حذف بونص");
+
             return Ok(new { message = "Bonus deleted successfully" });
         }
 
@@ -129,6 +187,13 @@ namespace Payroll.API.Controllers
             var result = await _service.DeleteCashBorrowAsync(id);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+
+
+            await _auditService.LogDetailsAsync(userId, userName, $"حذف خصم تعاقدات");
+
             return Ok(new { message = "Cash borrow deleted successfully" });
         }
         [HttpPost("discount/bulk")]
@@ -138,6 +203,13 @@ namespace Payroll.API.Controllers
             var result = await _service.BulkDiscountAsync(dto);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+
+
+            await _auditService.LogDetailsAsync(userId, userName, $"اضافة خصم لمجموعة من الموظفين بقيمة واحدة {dto.Amount}");
+
             return Ok(new { message = "Bulk discount added successfully" });
         }
 
@@ -148,6 +220,13 @@ namespace Payroll.API.Controllers
             var result = await _service.BulkBonusAsync(dto);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+
+
+            await _auditService.LogDetailsAsync(userId, userName, $"اضافة بونص لمجموعة من الموظفين بقيمة واحدة {dto.Amount}");
+
             return Ok(new { message = "Bulk bonus added successfully" });
         }
         [HttpGet("monthly-data")]
@@ -178,6 +257,13 @@ namespace Payroll.API.Controllers
             var result = await _service.BulkVariedDiscountAsync(items);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+
+
+            await _auditService.LogDetailsAsync(userId, userName, $"اضافة خصم لمجموعة من الموظفين بقيم مختلفة ");
+
             return Ok(new { message = "تم إضافة الخصومات بنجاح" });
         }
 
@@ -188,6 +274,13 @@ namespace Payroll.API.Controllers
             var result = await _service.BulkVariedContractDiscountAsync(items);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+
+
+            await _auditService.LogDetailsAsync(userId, userName, $"اضافة خصم تعاقدات لمجموعة من الموظفين بقيم مختلفة");
+
             return Ok(new { message = "تم إضافة خصومات التعاقد بنجاح" });
         }
 
@@ -198,6 +291,13 @@ namespace Payroll.API.Controllers
             var result = await _service.BulkVariedBonusAsync(items);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+
+
+            await _auditService.LogDetailsAsync(userId, userName, $"اضافة بونص لمجموعة من الموظفين بقيم مختلفة");
+
             return Ok(new { message = "تم إضافة البونص بنجاح" });
         }
         [HttpGet("{employeeId}/details")]

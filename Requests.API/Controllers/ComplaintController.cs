@@ -1,9 +1,10 @@
-﻿using System.Security.Claims;
-using Identity.Domain.Enums;
+﻿using Identity.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Requests.Application.DTOs;
 using Requests.Application.Interfaces;
+using SharedKernel.Interfaces;
+using System.Security.Claims;
 
 namespace Requests.API.Controllers
 {
@@ -12,10 +13,12 @@ namespace Requests.API.Controllers
     public class ComplaintController : ControllerBase
     {
         private readonly IComplaintService _service;
+        private readonly IAduitService _aduitService;
 
-        public ComplaintController(IComplaintService service)
+        public ComplaintController(IComplaintService service, SharedKernel.Interfaces.IAduitService aduitService)
         {
             _service = service;
+            _aduitService = aduitService;
         }
 
         [HttpPost]
@@ -58,6 +61,12 @@ namespace Requests.API.Controllers
             var result = await _service.RespondAsync(id, dto, userId, role);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
+
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+
+
+            await _aduitService.LogDetailsAsync(userId, userName, $"تم الرد على شكوى");
+
 
             return Ok(new { message = "تم الرد على الشكوى بنجاح" });
         }

@@ -19,6 +19,8 @@ using PharmacyHR.API.News;
 using Requests.Application;
 using Requests.Infrastructure;
 using System.Text;
+using PharmacyHR.API.Audit;
+
 
 public partial class Program
 {
@@ -77,6 +79,10 @@ public partial class Program
         builder.Services.AddHttpClient<INewsProvider, FreeNewsApiProvider>();
         builder.Services.AddScoped<NewsSyncJob>();
 
+        // Audit Module
+        builder.Services.AddDbContext<AuditDbContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+        builder.Services.AddScoped<IAuditService, AuditService>();
 
         // JWT Authentication
         builder.Services.AddAuthentication(options =>

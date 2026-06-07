@@ -3,6 +3,8 @@ using Employees.Application.Interfaces;
 using Identity.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SharedKernel.Interfaces;
+using System.Security.Claims;
 
 
 namespace Employees.API.Controllers
@@ -12,10 +14,12 @@ namespace Employees.API.Controllers
     public class EmployeesController : ControllerBase
     {
         private readonly IEmployeeService _service;
+        private readonly IAduitService _auditService;
 
-        public EmployeesController(IEmployeeService service)
+        public EmployeesController(IEmployeeService service, SharedKernel.Interfaces.IAduitService aduitService)
         {
             _service = service;
+            _auditService = aduitService;
         }
 
         [HttpPost]
@@ -54,6 +58,8 @@ namespace Employees.API.Controllers
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
 
+
+
             return Ok(result.Value);
         }
 
@@ -61,7 +67,10 @@ namespace Employees.API.Controllers
         [Authorize(Roles = UserRoles.HR)]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateEmployeeDto dto)
         {
-            var result = await _service.UpdateAsync(id, dto);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+
+            var result = await _service.UpdateAsync(id, dto, userId, userName);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
 
@@ -85,6 +94,13 @@ namespace Employees.API.Controllers
             var result = await _service.UpdateEndOfServiceAsync(id, dto);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+
+
+            await _auditService.LogDetailsAsync(userId, userName, $"تعديل جزء انهاء الخدمة الخاص بالموظف {id} في سجله");
+
 
             return Ok(new { message = "End of service updated successfully" });
         }

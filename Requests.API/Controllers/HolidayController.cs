@@ -12,10 +12,12 @@ namespace Requests.API.Controllers
     public class HolidayController : ControllerBase
     {
         private readonly IHolidayService _service;
+        private readonly SharedKernel.Interfaces.IAduitService _aduitService;
 
-        public HolidayController(IHolidayService service)
+        public HolidayController(IHolidayService service, SharedKernel.Interfaces.IAduitService aduitService)
         {
             _service = service;
+            _aduitService = aduitService;
         }
 
         [HttpPost]
@@ -63,6 +65,11 @@ namespace Requests.API.Controllers
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
 
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+
+
+            await _aduitService.LogDetailsAsync(userId, userName, $"تمت الموافقة على طلب اجازة");
+
             return Ok(new { message = dto.IsApproved ? "تم قبول الطلب" : "تم رفض الطلب" });
         }
 
@@ -73,6 +80,12 @@ namespace Requests.API.Controllers
             var result = await _service.HRApproveAsync(id, dto);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+
+
+            await _aduitService.LogDetailsAsync(userId, userName, $"تمت الموافقة على طلب اجازة");
 
             return Ok(new { message = dto.IsApproved ? "تم قبول الطلب" : "تم رفض الطلب" });
         }

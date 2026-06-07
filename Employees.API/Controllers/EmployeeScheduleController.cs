@@ -3,6 +3,8 @@ using Employees.Application.Interfaces;
 using Identity.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SharedKernel.Interfaces;
+using System.Security.Claims;
 
 namespace Employees.API.Controllers
 {
@@ -11,10 +13,12 @@ namespace Employees.API.Controllers
     public class EmployeeScheduleController : ControllerBase
     {
         private readonly IEmployeeScheduleService _service;
+        private readonly IAduitService _aduitService;
 
-        public EmployeeScheduleController(IEmployeeScheduleService service)
+        public EmployeeScheduleController(IEmployeeScheduleService service, SharedKernel.Interfaces.IAduitService aduitService)
         {
             _service = service;
+            _aduitService = aduitService;
         }
 
         [HttpPost]
@@ -34,6 +38,13 @@ namespace Employees.API.Controllers
             var result = await _service.UpdateScheduleAsync(employeeId,scheduleId, dto);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+
+
+            await _aduitService.LogDetailsAsync(userId, userName, $"تعديل جدول الحضور والانصراف الخاص بالموظف {employeeId}");
+
             return Ok(new { message = "تم تعديل الجدول بنجاح" });
         }
 
@@ -44,6 +55,13 @@ namespace Employees.API.Controllers
             var result = await _service.DeleteScheduleAsync(scheduleId);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+
+
+            await _aduitService.LogDetailsAsync(userId, userName, $"حذف يوم من جدول الحضور والانصراف الخاص بالموظف {employeeId}");
+
             return Ok(new { message = "تم حذف الجدول بنجاح" });
         }
 

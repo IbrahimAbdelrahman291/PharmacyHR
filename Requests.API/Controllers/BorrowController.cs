@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Requests.Application.DTOs;
 using Requests.Application.Interfaces;
+using SharedKernel.Interfaces;
+using System.Security.Claims;
 
 namespace Requests.API.Controllers
 {
@@ -11,10 +13,12 @@ namespace Requests.API.Controllers
     public class BorrowController : ControllerBase
     {
         private readonly IBorrowService _service;
+        private readonly IAduitService _aduitService;
 
-        public BorrowController(IBorrowService service)
+        public BorrowController(IBorrowService service, SharedKernel.Interfaces.IAduitService aduitService)
         {
             _service = service;
+            _aduitService = aduitService;
         }
 
         [HttpPost]
@@ -58,6 +62,13 @@ namespace Requests.API.Controllers
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
 
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+
+
+            await _aduitService.LogDetailsAsync(userId, userName, dto.IsApproved ? "تم قبول طلب سلفة" : "تم رفض طلب سلفة");
+
+
             return Ok(new { message = dto.IsApproved ? "تم قبول الطلب" : "تم رفض الطلب" });
         }
 
@@ -87,6 +98,13 @@ namespace Requests.API.Controllers
             var result = await _service.AddInstallmentBorrowAsync(dto);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+
+
+            await _aduitService.LogDetailsAsync(userId, userName, $"تم اضافة سلفة مرحلة للموظف {dto.EmployeeId}");
+
 
             return Ok(new { message = "تم إضافة السلفة المرحلة بنجاح" });
         }
