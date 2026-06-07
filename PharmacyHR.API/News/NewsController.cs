@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace PharmacyHR.API.News
 {
@@ -54,16 +55,46 @@ namespace PharmacyHR.API.News
 
             using var httpClient = new HttpClient();
 
-            var url = $"https://api.freenewsapi.io/v1/details?uuid={uuid}";
+            httpClient.DefaultRequestHeaders.Add(
+                "x-api-key",
+                "c20b9b14837dea7cdd0b5d6c6c0f89704d4515674dcc65dc7b6f85b804cef90b");
 
-            var response = await httpClient.GetAsync(url);
+            var url =
+                $"https://api.freenewsapi.io/v1/details?uuid={uuid}";
+
+            var response =
+                await httpClient.GetAsync(url);
+
+            var json =
+                await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)
-                return Ok(article);
+            {
+                return Ok(new
+                {
+                    StatusCode = (int)response.StatusCode,
+                    Response = json
+                });
+            }
 
-            var json = await response.Content.ReadAsStringAsync();
+            var detail =
+                JsonSerializer.Deserialize<FreeNewsDetailResponse>(
+                    json,
+                    new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
 
-            return Content(json, "application/json");
+            return Ok(new
+            {
+                article.Id,
+                article.Uuid,
+                article.Title,
+                article.ImageUrl,
+                article.Source,
+                article.PublishedAt,
+                Body = detail?.Data?.Body
+            });
         }
         [HttpPost("sync")]
         public async Task<IActionResult> Sync([FromServices] NewsSyncJob job)
