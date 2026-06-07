@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Runtime.CompilerServices;
 
 namespace PharmacyHR.API.Audit
 {
@@ -10,6 +11,7 @@ namespace PharmacyHR.API.Audit
         {
             _context = context;
         }
+
 
         public async Task LogAsync(string userId, string userName, string action)
         {
