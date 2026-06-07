@@ -28,7 +28,7 @@ namespace PharmacyHR.API.News
             string keyword)
         {
             var url =
-                $"{BaseUrl}?language=en&q={Uri.EscapeDataString(keyword)}";
+                $"{BaseUrl}?language=ar&country=eg&q={Uri.EscapeDataString(keyword)}";
 
             var response =
                 await _httpClient.GetAsync(url);
