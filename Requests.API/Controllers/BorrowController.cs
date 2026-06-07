@@ -13,9 +13,9 @@ namespace Requests.API.Controllers
     public class BorrowController : ControllerBase
     {
         private readonly IBorrowService _service;
-        private readonly IAduitService _aduitService;
+        private readonly IAuditService _aduitService;
 
-        public BorrowController(IBorrowService service, SharedKernel.Interfaces.IAduitService aduitService)
+        public BorrowController(IBorrowService service, SharedKernel.Interfaces.IAuditService aduitService)
         {
             _service = service;
             _aduitService = aduitService;

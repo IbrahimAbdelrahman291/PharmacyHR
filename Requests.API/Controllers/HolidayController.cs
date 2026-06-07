@@ -12,9 +12,9 @@ namespace Requests.API.Controllers
     public class HolidayController : ControllerBase
     {
         private readonly IHolidayService _service;
-        private readonly SharedKernel.Interfaces.IAduitService _aduitService;
+        private readonly SharedKernel.Interfaces.IAuditService _aduitService;
 
-        public HolidayController(IHolidayService service, SharedKernel.Interfaces.IAduitService aduitService)
+        public HolidayController(IHolidayService service, SharedKernel.Interfaces.IAuditService aduitService)
         {
             _service = service;
             _aduitService = aduitService;

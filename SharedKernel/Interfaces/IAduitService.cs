@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SharedKernel.Interfaces
 {
-    public interface IAduitService
+    public interface IAuditService
     {
         Task LogDetailsAsync(string userId, string userName, string action);
 

@@ -13,9 +13,9 @@ namespace Requests.API.Controllers
     public class ForgetedHoursController : ControllerBase
     {
         private readonly IForgetedHoursService _service;
-        private readonly IAduitService _aduitService;
+        private readonly IAuditService _aduitService;
 
-        public ForgetedHoursController(IForgetedHoursService service, SharedKernel.Interfaces.IAduitService aduitService)
+        public ForgetedHoursController(IForgetedHoursService service, SharedKernel.Interfaces.IAuditService aduitService)
         {
             _service = service;
             _aduitService = aduitService;

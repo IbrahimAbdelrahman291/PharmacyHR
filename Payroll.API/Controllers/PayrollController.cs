@@ -12,9 +12,9 @@ namespace Payroll.API.Controllers
     public class PayrollController : ControllerBase
     {
         private readonly IPayrollService _service;
-        private readonly SharedKernel.Interfaces.IAduitService _auditService;
+        private readonly SharedKernel.Interfaces.IAuditService _auditService;
 
-        public PayrollController(IPayrollService service, SharedKernel.Interfaces.IAduitService auditService)
+        public PayrollController(IPayrollService service, SharedKernel.Interfaces.IAuditService auditService)
         {
             _service = service;
             _auditService = auditService;

@@ -13,9 +13,9 @@ namespace Employees.API.Controllers
     public class PersonalCustodyController : ControllerBase
     {
         private readonly IPersonalCustodyService _service;
-        private readonly IAduitService _aduitService;
+        private readonly IAuditService _aduitService;
 
-        public PersonalCustodyController(IPersonalCustodyService service, SharedKernel.Interfaces.IAduitService aduitService)
+        public PersonalCustodyController(IPersonalCustodyService service, SharedKernel.Interfaces.IAuditService aduitService)
         {
             _service = service;
             _aduitService = aduitService;

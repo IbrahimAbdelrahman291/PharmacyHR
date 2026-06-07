@@ -13,9 +13,9 @@ namespace Requests.API.Controllers
     public class AppointmentController : ControllerBase
     {
         private readonly IAppointmentService _service;
-        private readonly IAduitService _aduitService;
+        private readonly IAuditService _aduitService;
 
-        public AppointmentController(IAppointmentService service, SharedKernel.Interfaces.IAduitService aduitService)
+        public AppointmentController(IAppointmentService service, SharedKernel.Interfaces.IAuditService aduitService)
         {
             _service = service;
             _aduitService = aduitService;

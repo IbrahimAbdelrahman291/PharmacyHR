@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace PharmacyHR.API.Audit
 {
-    public class AuditService : IAuditService, SharedKernel.Interfaces.IAduitService
+    public class AuditService : IAuditService, SharedKernel.Interfaces.IAuditService
     {
         private readonly AuditDbContext _context;
 

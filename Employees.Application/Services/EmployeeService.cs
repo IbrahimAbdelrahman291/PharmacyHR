@@ -15,14 +15,14 @@ namespace Employees.Application.Services
         private readonly IAuthRepository _authRepository;
 
         private readonly SharedKernel.Interfaces.IMonthlyDataRepository _monthlyDataRepository;
-        private readonly IAduitService _auditService;
+        private readonly IAuditService _auditService;
 
         public EmployeeService(
             Domain.Interfaces.IEmployeeRepository employeeRepository,
             IBranchRepository branchRepository,
             IAuthRepository authRepository,
             SharedKernel.Interfaces.IMonthlyDataRepository monthlyDataRepository,
-            SharedKernel.Interfaces.IAduitService auditService
+            SharedKernel.Interfaces.IAuditService auditService
             )
         {
             _employeeRepository = employeeRepository;

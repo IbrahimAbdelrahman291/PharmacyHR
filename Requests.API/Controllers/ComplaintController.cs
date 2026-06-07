@@ -13,9 +13,9 @@ namespace Requests.API.Controllers
     public class ComplaintController : ControllerBase
     {
         private readonly IComplaintService _service;
-        private readonly IAduitService _aduitService;
+        private readonly IAuditService _aduitService;
 
-        public ComplaintController(IComplaintService service, SharedKernel.Interfaces.IAduitService aduitService)
+        public ComplaintController(IComplaintService service, SharedKernel.Interfaces.IAuditService aduitService)
         {
             _service = service;
             _aduitService = aduitService;

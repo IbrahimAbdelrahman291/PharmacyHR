@@ -83,6 +83,7 @@ public partial class Program
         builder.Services.AddDbContext<AuditDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
         builder.Services.AddScoped<IAuditService, AuditService>();
+        builder.Services.AddScoped<SharedKernel.Interfaces.IAuditService, AuditService>();
 
         // JWT Authentication
         builder.Services.AddAuthentication(options =>

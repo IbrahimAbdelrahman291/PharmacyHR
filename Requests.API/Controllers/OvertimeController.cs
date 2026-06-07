@@ -13,9 +13,9 @@ namespace Requests.API.Controllers
     public class OvertimeController : ControllerBase
     {
         private readonly IOvertimeService _service;
-        private readonly IAduitService _aduitService;
+        private readonly IAuditService _aduitService;
 
-        public OvertimeController(IOvertimeService service, SharedKernel.Interfaces.IAduitService aduitService)
+        public OvertimeController(IOvertimeService service, SharedKernel.Interfaces.IAuditService aduitService)
         {
             _service = service;
             _aduitService = aduitService;

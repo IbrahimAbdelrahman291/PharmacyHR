@@ -14,9 +14,9 @@ namespace Employees.API.Controllers
     public class EmployeesController : ControllerBase
     {
         private readonly IEmployeeService _service;
-        private readonly IAduitService _auditService;
+        private readonly IAuditService _auditService;
 
-        public EmployeesController(IEmployeeService service, SharedKernel.Interfaces.IAduitService aduitService)
+        public EmployeesController(IEmployeeService service, SharedKernel.Interfaces.IAuditService aduitService)
         {
             _service = service;
             _auditService = aduitService;
