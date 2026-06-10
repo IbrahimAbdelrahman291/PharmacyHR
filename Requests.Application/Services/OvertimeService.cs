@@ -103,8 +103,6 @@ namespace Requests.Application.Services
             request.ControlUserId = controlUserId;
             request.ControlRejectionReason = dto.RejectionReason;
             request.IsSeenByControl = true;
-            request.IsSeenByAreaManager = false;
-            request.IsSeenByHR = false;
 
             if (!dto.IsApproved)
                 request.Status = "ControlRejected";
@@ -127,7 +125,6 @@ namespace Requests.Application.Services
             request.AreaManagerApproval = dto.IsApproved ? "Approved" : "Rejected";
             request.AreaManagerRejectionReason = dto.RejectionReason;
             request.IsSeenByAreaManager = true;
-            request.IsSeenByHR = false;
 
             if (!dto.IsApproved)
                 request.Status = "AreaManagerRejected";

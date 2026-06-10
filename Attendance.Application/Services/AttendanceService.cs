@@ -52,9 +52,9 @@ namespace Attendance.Application.Services
             var hasShiftToday = await _workLogRepository.HasShiftOnDayAsync(employeeId, egyptDate);
             if (hasShiftToday)
                 return Result<bool>.Failure("تم تسجيل بداية العمل بالفعل لهذا اليوم");
-            if (allowedCheckIn >= allowedCheckOut)
+            if (egyptTime > allowedCheckOut)
             {
-                return Result<bool>.Failure("وقت شيفتك خلاص انتها يرجى الخضور في وقت حضورك المقرر");
+                return Result<bool>.Failure("انتهى وقت تسجيل الحضور لهذا الشيفت");
             }
 
             var workLog = new WorkLog
@@ -91,8 +91,6 @@ namespace Attendance.Application.Services
             var allowCheckOutEmergency = workLog.Day.ToDateTime(workLog.Start.AddMinutes(15));
 
 
-            if (totalTime.TotalHours >= 24)
-                return Result<bool>.Failure("تعذر تسجيل ساعاتك، يجب التواصل مع HR");
 
             if (egyptNow >= allowCheckOutEmergency)
             {
