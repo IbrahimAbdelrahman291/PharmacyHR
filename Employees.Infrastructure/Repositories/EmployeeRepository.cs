@@ -49,6 +49,7 @@ namespace Employees.Infrastructure.Repositories
                 query = query.Where(e => e.Name.Contains(name));
 
             return await query
+                .OrderByDescending(e => e.Id)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();

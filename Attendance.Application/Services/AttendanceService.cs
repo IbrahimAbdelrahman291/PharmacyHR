@@ -84,22 +84,21 @@ namespace Attendance.Application.Services
             var CheckOutTime = schedule.Value.CheckOutTime;
             var startDateTime = workLog.Day.ToDateTime(workLog.Start);
             var endDateTime = workLog.Day.ToDateTime(CheckOutTime);
-            var allowedCheckOut = schedule.Value.CheckOutTime.AddMinutes(15);
+            var allowedCheckOut = workLog.Day.ToDateTime(schedule.Value.CheckOutTime.AddMinutes(15));
             var totalWorkTime = endDateTime - startDateTime;
             var endShift = workLog.Day.ToDateTime(egyptTime);
             var totalTime = endShift - startDateTime;
-            var allowCheckOutEmergency = workLog.Start.AddMinutes(15);
+            var allowCheckOutEmergency = workLog.Day.ToDateTime(workLog.Start.AddMinutes(15));
 
-            
 
             if (totalTime.TotalHours >= 24)
                 return Result<bool>.Failure("تعذر تسجيل ساعاتك، يجب التواصل مع HR");
 
-            if (egyptTime >= allowCheckOutEmergency)
+            if (egyptNow >= allowCheckOutEmergency)
             {
                 if (schedule is not null)
                 {
-                    if (egyptTime > allowedCheckOut)
+                    if (egyptNow > allowedCheckOut)
                     {
                         workLog.End = CheckOutTime;
                         workLog.TotalTime = endDateTime - startDateTime;
