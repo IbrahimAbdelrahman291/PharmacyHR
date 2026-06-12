@@ -69,6 +69,8 @@ namespace Requests.Infrastructure.Repositories
                 return await _context.OvertimeRequests.CountAsync(r => !r.IsSeenByControl);
             else if (role == "AreaManager" && !string.IsNullOrEmpty(userId))
                 return await _context.OvertimeRequests.CountAsync(r => r.AreaManagerUserId == userId && !r.IsSeenByAreaManager);
+            else if (role == "Employee")
+                return await _context.OvertimeRequests.CountAsync(r => !r.IsSeenByEmployee);
 
             return 0;
         }

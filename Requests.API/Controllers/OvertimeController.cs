@@ -110,7 +110,7 @@ namespace Requests.API.Controllers
         }
 
         [HttpGet("unseen-count")]
-        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Control},{UserRoles.AreaManager}")]
+        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Control},{UserRoles.AreaManager},{UserRoles.Employee}")]
         public async Task<IActionResult> GetUnseenCount()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
@@ -121,7 +121,7 @@ namespace Requests.API.Controllers
         }
 
         [HttpPut("{id}/mark-seen")]
-        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Control},{UserRoles.AreaManager}")]
+        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Control},{UserRoles.AreaManager},{UserRoles.Employee}")]
         public async Task<IActionResult> MarkAsSeen(int id)
         {
             var role = User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;

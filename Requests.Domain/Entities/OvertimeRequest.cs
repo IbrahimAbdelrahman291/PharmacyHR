@@ -27,5 +27,6 @@ namespace Requests.Domain.Entities
         public bool IsSeenByHR { get; set; } = false;
         public bool IsSeenByControl { get; set; } = false;
         public bool IsSeenByAreaManager { get; set; } = false;
+        public bool IsSeenByEmployee { get; set; } = false;
     }
 }

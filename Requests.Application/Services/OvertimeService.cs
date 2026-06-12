@@ -47,7 +47,8 @@ namespace Requests.Application.Services
                 AreaManagerUserId = areaManagerUserId,
                 IsSeenByHR = false,
                 IsSeenByControl = false,
-                IsSeenByAreaManager = false
+                IsSeenByAreaManager = false,
+                IsSeenByEmployee = true
             };
 
             await _repository.AddAsync(request);
@@ -144,7 +145,7 @@ namespace Requests.Application.Services
             request.HRApproval = dto.IsApproved ? "Approved" : "Rejected";
             request.HRRejectionReason = dto.RejectionReason;
             request.IsSeenByHR = true;
-
+            request.IsSeenByEmployee = false;
             if (dto.IsApproved)
             {
                 request.Status = "Approved";
@@ -174,7 +175,7 @@ namespace Requests.Application.Services
             if (role == "HR") request.IsSeenByHR = true;
             else if (role == "Control") request.IsSeenByControl = true;
             else if (role == "AreaManager") request.IsSeenByAreaManager = true;
-
+            else if (role == "Employee") request.IsSeenByEmployee = true;
             await _repository.UpdateAsync(request);
             return Result<bool>.Success(true);
         }
