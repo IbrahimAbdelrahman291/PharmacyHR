@@ -114,5 +114,30 @@ namespace Identity.Infrastructure.Repositories
 
             return areaManagerBranch?.UserId;
         }
+        public async Task<bool> AddAreaManagerBranchAsync(string userId, int branchId)
+        {
+            var exists = await _context.AreaManagerBranches
+                .AnyAsync(x => x.UserId == userId && x.BranchId == branchId);
+            if (exists) return false;
+
+            await _context.AreaManagerBranches.AddAsync(new AreaManagerBranch
+            {
+                UserId = userId,
+                BranchId = branchId
+            });
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> RemoveAreaManagerBranchAsync(string userId, int branchId)
+        {
+            var branch = await _context.AreaManagerBranches
+                .FirstOrDefaultAsync(x => x.UserId == userId && x.BranchId == branchId);
+            if (branch is null) return false;
+
+            _context.AreaManagerBranches.Remove(branch);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

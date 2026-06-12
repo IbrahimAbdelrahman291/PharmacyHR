@@ -18,5 +18,7 @@ namespace Identity.Domain.Interfaces
         Task<bool> ToggleUserAsync(string userId);
         Task<bool> AddAreaManagerBranchesAsync(string userId, IList<int> branchIds);
         Task<IList<int>> GetAreaManagerBranchesAsync(string userId);
+        Task<bool> AddAreaManagerBranchAsync(string userId, int branchId);
+        Task<bool> RemoveAreaManagerBranchAsync(string userId, int branchId);
     }
 }

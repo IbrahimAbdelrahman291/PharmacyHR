@@ -172,5 +172,26 @@ namespace Identity.Application.Services
                 return Result<bool>.Failure("User not found");
             return Result<bool>.Success(true);
         }
+        public async Task<Result<IList<int>>> GetAreaManagerBranchesAsync(string userId)
+        {
+            var branches = await _authRepository.GetAreaManagerBranchesAsync(userId);
+            return Result<IList<int>>.Success(branches);
+        }
+
+        public async Task<Result<bool>> AddAreaManagerBranchAsync(string userId, int branchId)
+        {
+            var result = await _authRepository.AddAreaManagerBranchAsync(userId, branchId);
+            if (!result)
+                return Result<bool>.Failure("Branch already exists for this Area Manager");
+            return Result<bool>.Success(true);
+        }
+
+        public async Task<Result<bool>> RemoveAreaManagerBranchAsync(string userId, int branchId)
+        {
+            var result = await _authRepository.RemoveAreaManagerBranchAsync(userId, branchId);
+            if (!result)
+                return Result<bool>.Failure("Branch not found for this Area Manager");
+            return Result<bool>.Success(true);
+        }
     }
 }

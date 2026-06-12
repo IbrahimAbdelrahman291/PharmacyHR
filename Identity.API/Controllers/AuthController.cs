@@ -68,5 +68,32 @@ namespace Identity.API.Controllers
                 return NotFound(new { message = result.Error });
             return Ok(new { message = "User status updated successfully" });
         }
+        [HttpGet("users/{userId}/branches")]
+        [Authorize(Roles = UserRoles.Admin)]
+        public async Task<IActionResult> GetAreaManagerBranches(string userId)
+        {
+            var result = await _authService.GetAreaManagerBranchesAsync(userId);
+            return Ok(result.Value);
+        }
+
+        [HttpPost("users/{userId}/branches/{branchId}")]
+        [Authorize(Roles = UserRoles.Admin)]
+        public async Task<IActionResult> AddAreaManagerBranch(string userId, int branchId)
+        {
+            var result = await _authService.AddAreaManagerBranchAsync(userId, branchId);
+            if (!result.IsSuccess)
+                return NotFound(new { message = result.Error });
+            return Ok(new { message = "Branch added successfully" });
+        }
+
+        [HttpDelete("users/{userId}/branches/{branchId}")]
+        [Authorize(Roles = UserRoles.Admin)]
+        public async Task<IActionResult> RemoveAreaManagerBranch(string userId, int branchId)
+        {
+            var result = await _authService.RemoveAreaManagerBranchAsync(userId, branchId);
+            if (!result.IsSuccess)
+                return NotFound(new { message = result.Error });
+            return Ok(new { message = "Branch removed successfully" });
+        }
     }
 }
