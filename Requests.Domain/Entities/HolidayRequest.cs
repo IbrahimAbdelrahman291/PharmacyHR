@@ -18,5 +18,6 @@ namespace Requests.Domain.Entities
         public string? RejectionReason { get; set; }
         public DateTime RequestDate { get; set; }
         public bool IsSeenByHR { get; set; } = false;
+        public bool IsSeenByEmployee { get; set; } = true;
     }
 }

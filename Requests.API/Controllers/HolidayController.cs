@@ -91,18 +91,20 @@ namespace Requests.API.Controllers
         }
 
         [HttpGet("unseen-count")]
-        [Authorize(Roles = UserRoles.HR)]
+        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Employee}")]
         public async Task<IActionResult> GetUnseenCount()
         {
-            var result = await _service.GetUnseenCountAsync();
+            var role = User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
+            var result = await _service.GetUnseenCountAsync(role);
             return Ok(new { count = result.Value });
         }
 
         [HttpPut("{id}/mark-seen")]
-        [Authorize(Roles = UserRoles.HR)]
+        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Employee}")]
         public async Task<IActionResult> MarkAsSeen(int id)
         {
-            var result = await _service.MarkAsSeenAsync(id);
+            var role = User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
+            var result = await _service.MarkAsSeenAsync(id,role);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
 

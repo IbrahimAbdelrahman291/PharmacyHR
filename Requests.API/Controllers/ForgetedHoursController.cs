@@ -85,7 +85,7 @@ namespace Requests.API.Controllers
         }
 
         [HttpPut("{id}/mark-seen")]
-        [Authorize(Roles = UserRoles.HR)]
+        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Employee}")]
         public async Task<IActionResult> MarkAsSeen(int id)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
