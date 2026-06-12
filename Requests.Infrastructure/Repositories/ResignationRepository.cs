@@ -55,7 +55,13 @@ namespace Requests.Infrastructure.Repositories
             return true;
         }
 
-        public async Task<int> GetUnseenCountAsync()
-            => await _context.ResignationRequests.CountAsync(r => !r.IsSeenByHR);
+        public async Task<int> GetUnseenCountAsync(string role)
+        {
+            if (role == "HR")
+                return await _context.ResignationRequests.CountAsync(r => !r.IsSeenByHR);
+            else if (role == "Employee")
+                return await _context.ResignationRequests.CountAsync(r => !r.IsSeenByEmployee);
+            return 0;
+        }
     }
 }
