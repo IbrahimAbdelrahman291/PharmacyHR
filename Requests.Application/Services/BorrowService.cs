@@ -123,13 +123,20 @@ namespace Requests.Application.Services
             return Result<int>.Success(count);
         }
 
-        public async Task<Result<bool>> MarkBorrowAsSeenAsync(int id)
+        public async Task<Result<bool>> MarkBorrowAsSeenAsync(int id, string role)
         {
             var request = await _repository.GetBorrowRequestByIdAsync(id);
             if (request is null)
                 return Result<bool>.Failure("Request not found");
 
-            request.IsSeenByHR = true;
+            if (role == "HR")
+            {
+                request.IsSeenByHR = true;
+            }
+            else if(role == "Employee")
+            {
+                request.IsSeenByEmployee = true;
+            }
             await _repository.UpdateBorrowRequestAsync(request);
             return Result<bool>.Success(true);
         }

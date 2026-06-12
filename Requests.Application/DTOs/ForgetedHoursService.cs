@@ -93,6 +93,7 @@ namespace Requests.Application.DTOs
             {
                 request.Status = "Approved";
                 request.IsSeenByHR = true;
+                request.IsSeenByEmployee = false;
 
                 var shiftHours = await _employeeRepository.GetShiftHoursAsync(request.EmployeeId);
                 await _monthlyDataRepository.AddForgetedHoursAsync(request.EmployeeId, shiftHours ?? 0);
@@ -102,25 +103,34 @@ namespace Requests.Application.DTOs
                 request.Status = "Rejected";
                 request.RejectionReason = dto.RejectionReason;
                 request.IsSeenByHR = true;
+                request.IsSeenByEmployee = false;
             }
 
             await _repository.UpdateAsync(request);
             return Result<bool>.Success(true);
         }
 
-        public async Task<Result<int>> GetUnseenCountAsync()
+        public async Task<Result<int>> GetUnseenCountAsync(string role)
         {
-            var count = await _repository.GetUnseenCountAsync();
+            var count = await _repository.GetUnseenCountAsync(role);
             return Result<int>.Success(count);
         }
 
-        public async Task<Result<bool>> MarkAsSeenAsync(int id)
+        public async Task<Result<bool>> MarkAsSeenAsync(int id, string role)
         {
             var request = await _repository.GetByIdAsync(id);
             if (request is null)
                 return Result<bool>.Failure("Request not found");
 
-            request.IsSeenByHR = true;
+            if (role == "HR")
+            {
+                request.IsSeenByHR = true;
+            }
+            else if (role == "Employee") 
+            {
+                request.IsSeenByEmployee = true;
+            }
+
             await _repository.UpdateAsync(request);
             return Result<bool>.Success(true);
         }

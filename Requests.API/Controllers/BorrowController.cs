@@ -87,7 +87,10 @@ namespace Requests.API.Controllers
         [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Employee}")]
         public async Task<IActionResult> MarkAsSeen(int id)
         {
-            var result = await _service.MarkBorrowAsSeenAsync(id);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            var role = User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
+
+            var result = await _service.MarkBorrowAsSeenAsync(id, role);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
 
