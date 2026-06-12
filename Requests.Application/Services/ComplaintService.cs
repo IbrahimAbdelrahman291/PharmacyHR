@@ -44,7 +44,8 @@ namespace Requests.Application.Services
                 RecipientUserId = recipientUserId,
                 Status = "Pending",
                 Date = DateTime.UtcNow,
-                IsSeenByHR = false
+                IsSeenByHR = false,
+                IsSeenByEmployee = true
             };
 
             await _repository.AddAsync(complaint);
@@ -109,6 +110,7 @@ namespace Requests.Application.Services
             if (role == "HR") complaint.IsSeenByHR = true;
             else if (role == "AreaManager") complaint.IsSeenByAreaManager = true;
             else if (role == "CEO") complaint.IsSeenByCEO = true;
+            else if (role == "Employee") complaint.IsSeenByEmployee = false;
 
             await _repository.UpdateAsync(complaint);
             return Result<bool>.Success(true);
@@ -138,6 +140,10 @@ namespace Requests.Application.Services
                 if (complaint.RecipientUserId != userId)
                     return Result<bool>.Failure("غير مسموح لك");
                 complaint.IsSeenByCEO = true;
+            }
+            else if (role == "Employee") 
+            {
+                complaint.IsSeenByEmployee = true;
             }
 
             await _repository.UpdateAsync(complaint);

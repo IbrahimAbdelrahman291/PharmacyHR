@@ -84,7 +84,7 @@ namespace Requests.API.Controllers
         }
 
         [HttpPut("{id}/mark-seen")]
-        [Authorize(Roles = UserRoles.HR)]
+        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Employee}")]
         public async Task<IActionResult> MarkAsSeen(int id)
         {
             var result = await _service.MarkBorrowAsSeenAsync(id);

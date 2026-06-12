@@ -70,6 +70,8 @@ namespace Requests.Infrastructure.Repositories
                 return await query.CountAsync(c => c.RecipientUserId == recipientUserId && !c.IsSeenByAreaManager);
             else if (role == "CEO")
                 return await query.CountAsync(c => c.RecipientRole == "CEO" && !c.IsSeenByCEO);
+            else if (role == "Employee")
+                return await query.CountAsync(c => c.RecipientRole == "Employee" && !c.IsSeenByEmployee);
 
             return 0;
         }
