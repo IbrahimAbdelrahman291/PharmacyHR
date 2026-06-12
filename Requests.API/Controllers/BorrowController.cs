@@ -73,10 +73,13 @@ namespace Requests.API.Controllers
         }
 
         [HttpGet("unseen-count")]
-        [Authorize(Roles = UserRoles.HR)]
+        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Employee}")]
         public async Task<IActionResult> GetUnseenCount()
         {
-            var result = await _service.GetUnseenBorrowCountAsync();
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            var role = User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
+
+            var result = await _service.GetUnseenBorrowCountAsync(role);
             return Ok(new { count = result.Value });
         }
 

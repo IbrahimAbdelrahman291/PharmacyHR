@@ -50,6 +50,7 @@ namespace Requests.Application.Services
                 RequestDate = egyptNow,
                 Status = "Pending",
                 IsSeenByHR = false,
+                IsSeenByEmployee = true,
                 IsOverQuarter = isOverQuarter
             };
 
@@ -77,6 +78,7 @@ namespace Requests.Application.Services
                     Status = request.Status,
                     RejectionReason = request.RejectionReason,
                     IsSeenByHR = request.IsSeenByHR,
+                    IsSeenByEmployee = request.IsSeenByEmployee,
                     IsOverQuarter = request.IsOverQuarter
                 });
             }
@@ -100,6 +102,7 @@ namespace Requests.Application.Services
             {
                 request.Status = "Approved";
                 request.IsSeenByHR = true;
+                request.IsSeenByEmployee = false; 
                 await _monthlyDataRepository.AddBorrowAsync(request.EmployeeId, request.Amount);
             }
             else
@@ -107,15 +110,16 @@ namespace Requests.Application.Services
                 request.Status = "Rejected";
                 request.RejectionReason = dto.RejectionReason;
                 request.IsSeenByHR = true;
+                request.IsSeenByEmployee = false; 
             }
 
             await _repository.UpdateBorrowRequestAsync(request);
             return Result<bool>.Success(true);
         }
 
-        public async Task<Result<int>> GetUnseenBorrowCountAsync()
+        public async Task<Result<int>> GetUnseenBorrowCountAsync(string role)
         {
-            var count = await _repository.GetUnseenBorrowCountAsync();
+            var count = await _repository.GetUnseenBorrowCountAsync(role);
             return Result<int>.Success(count);
         }
 

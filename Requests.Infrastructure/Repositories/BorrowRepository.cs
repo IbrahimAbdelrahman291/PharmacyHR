@@ -61,8 +61,18 @@ namespace Requests.Infrastructure.Repositories
             return true;
         }
 
-        public async Task<int> GetUnseenBorrowCountAsync()
-            => await _context.BorrowRequests.CountAsync(r => !r.IsSeenByHR);
+        public async Task<int> GetUnseenBorrowCountAsync(string role)
+        {
+            if (role == "HR")
+            {
+                return await _context.BorrowRequests.CountAsync(r => !r.IsSeenByHR);
+            }
+            else if (role == "Employee")
+            {
+                return await _context.BorrowRequests.CountAsync(r => !r.IsSeenByEmployee);
+            }
+            return 0;
+        }
 
         public async Task<bool> AddInstallmentBorrowAsync(InstallmentBorrow borrow)
         {

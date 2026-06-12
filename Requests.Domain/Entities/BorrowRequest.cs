@@ -14,6 +14,7 @@ namespace Requests.Domain.Entities
         public string Status { get; set; } = "Pending";
         public string? RejectionReason { get; set; }
         public bool IsSeenByHR { get; set; } = false;
+        public bool IsSeenByEmployee { get; set; } = true;
         public bool IsOverQuarter { get; set; } = false; // تنبيه لو أكتر من ربع المرتب
     }
 }

@@ -15,6 +15,7 @@ namespace Requests.Application.DTOs
         public string Status { get; set; } = string.Empty;
         public string? RejectionReason { get; set; }
         public bool IsSeenByHR { get; set; }
+        public bool IsSeenByEmployee { get; set; }
         public bool IsOverQuarter { get; set; }
     }
 }
