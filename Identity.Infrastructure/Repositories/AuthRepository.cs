@@ -45,9 +45,11 @@ namespace Identity.Infrastructure.Repositories
         public async Task<User?> FindByIdAsync(string userId)
             => await _userManager.FindByIdAsync(userId);
 
-        public async Task<IList<User>> GetAllUsersAsync(int page, int pageSize)
+        public async Task<IList<User>> GetAllUsersAsync(int page, int pageSize,string name)
         {
-            return _userManager.Users
+            if (name == null || name.Length == 0)
+                name = "Admin";
+            return _userManager.Users.Where(x => x.Name.Contains(name))
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .Select(u => new User

@@ -51,9 +51,9 @@ namespace Identity.API.Controllers
 
         [HttpGet("users")]
         [Authorize(Roles = UserRoles.Admin)]
-        public async Task<IActionResult> GetAllUsers([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetAllUsers([FromQuery] string name,[FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
-            var result = await _authService.GetAllUsersAsync(page, pageSize);
+            var result = await _authService.GetAllUsersAsync(page, pageSize,name);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
 

@@ -33,6 +33,16 @@ namespace Employees.API.Controllers
             return Ok(new { message = "Employee created successfully" });
         }
 
+        [HttpPost("import")]
+        [Authorize(Roles = UserRoles.HR)]
+        public async Task<IActionResult> Import()
+        {
+            var result = await _service.ImportEmployeesData();
+            if (!result.IsSuccess)
+                return NotFound(new { message = result.Error });
+            return Ok(new { message = "Employees data imported successfully" });
+        }
+
         [HttpGet("{id}")]
         [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Admin},{UserRoles.Manager},{UserRoles.Employee}")]
         public async Task<IActionResult> GetById(int id)

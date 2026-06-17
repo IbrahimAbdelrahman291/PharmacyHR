@@ -138,9 +138,9 @@ namespace Identity.Application.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public async Task<Result<PaginatedResponse<UserDto>>> GetAllUsersAsync(int page, int pageSize)
+        public async Task<Result<PaginatedResponse<UserDto>>> GetAllUsersAsync(int page, int pageSize,string name)
         {
-            var users = await _authRepository.GetAllUsersAsync(page, pageSize);
+            var users = await _authRepository.GetAllUsersAsync(page, pageSize,name);
             var totalCount = await _authRepository.GetTotalUsersCountAsync();
 
             var userDtos = new List<UserDto>();

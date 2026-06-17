@@ -13,6 +13,6 @@ namespace Employees.Application.Interfaces
         Task<Result<EmployeeHistoryDto>> GetHistoryAsync(int employeeId);
         Task<Result<bool>> UpdateEndOfServiceAsync(int employeeId, UpdateEndOfServiceDto dto);
         Task<Result<IList<EmployeeBranchDto>>> GetEmployeeBranchesAsync(int employeeId);
-
+        Task<Result<bool>> ImportEmployeesData();
     }
 }

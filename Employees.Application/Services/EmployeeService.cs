@@ -5,6 +5,7 @@ using Employees.Domain.Interfaces;
 using SharedKernel.Interfaces;
 using SharedKernel.Wrappers;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace Employees.Application.Services
 {
@@ -260,5 +261,17 @@ namespace Employees.Application.Services
             return Result<IList<EmployeeBranchDto>>.Success(dtos);
         }
 
+        public async Task<Result<bool>> ImportEmployeesData()
+        {
+            var json = await File.ReadAllTextAsync("C:\\Users\\ebrah\\source\\repos\\PharmacyHR\\Employees.Application\\EmployeesData\\create_employee_dto_import_final_clean.json");
+
+            var employees = JsonSerializer.Deserialize<List<CreateEmployeeDto>>(json);
+
+            foreach (var employee in employees)
+            {
+                await CreateAsync(employee);
+            }
+            return Result<bool>.Success(true);
+        }
     }
 }

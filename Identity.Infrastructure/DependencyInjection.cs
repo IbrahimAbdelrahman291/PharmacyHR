@@ -21,10 +21,10 @@ namespace Identity.Infrastructure
             services.AddIdentity<User, IdentityRole>(options =>
             {
                 options.Password.RequireDigit = true;
-                options.Password.RequiredLength = 6;
-                options.Password.RequireUppercase = true;
+                options.Password.RequiredLength = 3;
+                options.Password.RequireUppercase = false;
                 options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireLowercase = true;
+                options.Password.RequireLowercase = false;
             })
             .AddEntityFrameworkStores<IdentityDbContext>()
             .AddDefaultTokenProviders();
