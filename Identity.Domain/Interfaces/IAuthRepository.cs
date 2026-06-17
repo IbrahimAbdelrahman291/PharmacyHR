@@ -13,7 +13,7 @@ namespace Identity.Domain.Interfaces
         Task<bool> CreateUserAsync(User user, string password, string role);
         Task<bool> ChangePasswordAsync(User user, string newPassword);
         Task<User?> FindByIdAsync(string userId);
-        Task<IList<User>> GetAllUsersAsync(int page, int pageSize, string name);
+        Task<IList<User>> GetAllUsersAsync(int page, int pageSize, string? name);
         Task<int> GetTotalUsersCountAsync();
         Task<bool> ToggleUserAsync(string userId);
         Task<bool> AddAreaManagerBranchesAsync(string userId, IList<int> branchIds);

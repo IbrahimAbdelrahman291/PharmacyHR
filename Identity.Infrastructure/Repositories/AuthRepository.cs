@@ -45,7 +45,7 @@ namespace Identity.Infrastructure.Repositories
         public async Task<User?> FindByIdAsync(string userId)
             => await _userManager.FindByIdAsync(userId);
 
-        public async Task<IList<User>> GetAllUsersAsync(int page, int pageSize,string name)
+        public async Task<IList<User>> GetAllUsersAsync(int page, int pageSize,string? name)
         {
             if (name is not null)
             {
