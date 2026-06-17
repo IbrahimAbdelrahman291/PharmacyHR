@@ -47,9 +47,24 @@ namespace Identity.Infrastructure.Repositories
 
         public async Task<IList<User>> GetAllUsersAsync(int page, int pageSize,string name)
         {
-            if (name == null || name.Length == 0)
-                name = "Admin";
-            return _userManager.Users.Where(x => x.Name.Contains(name))
+            if (name is not null)
+            {
+                return _userManager.Users.Where(x => x.Name.Contains(name))
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(u => new User
+                {
+                    Id = u.Id,
+                    UserName = u.UserName,
+                    Name = u.Name,
+                    EmployeeId = u.EmployeeId,
+                    BranchId = u.BranchId,
+                    IsActive = u.IsActive
+                })
+                .ToList();
+            }
+
+            return _userManager.Users
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .Select(u => new User
