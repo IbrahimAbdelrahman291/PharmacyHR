@@ -125,7 +125,7 @@ namespace Employees.API.Controllers
             return Ok(result.Value);
         }
         [HttpDelete("{id}")]
-        [Authorize(Roles = UserRoles.HR)]
+        [Authorize(Roles = UserRoles.Admin)]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _service.DeleteAsync(id);
