@@ -115,8 +115,9 @@ namespace Requests.API.Controllers
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
             var role = User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
+            var employeeId = User.IsInRole(UserRoles.Employee) ? int.Parse(User.FindFirst("EmployeeId")!.Value) : (int?)null;
 
-            var result = await _service.GetUnseenCountAsync(userId, role);
+            var result = await _service.GetUnseenCountAsync(userId, role, employeeId);
             return Ok(new { count = result.Value });
         }
 

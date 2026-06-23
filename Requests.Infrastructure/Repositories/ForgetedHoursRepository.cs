@@ -62,12 +62,12 @@ namespace Requests.Infrastructure.Repositories
             return true;
         }
 
-        public async Task<int> GetUnseenCountAsync(string role)
+        public async Task<int> GetUnseenCountAsync(string role, int? employeeId = 0)
         {
             if (role == "HR")
                 return await _context.ForgetedHoursRequests.CountAsync(r => !r.IsSeenByHR);
             if (role == "Employee")
-                return await _context.ForgetedHoursRequests.CountAsync(r => !r.IsSeenByEmployee);
+                return await _context.ForgetedHoursRequests.CountAsync(r => !r.IsSeenByEmployee && r.EmployeeId == employeeId);
             return 0;
         }
 

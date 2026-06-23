@@ -116,7 +116,7 @@ namespace Requests.Application.Services
             return Result<bool>.Success(true);
         }
 
-        public async Task<Result<int>> GetUnseenCountAsync(string? recipientUserId, string role)
+        public async Task<Result<int>> GetUnseenCountAsync(string? recipientUserId, string role, int? employeeId)
         {
             var count = await _repository.GetUnseenCountAsync(recipientUserId, role);
             return Result<int>.Success(count);

@@ -61,7 +61,7 @@ namespace Requests.Infrastructure.Repositories
             return true;
         }
 
-        public async Task<int> GetUnseenBorrowCountAsync(string role)
+        public async Task<int> GetUnseenBorrowCountAsync(string role, int? employeeId = 0)
         {
             if (role == "HR")
             {
@@ -69,7 +69,7 @@ namespace Requests.Infrastructure.Repositories
             }
             else if (role == "Employee")
             {
-                return await _context.BorrowRequests.CountAsync(r => !r.IsSeenByEmployee);
+                return await _context.BorrowRequests.CountAsync(r => !r.IsSeenByEmployee && r.EmployeeId == employeeId);
             }
             return 0;
         }

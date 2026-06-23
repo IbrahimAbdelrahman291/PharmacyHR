@@ -74,8 +74,10 @@ namespace Requests.API.Controllers
         public async Task<IActionResult> GetUnseenCount()
         {
             var role = User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
+            var employeeId = User.IsInRole(UserRoles.Employee) ? int.Parse(User.FindFirst("EmployeeId")!.Value) : (int?)null;
 
-            var result = await _service.GetUnseenCountAsync(role);
+            var result = await _service.GetUnseenCountAsync(role, employeeId);
+
             return Ok(new { count = result.Value });
         }
 

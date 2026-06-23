@@ -9,6 +9,6 @@ namespace Requests.Domain.Interfaces
         Task<int> GetTotalCountAsync(int? employeeId, string? userId, string role);
         Task<OvertimeRequest?> GetByIdAsync(int id);
         Task<bool> UpdateAsync(OvertimeRequest request);
-        Task<int> GetUnseenCountAsync(string? userId, string role);
+        Task<int> GetUnseenCountAsync(string? userId, string role, int? employeeId);
     }
 }

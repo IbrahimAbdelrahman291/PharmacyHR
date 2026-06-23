@@ -9,6 +9,6 @@ namespace Requests.Domain.Interfaces
         Task<int> GetTotalCountAsync(int? employeeId, bool? isSeenByHR);
         Task<ResignationRequest?> GetByIdAsync(int id);
         Task<bool> UpdateAsync(ResignationRequest request);
-        Task<int> GetUnseenCountAsync(string role);
+        Task<int> GetUnseenCountAsync(string role, int? employeeId);
     }
 }

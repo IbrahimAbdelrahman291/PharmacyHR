@@ -12,6 +12,6 @@ namespace Requests.Domain.Interfaces
         Task<int> GetTotalCountAsync(int? employeeId, bool? isSeenByHR, string? areaManagerUserId);
         Task<HolidayRequest?> GetByIdAsync(int id);
         Task<bool> UpdateAsync(HolidayRequest request);
-        Task<int> GetUnseenCountAsync(string role);
+        Task<int> GetUnseenCountAsync(string role, int? employeeId);
     }
 }

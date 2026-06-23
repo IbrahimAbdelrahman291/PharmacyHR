@@ -12,7 +12,7 @@ namespace Requests.Domain.Interfaces
         Task<int> GetTotalBorrowRequestsCountAsync(int? employeeId, bool? isSeenByHR);
         Task<BorrowRequest?> GetBorrowRequestByIdAsync(int id);
         Task<bool> UpdateBorrowRequestAsync(BorrowRequest request);
-        Task<int> GetUnseenBorrowCountAsync(string role);
+        Task<int> GetUnseenBorrowCountAsync(string role, int? employeeId);
         Task<bool> AddInstallmentBorrowAsync(InstallmentBorrow borrow);
         Task<IList<InstallmentBorrow>> GetActiveInstallmentBorrowsAsync();
         Task<IList<InstallmentBorrow>> GetInstallmentBorrowsByEmployeeAsync(int employeeId);

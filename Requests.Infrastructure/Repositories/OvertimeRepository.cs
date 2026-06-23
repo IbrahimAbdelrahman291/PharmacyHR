@@ -61,7 +61,7 @@ namespace Requests.Infrastructure.Repositories
             return true;
         }
 
-        public async Task<int> GetUnseenCountAsync(string? userId, string role)
+        public async Task<int> GetUnseenCountAsync(string? userId, string role, int? employeeId = 0)
         {
             if (role == "HR")
                 return await _context.OvertimeRequests.CountAsync(r => !r.IsSeenByHR);
@@ -70,7 +70,7 @@ namespace Requests.Infrastructure.Repositories
             else if (role == "AreaManager" && !string.IsNullOrEmpty(userId))
                 return await _context.OvertimeRequests.CountAsync(r => r.AreaManagerUserId == userId && !r.IsSeenByAreaManager);
             else if (role == "Employee")
-                return await _context.OvertimeRequests.CountAsync(r => !r.IsSeenByEmployee);
+                return await _context.OvertimeRequests.CountAsync(r => !r.IsSeenByEmployee && r.EmployeeId == employeeId);
 
             return 0;
         }

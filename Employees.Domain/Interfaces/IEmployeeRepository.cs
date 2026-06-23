@@ -12,6 +12,7 @@ namespace Employees.Domain.Interfaces
         Task<IList<Employee>> GetAllAsync(int page, int pageSize, int? branchId, int? bankId, string? role, string? name);
         Task<int> GetTotalCountAsync(int? branchId, int? bankId, string? role, string? name);
         Task<bool> UpdateAsync(Employee employee);
+        Task<bool> DeleteAsync(int id);
         Task<EmployeeHistory?> GetHistoryByEmployeeIdAsync(int employeeId);
         Task<bool> UpdateHistoryAsync(EmployeeHistory history);
         Task<bool> AddScheduleAsync(EmployeeSchedule schedule);

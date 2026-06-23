@@ -60,7 +60,7 @@ namespace Requests.Infrastructure.Repositories
             return await query.CountAsync();
         }
 
-        public async Task<int> GetUnseenCountAsync(string? recipientUserId, string role)
+        public async Task<int> GetUnseenCountAsync(string? recipientUserId, string role, int? employeeId = 0)
         {
             var query = _context.ComplaintRequests.AsQueryable();
 
@@ -71,7 +71,7 @@ namespace Requests.Infrastructure.Repositories
             else if (role == "CEO")
                 return await query.CountAsync(c => c.RecipientRole == "CEO" && !c.IsSeenByCEO);
             else if (role == "Employee")
-                return await query.CountAsync(c => c.RecipientRole == "Employee" && !c.IsSeenByEmployee);
+                return await query.CountAsync(c => c.RecipientRole == "Employee" && !c.IsSeenByEmployee && c.EmployeeId == employeeId);
 
             return 0;
         }

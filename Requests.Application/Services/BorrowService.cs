@@ -117,9 +117,9 @@ namespace Requests.Application.Services
             return Result<bool>.Success(true);
         }
 
-        public async Task<Result<int>> GetUnseenBorrowCountAsync(string role)
+        public async Task<Result<int>> GetUnseenBorrowCountAsync(string role, int? employeeId)
         {
-            var count = await _repository.GetUnseenBorrowCountAsync(role);
+            var count = await _repository.GetUnseenBorrowCountAsync(role, employeeId);
             return Result<int>.Success(count);
         }
 

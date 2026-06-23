@@ -248,5 +248,14 @@ namespace Employees.Infrastructure.Repositories
                 .Where(e => e.Status == "Active")
                 .Select(e => e.Id)
                 .ToListAsync();
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var employee = await _context.Employees.FindAsync(id);
+            if (employee is null) return false;
+            _context.Employees.Remove(employee);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

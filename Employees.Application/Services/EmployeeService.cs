@@ -267,11 +267,27 @@ namespace Employees.Application.Services
 
             var employees = JsonSerializer.Deserialize<List<CreateEmployeeDto>>(json);
 
-            foreach (var employee in employees)
+            foreach (var employee in employees!)
             {
                 await CreateAsync(employee);
             }
             return Result<bool>.Success(true);
+        }
+
+        public Task<Result<bool>> DeleteAsync(int id)
+        {
+            var DeleteEmployeeTask = _employeeRepository.DeleteAsync(id);
+            return DeleteEmployeeTask.ContinueWith(task =>
+            {
+                if (task.IsCompletedSuccessfully)
+                {
+                    return Result<bool>.Success(true);
+                }
+                else
+                {
+                    return Result<bool>.Failure("Failed to delete employee");
+                }
+            });
         }
     }
 }

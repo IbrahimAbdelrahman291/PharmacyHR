@@ -4,6 +4,12 @@
     <Project Path="PharmacyHR.API/PharmacyHR.API.csproj" Id="9a01d004-b014-44c1-891e-6792969a8315" />
   </Folder>
   <Folder Name="/src/Modules/" />
+  <Folder Name="/src/Modules/Anouncement/">
+    <Project Path="Announcement.API/Announcement.API.csproj" Id="d3d54d68-0aa4-408c-b62a-bddec363a88d" />
+    <Project Path="Anouncement.Application/Anouncement.Application.csproj" Id="77196d00-a102-4baa-87a6-059f7db39ec9" />
+    <Project Path="Anouncement.Domain/Anouncement.Domain.csproj" Id="6b5a1dce-4562-4aaa-89d3-159e9084d6e5" />
+    <Project Path="Anouncement.Infrastructure/Anouncement.Infrastructure.csproj" Id="863902e5-a9f9-4a2f-a2b9-feabf7fa604b" />
+  </Folder>
   <Folder Name="/src/Modules/Attendance/">
     <Project Path="Attendance.API/Attendance.API.csproj" Id="a10e5696-28dd-4cdb-9488-c273fce4f9db" />
     <Project Path="Attendance.Application/Attendance.Application.csproj" Id="251e31ca-43cd-4b8c-8b53-10edc5f11341" />

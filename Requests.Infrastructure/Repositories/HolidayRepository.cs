@@ -67,7 +67,7 @@ namespace Requests.Infrastructure.Repositories
             return true;
         }
 
-        public async Task<int> GetUnseenCountAsync(string role) 
+        public async Task<int> GetUnseenCountAsync(string role, int? employeeId = 0)
         {
             if (role == "HR")
             {
@@ -75,7 +75,7 @@ namespace Requests.Infrastructure.Repositories
             }
             else if (role == "Employee")
             {
-                return await _context.HolidayRequests.CountAsync(r => r.IsSeenByEmployee == null);
+                return await _context.HolidayRequests.CountAsync(r => !r.IsSeenByEmployee && r.EmployeeId == employeeId);
             }
             return 0;
         }

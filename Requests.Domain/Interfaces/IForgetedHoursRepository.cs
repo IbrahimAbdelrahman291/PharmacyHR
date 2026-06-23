@@ -12,7 +12,7 @@ namespace Requests.Domain.Interfaces
         Task<int> GetTotalCountAsync(int? employeeId, bool? isSeenByHR);
         Task<ForgetedHoursRequest?> GetByIdAsync(int id);
         Task<bool> UpdateAsync(ForgetedHoursRequest request);
-        Task<int> GetUnseenCountAsync(string role);
+        Task<int> GetUnseenCountAsync(string role, int? employeeId);
         Task<int> GetMonthlyCountAsync(int employeeId, int month, int year);
     }
 }

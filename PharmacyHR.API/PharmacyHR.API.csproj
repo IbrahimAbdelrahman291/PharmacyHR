@@ -21,6 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Announcement.API\Announcement.API.csproj" />
+    <ProjectReference Include="..\Anouncement.Application\Anouncement.Application.csproj" />
+    <ProjectReference Include="..\Anouncement.Infrastructure\Anouncement.Infrastructure.csproj" />
     <ProjectReference Include="..\Attendance.API\Attendance.API.csproj" />
     <ProjectReference Include="..\Attendance.Application\Attendance.Application.csproj" />
     <ProjectReference Include="..\Attendance.Infrastructure\Attendance.Infrastructure.csproj" />

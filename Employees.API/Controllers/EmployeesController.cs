@@ -123,6 +123,16 @@ namespace Employees.API.Controllers
                 return NotFound(new { message = result.Error });
 
             return Ok(result.Value);
-        }   
+        }
+        [HttpDelete("{id}")]
+        [Authorize(Roles = UserRoles.HR)]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var result = await _service.DeleteAsync(id);
+            if (!result.IsSuccess)
+                return NotFound(new { message = result.Error });
+
+            return Ok(new { message = "Employee deleted successfully" });
+        }
     }
 }

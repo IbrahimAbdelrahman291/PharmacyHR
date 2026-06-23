@@ -12,6 +12,12 @@ namespace Payroll.Application.DTOs
         public string BranchName { get; set; } = string.Empty;
         public int Month { get; set; }
         public int Year { get; set; }
+        public double? Target { get; set; }
+        public double? Insurence { get; set; }
+        public double? Hours { get; set; }
+        public double? HoursOverTime { get; set; }
+        public double? ForgetedHours { get; set; }
+        public double? HolidayHours { get; set; }
         public double? TotalSalary { get; set; }
         public double? TotalDiscounts { get; set; }
         public double? TotalContractDiscount { get; set; }
