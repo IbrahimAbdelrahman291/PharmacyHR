@@ -40,9 +40,13 @@ namespace Attendance.Application.Services
             if (schedule is null)
                 return Result<bool>.Failure("مش مسموح لك تسجل حضور النهارده");
 
-            var allowedCheckIn = schedule.Value.CheckInTime.AddMinutes(-15);
-            var allowedCheckOut = schedule.Value.CheckOutTime;
-            if (egyptTime < allowedCheckIn)
+            var allowedCheckIn = egyptDate.ToDateTime(schedule.Value.CheckInTime.AddMinutes(-15));
+            var allowedCheckOut = egyptDate.ToDateTime(schedule.Value.CheckOutTime.AddMinutes(15));
+            if (schedule.Value.CheckOutTime < schedule.Value.CheckInTime)
+            {
+                allowedCheckOut = allowedCheckOut.AddDays(1);
+            }
+            if (egyptNow < allowedCheckIn)
                 return Result<bool>.Failure($"لسه مش متاح تسجل دلوقتي، موعد الحضور {schedule.Value.CheckInTime}");
 
             var openShift = await _workLogRepository.GetOpenShiftAsync(employeeId);
@@ -52,7 +56,7 @@ namespace Attendance.Application.Services
             var hasShiftToday = await _workLogRepository.HasShiftOnDayAsync(employeeId, egyptDate);
             if (hasShiftToday)
                 return Result<bool>.Failure("تم تسجيل بداية العمل بالفعل لهذا اليوم");
-            if (egyptTime > allowedCheckOut)
+            if (egyptNow > allowedCheckOut)
             {
                 return Result<bool>.Failure("انتهى وقت تسجيل الحضور لهذا الشيفت");
             }
