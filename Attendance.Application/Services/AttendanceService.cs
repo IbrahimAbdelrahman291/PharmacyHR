@@ -87,16 +87,16 @@ namespace Attendance.Application.Services
             var schedule = await _scheduleRepository.GetEmployeeScheduleByDayAsync(employeeId, workLog.Day.DayOfWeek);
             var CheckOutTime = schedule.Value.CheckOutTime;
             var startDateTime = workLog.Day.ToDateTime(workLog.Start);
-            var endDateTime = workLog.Day.ToDateTime(CheckOutTime);
-            var allowedCheckOut = egyptDate.ToDateTime(schedule.Value.CheckOutTime.AddMinutes(15));
-            if (schedule.Value.CheckOutTime < schedule.Value.CheckInTime)
+            var endDateTime = egyptDate.ToDateTime(CheckOutTime);
+            var allowedCheckOut = workLog.Day.ToDateTime(schedule.Value.CheckOutTime.AddMinutes(15));
+            if (allowedCheckOut < workLog.Day.ToDateTime(schedule.Value.CheckInTime))
             {
                 allowedCheckOut = allowedCheckOut.AddDays(1);
             }
             var totalWorkTime = endDateTime - startDateTime;
-            var endShift = workLog.Day.ToDateTime(egyptTime);
+            var endShift = egyptDate.ToDateTime(egyptTime);
             var totalTime = endShift - startDateTime;
-            var allowCheckOutEmergency = workLog.Day.ToDateTime(workLog.Start.AddMinutes(15));
+            var allowCheckOutEmergency = startDateTime.AddMinutes(15);
 
 
 
