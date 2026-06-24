@@ -42,6 +42,7 @@ namespace Requests.Application.Services
                 EmployeeId = employeeId,
                 Hours = dto.Hours,
                 Notes = dto.Notes,
+                DateShift = dto.DateOfShift ?? egyptNow,
                 RequestDate = egyptNow,
                 Status = "Pending",
                 AreaManagerUserId = areaManagerUserId,

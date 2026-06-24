@@ -35,12 +35,14 @@ namespace Attendance.Application.Services
             var egyptNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, egyptTimeZone);
             var egyptDate = DateOnly.FromDateTime(egyptNow);
             var egyptTime = TimeOnly.FromDateTime(egyptNow);
-
+            
             var schedule = await _scheduleRepository.GetEmployeeScheduleByDayAsync(employeeId, egyptDate.DayOfWeek);
             if (schedule is null)
                 return Result<bool>.Failure("مش مسموح لك تسجل حضور النهارده");
 
             var allowedCheckIn = egyptDate.ToDateTime(schedule.Value.CheckInTime.AddMinutes(-15));
+
+
             var allowedCheckOut = egyptDate.ToDateTime(schedule.Value.CheckOutTime.AddMinutes(15));
             if (schedule.Value.CheckOutTime < schedule.Value.CheckInTime)
             {
