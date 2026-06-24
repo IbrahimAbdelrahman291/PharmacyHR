@@ -88,7 +88,11 @@ namespace Attendance.Application.Services
             var CheckOutTime = schedule.Value.CheckOutTime;
             var startDateTime = workLog.Day.ToDateTime(workLog.Start);
             var endDateTime = workLog.Day.ToDateTime(CheckOutTime);
-            var allowedCheckOut = workLog.Day.ToDateTime(schedule.Value.CheckOutTime.AddMinutes(15));
+            var allowedCheckOut = egyptDate.ToDateTime(schedule.Value.CheckOutTime.AddMinutes(15));
+            if (schedule.Value.CheckOutTime < schedule.Value.CheckInTime)
+            {
+                allowedCheckOut = allowedCheckOut.AddDays(1);
+            }
             var totalWorkTime = endDateTime - startDateTime;
             var endShift = workLog.Day.ToDateTime(egyptTime);
             var totalTime = endShift - startDateTime;
