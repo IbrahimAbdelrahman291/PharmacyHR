@@ -181,7 +181,7 @@ namespace Attendance.Application.Services
             });
         }
 
-        public async Task<Result<PaginatedResponse<AbsentReportDto>>> GetAbsentReportAsync(DateOnly fromDate, DateOnly toDate, int? branchId, int page, int pageSize)
+        public async Task<Result<PaginatedResponse<AbsentReportDto>>> GetAbsentReportAsync(DateOnly fromDate, DateOnly toDate, int? branchId, int page, int pageSize, int? employeeId)
         {
             var result = new List<AbsentReportDto>();
             var currentDate = fromDate;
@@ -191,7 +191,7 @@ namespace Attendance.Application.Services
                 var workLogs = await _workLogRepository.GetReportAsync(currentDate, currentDate, null);
                 var presentEmployeeIds = workLogs.Select(w => w.EmployeeId).ToHashSet();
 
-                var schedules = await _scheduleRepository.GetAllEmployeesWithScheduleByDayAsync(currentDate.DayOfWeek);
+                var schedules = await _scheduleRepository.GetAllEmployeesWithScheduleByDayAsync(currentDate.DayOfWeek,employeeId);
 
                 foreach (var schedule in schedules)
                 {

@@ -70,6 +70,7 @@ namespace Attendance.API.Controllers
             [FromQuery] DateOnly? fromDate = null,
             [FromQuery] DateOnly? toDate = null,
             [FromQuery] int? branchId = null,
+            [FromQuery] int? employeeId = null,
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 10)
         {
@@ -79,7 +80,7 @@ namespace Attendance.API.Controllers
             var from = fromDate ?? egyptNow;
             var to = toDate ?? egyptNow;
 
-            var result = await _service.GetAbsentReportAsync(from, to, branchId, page, pageSize);
+            var result = await _service.GetAbsentReportAsync(from, to, branchId, page, pageSize,employeeId);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
 
