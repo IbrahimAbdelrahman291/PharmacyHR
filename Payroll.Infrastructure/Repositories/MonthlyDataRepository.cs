@@ -401,7 +401,7 @@ namespace Payroll.Infrastructure.Repositories
 
             await _context.SaveChangesAsync();
         }
-        public async Task<IList<MonthlyEmployeeData>> GetAllByMonthAndYearAsync(int month, int year, int? branchId)
+        public async Task<IList<MonthlyEmployeeData>> GetAllByMonthAndYearAsync(int month, int year, int? branchId, int page, int pageSize)
         {
             var activeEmployeeIds = await _employeeRepository.GetActiveEmployeeIdsAsync();
 
@@ -413,7 +413,11 @@ namespace Payroll.Infrastructure.Repositories
             if (branchId.HasValue)
                 query = query.Where(x => x.BranchId == branchId.Value);
 
-            return await query.ToListAsync();
+            return await query
+                .OrderByDescending(x => x.Id)
+                .Skip((page-1)*pageSize)
+                .Take(pageSize)
+                .ToListAsync();
         }
         public async Task CreateMonthlyDataAsync(int employeeId, string role, double? totalSalary, double? salaryPerHour, double target, int branchId,double? insurence, int Holidaies)
         {

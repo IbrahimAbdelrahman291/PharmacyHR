@@ -137,7 +137,7 @@ namespace Payroll.Application.Services
 
         public async Task<Result<PaginatedResponse<MonthlyDataWithEmployeeDto>>> GetAllMonthlyDataAsync(int month, int year, int? branchId,int page, int pageSize)
         {
-            var allData = await _repository.GetAllByMonthAndYearAsync(month, year, branchId);
+            var allData = await _repository.GetAllByMonthAndYearAsync(month, year, branchId, page, pageSize);
             var totalCount = allData.Count();
             var result = new List<MonthlyDataWithEmployeeDto>();
             foreach (var data in allData)
