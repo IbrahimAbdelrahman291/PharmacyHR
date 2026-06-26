@@ -72,6 +72,7 @@ namespace Requests.Application.Services
                     EmployeeName = employeeInfo?.Name ?? string.Empty,
                     Hours = request.Hours,
                     Notes = request.Notes,
+                    DateOfShift = request.DateShift,
                     RequestDate = request.RequestDate,
                     Status = request.Status,
                     ControlApproval = request.ControlApproval,

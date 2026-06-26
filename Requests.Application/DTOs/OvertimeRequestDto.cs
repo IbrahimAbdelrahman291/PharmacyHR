@@ -9,6 +9,7 @@ namespace Requests.Application.DTOs
         public string EmployeeName { get; set; } = string.Empty;
         public double Hours { get; set; }
         public string? Notes { get; set; }
+        public DateTime DateOfShift { get; set; }
         public DateTime RequestDate { get; set; }
         public string Status { get; set; } = string.Empty;
         public string? ControlApproval { get; set; }

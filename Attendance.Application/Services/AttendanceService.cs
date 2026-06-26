@@ -150,11 +150,12 @@ namespace Attendance.Application.Services
                 var scheduledCheckIn = schedule?.CheckInTime ?? TimeOnly.MinValue;
                 var scheduledCheckOut = schedule?.CheckOutTime ?? TimeOnly.MinValue;
                 var actualCheckIn = workLog.Start == TimeOnly.MinValue ? (TimeOnly?)null : workLog.Start;
+                
                 var actualCheckOut = workLog.End == TimeOnly.MinValue ? (TimeOnly?)null : workLog.End;
 
                 // فلتر حسب النوع
                 if (type == "open" && actualCheckOut is not null) continue;
-                if (type == "late" && (actualCheckIn is null || actualCheckIn <= scheduledCheckIn)) continue;
+                if (type == "late" && (actualCheckIn is null || actualCheckIn <= scheduledCheckIn.AddMinutes(15))) continue;
                 if (type == "overtime" && (actualCheckOut is null || actualCheckOut <= scheduledCheckOut)) continue;
 
                 result.Add(new AttendanceReportDto
