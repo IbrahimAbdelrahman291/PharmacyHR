@@ -577,5 +577,24 @@ namespace Payroll.Infrastructure.Repositories
 
             return Quarter;
         }
+
+        public async Task<int> GetTotalMonthlyDataCount(int? month, int? year, int? branchId)
+        {
+            var query = _context.MonthlyEmployeeData.AsQueryable();
+
+            if (branchId.HasValue)
+            {
+                query = query.Where(x => x.BranchId == branchId.Value);
+            }
+            if (month.HasValue)
+            {
+                query = query.Where(x => x.Month == month.Value);
+            }
+            if (year.HasValue)
+            {
+                query = query.Where(x => x.Year == year.Value);
+            }
+            return await query.CountAsync();
+        }
     }
 }

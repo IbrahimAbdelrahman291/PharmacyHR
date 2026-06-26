@@ -21,6 +21,7 @@ namespace Payroll.Domain.Interfaces
         Task<IList<ContractDiscount>> GetContractDiscountsAsync(int employeeId, int? month, int? year);
         Task<IList<Bonus>> GetBonusesAsync(int employeeId, int? month, int? year);
         Task<IList<CashBorrow>> GetCashBorrowsAsync(int employeeId, int? month, int? year);
+        Task<int> GetTotalMonthlyDataCount(int? month, int? year, int? branchId);
 
     }
 }
