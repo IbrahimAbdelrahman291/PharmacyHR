@@ -231,9 +231,9 @@ namespace Payroll.API.Controllers
         }
         [HttpGet("monthly-data")]
         [Authorize(Roles = UserRoles.Accountant)]
-        public async Task<IActionResult> GetAllMonthlyData([FromQuery] int month,[FromQuery] int year,[FromQuery] int? branchId = null)
+        public async Task<IActionResult> GetAllMonthlyData([FromQuery] int month,[FromQuery] int year,[FromQuery] int? branchId = null,int page = 1, int pageSize = 10)
         {
-            var result = await _service.GetAllMonthlyDataAsync(month, year, branchId);
+            var result = await _service.GetAllMonthlyDataAsync(month, year, branchId, page, pageSize);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
 

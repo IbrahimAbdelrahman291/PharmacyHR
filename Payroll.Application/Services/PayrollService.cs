@@ -135,10 +135,10 @@ namespace Payroll.Application.Services
             return Result<bool>.Success(true);
         }
 
-        public async Task<Result<IList<MonthlyDataWithEmployeeDto>>> GetAllMonthlyDataAsync(int month, int year, int? branchId)
+        public async Task<Result<PaginatedResponse<MonthlyDataWithEmployeeDto>>> GetAllMonthlyDataAsync(int month, int year, int? branchId,int page, int pageSize)
         {
             var allData = await _repository.GetAllByMonthAndYearAsync(month, year, branchId);
-
+            var totalCount = allData.Count();
             var result = new List<MonthlyDataWithEmployeeDto>();
             foreach (var data in allData)
             {
@@ -171,7 +171,13 @@ namespace Payroll.Application.Services
                 });
             }
 
-            return Result<IList<MonthlyDataWithEmployeeDto>>.Success(result);
+            return Result<PaginatedResponse<MonthlyDataWithEmployeeDto>>.Success(new PaginatedResponse<MonthlyDataWithEmployeeDto> 
+            {
+                Data = result,
+                TotalCount = totalCount,
+                Page = page,
+                PageSize = pageSize
+            });
         }
         public async Task<Result<IList<DeductionCalculatorResponseDto>>> CalculateDeductionsAsync(DeductionCalculatorRequestDto dto)
         {

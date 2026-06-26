@@ -21,7 +21,7 @@ namespace Payroll.Application.Interfaces
         Task<Result<bool>> DeleteCashBorrowAsync(int id);
         Task<Result<bool>> BulkDiscountAsync(BulkDiscountDto dto);
         Task<Result<bool>> BulkBonusAsync(BulkBonusDto dto);
-        Task<Result<IList<MonthlyDataWithEmployeeDto>>> GetAllMonthlyDataAsync(int month, int year, int? branchId);
+        Task<Result<PaginatedResponse<MonthlyDataWithEmployeeDto>>> GetAllMonthlyDataAsync(int month, int year, int? branchId,int page, int pageSize);
         Task<Result<IList<DeductionCalculatorResponseDto>>> CalculateDeductionsAsync(DeductionCalculatorRequestDto dto);
         Task<Result<bool>> BulkVariedDiscountAsync(IList<BulkVariedItemDto> items);
         Task<Result<bool>> BulkVariedContractDiscountAsync(IList<BulkVariedItemDto> items);

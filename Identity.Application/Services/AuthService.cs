@@ -62,7 +62,8 @@ namespace Identity.Application.Services
                 UserRoles.Accountant,
                 UserRoles.Control,
                 UserRoles.Manager,
-                UserRoles.AreaManager
+                UserRoles.AreaManager,
+                UserRoles.CEO
             };
 
             if (!validRoles.Contains(dto.Role))
