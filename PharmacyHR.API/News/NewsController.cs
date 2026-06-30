@@ -7,7 +7,6 @@ namespace PharmacyHR.API.News
 {
     [ApiController]
     [Route("api/news")]
-    [Authorize]
     public class NewsController : ControllerBase
     {
         private readonly NewsDbContext _context;

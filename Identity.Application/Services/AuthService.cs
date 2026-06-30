@@ -154,6 +154,7 @@ namespace Identity.Application.Services
                     Username = user.UserName ?? string.Empty,
                     Name = user.Name,
                     Role = roles.FirstOrDefault() ?? string.Empty,
+                    EmployeeId = user.EmployeeId ?? 0,
                     IsActive = user.IsActive,
                 });
             }
