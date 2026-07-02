@@ -55,7 +55,7 @@ namespace PharmacyHR.API.News
 
             httpClient.DefaultRequestHeaders.Add(
                 "x-api-key",
-                "c20b9b14837dea7cdd0b5d6c6c0f89704d4515674dcc65dc7b6f85b804cef90b");
+                "1f8af3768ee37349d0ab41c413e0f8e2187d13746ea8b7c8224d85c38a5cb480");
 
             var url =
                 $"https://api.freenewsapi.io/v1/details?uuid={uuid}";
