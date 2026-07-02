@@ -7,7 +7,7 @@ namespace PharmacyHR.API.News
         private readonly HttpClient _httpClient;
 
         private const string ApiKey =
-            "c20b9b14837dea7cdd0b5d6c6c0f89704d4515674dcc65dc7b6f85b804cef90b";
+            "1f8af3768ee37349d0ab41c413e0f8e2187d13746ea8b7c8224d85c38a5cb480";
 
         private const string BaseUrl =
             "https://api.freenewsapi.io/v1/news";
@@ -28,11 +28,11 @@ namespace PharmacyHR.API.News
             string keyword)
         {
             var url =
-                $"{BaseUrl}?language=ar&q={Uri.EscapeDataString(keyword)}";
+                $"{BaseUrl}?language=ar&in_title={Uri.EscapeDataString(keyword)}";
 
             var response =
                 await _httpClient.GetAsync(url);
-
+            var body = response.Content.ReadAsStringAsync();
             if (!response.IsSuccessStatusCode)
             {
                 return new List<NewsArticleResult>();
