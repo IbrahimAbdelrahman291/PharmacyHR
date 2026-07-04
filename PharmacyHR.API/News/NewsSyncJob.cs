@@ -9,7 +9,8 @@ namespace PharmacyHR.API.News
 
         private static readonly string[] Keywords =
         {
-            "medicine"
+            "medicine",
+            "science"
         };
 
         public NewsSyncJob(

@@ -95,7 +95,7 @@ namespace Attendance.Application.Services
             {
                 allowedCheckOut = allowedCheckOut.AddDays(1);
             }
-            var totalWorkTime = endDateTime - startDateTime;
+            var totalWorkTime = allowedCheckOut - startDateTime;
             var endShift = egyptDate.ToDateTime(egyptTime);
             var totalTime = endShift - startDateTime;
             var allowCheckOutEmergency = startDateTime.AddMinutes(15);
@@ -109,7 +109,7 @@ namespace Attendance.Application.Services
                     if (egyptNow > allowedCheckOut)
                     {
                         workLog.End = CheckOutTime;
-                        workLog.TotalTime = endDateTime - startDateTime;
+                        workLog.TotalTime = allowedCheckOut - startDateTime;
                         await _workLogRepository.UpdateAsync(workLog);
                         await _monthlyDataRepository.AddHoursAsync(employeeId, totalWorkTime.TotalHours);
 
