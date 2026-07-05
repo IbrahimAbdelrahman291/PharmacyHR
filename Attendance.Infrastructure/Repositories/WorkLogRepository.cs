@@ -23,7 +23,7 @@ namespace Attendance.Infrastructure.Repositories
             var workLog = await _context.WorkLogs
                 .FirstOrDefaultAsync(w => w.EmployeeId == employeeId
                     && w.Day == egyptDate
-                    && w.IsEnd == false
+                    && (w.IsEnd == false && w.End == TimeOnly.MinValue)
                     );
 
             if (workLog is null)
@@ -32,7 +32,7 @@ namespace Attendance.Infrastructure.Repositories
                 workLog = await _context.WorkLogs
                     .FirstOrDefaultAsync(w => w.EmployeeId == employeeId
                         && w.Day == previousDate
-                        && w.IsEnd == false
+                        && (w.IsEnd == false && w.End == TimeOnly.MinValue)
                         );
 
             }
