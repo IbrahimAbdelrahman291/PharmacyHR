@@ -282,12 +282,22 @@ namespace Employees.Application.Services
 
         public Task<Result<bool>> DeleteAsync(int id)
         {
+
             var DeleteEmployeeTask = _employeeRepository.DeleteAsync(id);
             return DeleteEmployeeTask.ContinueWith(task =>
             {
                 if (DeleteEmployeeTask.Result == true)
                 {
-                    return Result<bool>.Success(true);
+                    var result = _authRepository.DeleteUser(id);
+                    if (result.Result == true)
+                    {
+                        return Result<bool>.Success(true);
+                    }
+                    else
+                    {
+                        return Result<bool>.Failure("Failed to delete user");
+
+                    }
                 }
                 else
                 {

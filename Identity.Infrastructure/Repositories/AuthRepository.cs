@@ -163,5 +163,13 @@ namespace Identity.Infrastructure.Repositories
             return result is not null ? true : false;
 
         }
+
+        public async Task<bool> DeleteUser(int id)
+        {
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.EmployeeId == id);
+            if (user is null) return false;
+            var isDeleted = await _userManager.DeleteAsync(user);
+            return isDeleted.Succeeded == true ? true : false;
+        }
     }
 }
