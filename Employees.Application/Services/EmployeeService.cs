@@ -43,7 +43,7 @@ namespace Employees.Application.Services
             if (branch is null)
                 return Result<bool>.Failure("Branch not found");
             var excetsEmployee = _authRepository.FindByUsername(dto.Username);
-            if (excetsEmployee.Result == false)
+            if (excetsEmployee.Result == true)
             {
                 return Result<bool>.Failure("Failed to create user");
             }
