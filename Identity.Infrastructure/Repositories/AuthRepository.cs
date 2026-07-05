@@ -156,5 +156,12 @@ namespace Identity.Infrastructure.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<bool> FindByUsername(string username)
+        {
+            var result = await _userManager.FindByNameAsync(username);
+            return result is not null ? true : false;
+
+        }
     }
 }

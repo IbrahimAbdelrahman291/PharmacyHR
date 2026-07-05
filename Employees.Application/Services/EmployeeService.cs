@@ -42,6 +42,11 @@ namespace Employees.Application.Services
             var branch = await _branchRepository.GetBranchByIdAsync(dto.BranchId);
             if (branch is null)
                 return Result<bool>.Failure("Branch not found");
+            var excetsEmployee = _authRepository.FindByUsername(dto.Username);
+            if (excetsEmployee.Result == false)
+            {
+                return Result<bool>.Failure("Failed to create user");
+            }
 
             var employee = new Employee
             {
@@ -76,6 +81,9 @@ namespace Employees.Application.Services
                 employee.Id,
                 dto.BranchId
             );
+            if (!userCreated)
+                return Result<bool>.Failure("Failed to create user");
+
             var target = (dto.ShiftHours ?? 0) * 26;
             await _monthlyDataRepository.CreateMonthlyDataAsync(
                 employee.Id,
@@ -87,8 +95,6 @@ namespace Employees.Application.Services
                 dto.Insurence,
                 dto.Holidaies
             );
-            if (!userCreated)
-                return Result<bool>.Failure("Failed to create user");
             await _employeeRepository.AddEmployeeBranchAsync(new EmployeeBranch
             {
                 EmployeeId = employee.Id,
