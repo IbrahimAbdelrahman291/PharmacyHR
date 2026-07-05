@@ -68,6 +68,7 @@ namespace Attendance.Application.Services
                 EmployeeId = employeeId,
                 Day = egyptDate,
                 Start = egyptTime,
+                IsEnd = false,
                 End = TimeOnly.MinValue
             };
 
@@ -99,8 +100,7 @@ namespace Attendance.Application.Services
             var endShift = egyptDate.ToDateTime(egyptTime);
             var totalTime = endShift - startDateTime;
             var allowCheckOutEmergency = startDateTime.AddMinutes(15);
-
-
+           
 
             if (egyptNow >= allowCheckOutEmergency)
             {
@@ -110,6 +110,7 @@ namespace Attendance.Application.Services
                     {
                         workLog.End = CheckOutTime;
                         workLog.TotalTime = allowedCheckOut - startDateTime;
+                        workLog.IsEnd = true;
                         await _workLogRepository.UpdateAsync(workLog);
                         await _monthlyDataRepository.AddHoursAsync(employeeId, totalWorkTime.TotalHours);
 
@@ -119,7 +120,7 @@ namespace Attendance.Application.Services
 
                 workLog.End = egyptTime;
                 workLog.TotalTime = totalTime;
-
+                workLog.IsEnd= true;
                 await _workLogRepository.UpdateAsync(workLog);
                 await _monthlyDataRepository.AddHoursAsync(employeeId, totalTime.TotalHours);
 

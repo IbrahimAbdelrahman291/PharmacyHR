@@ -27,5 +27,6 @@ namespace Payroll.Application.DTOs
         public double? NetSalary { get; set; }
         public string? BankName { get; set; }
         public string? BankAccount { get; set; }
+        public double? SalaryPerHour { get; set; }
     }
 }

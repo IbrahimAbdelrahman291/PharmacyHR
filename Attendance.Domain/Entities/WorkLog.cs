@@ -8,6 +8,7 @@ namespace Attendance.Domain.Entities
         public DateOnly Day { get; set; }
         public TimeOnly Start { get; set; }
         public TimeOnly End { get; set; }
+        public bool IsEnd { get; set; } = false;
         public TimeSpan TotalTime { get; set; }
     }
 }

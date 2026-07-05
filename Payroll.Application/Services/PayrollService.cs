@@ -167,7 +167,9 @@ namespace Payroll.Application.Services
                     TotalBouns = data.TotalBouns,
                     TotalBorrows = data.TotalBorrows,
                     TotalCashBorrows = data.TotalCashBorrows,
-                    NetSalary = data.NetSalary
+                    NetSalary = data.NetSalary,
+                    SalaryPerHour = data.SalaryPerHour,
+
                 });
             }
 

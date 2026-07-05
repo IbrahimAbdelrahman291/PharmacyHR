@@ -279,7 +279,7 @@ namespace Employees.Application.Services
             var DeleteEmployeeTask = _employeeRepository.DeleteAsync(id);
             return DeleteEmployeeTask.ContinueWith(task =>
             {
-                if (task.IsCompletedSuccessfully)
+                if (DeleteEmployeeTask.Result == true)
                 {
                     return Result<bool>.Success(true);
                 }
