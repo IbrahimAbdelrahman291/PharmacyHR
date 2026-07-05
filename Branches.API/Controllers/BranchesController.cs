@@ -18,7 +18,7 @@ namespace Branches.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = UserRoles.Admin)]
+        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Admin}")]
         public async Task<IActionResult> Add([FromBody] CreateBranchDto dto)
         {
             var result = await _service.AddAsync(dto);
@@ -29,7 +29,7 @@ namespace Branches.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = UserRoles.Admin)]
+        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Admin}")]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _service.DeleteAsync(id);
@@ -40,7 +40,7 @@ namespace Branches.API.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Control},{UserRoles.HR},{UserRoles.AreaManager},{UserRoles.Accountant},{UserRoles.CEO}")]
         public async Task<IActionResult> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
             var result = await _service.GetAllAsync(page, pageSize);
