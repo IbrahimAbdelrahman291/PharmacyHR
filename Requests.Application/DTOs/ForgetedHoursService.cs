@@ -11,15 +11,19 @@ namespace Requests.Application.DTOs
         private readonly IForgetedHoursRepository _repository;
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IMonthlyDataRepository _monthlyDataRepository;
+        private readonly IBranchRepository _branchRepository;
 
         public ForgetedHoursService(
             IForgetedHoursRepository repository,
             IEmployeeRepository employeeRepository,
-            IMonthlyDataRepository monthlyDataRepository)
+            IMonthlyDataRepository monthlyDataRepository,
+            SharedKernel.Interfaces.IBranchRepository branchRepository
+            )
         {
             _repository = repository;
             _employeeRepository = employeeRepository;
             _monthlyDataRepository = monthlyDataRepository;
+            _branchRepository = branchRepository;
         }
 
         public async Task<Result<bool>> AddAsync(int employeeId, CreateForgetedHoursDto dto)
@@ -59,11 +63,13 @@ namespace Requests.Application.DTOs
             foreach (var request in requests)
             {
                 var employeeInfo = await _employeeRepository.GetEmployeeBasicInfoAsync(request.EmployeeId);
+                var brachName = await _branchRepository.GetBranchByIdAsync(employeeInfo.Value.BranchId);
                 dtos.Add(new ForgetedHoursDto
                 {
                     Id = request.Id,
                     EmployeeId = request.EmployeeId,
                     EmployeeName = employeeInfo?.Name ?? string.Empty,
+                    BranchName = brachName.Value.Name ?? string.Empty,
                     Reason = request.Reason,
                     Notes = request.Notes,
                     ShiftDate = request.ShiftDate,

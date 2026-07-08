@@ -14,17 +14,21 @@ namespace Requests.Application.Services
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IMonthlyDataRepository _monthlyDataRepository;
         private readonly IAuthRepository _authRepository;
+        private readonly IBranchRepository _branchRepository;
 
         public HolidayService(
             IHolidayRepository repository,
             IEmployeeRepository employeeRepository,
             IMonthlyDataRepository monthlyDataRepository,
-            IAuthRepository authRepository)
+            IAuthRepository authRepository,
+            SharedKernel.Interfaces.IBranchRepository branchRepository
+            )
         {
             _repository = repository;
             _employeeRepository = employeeRepository;
             _monthlyDataRepository = monthlyDataRepository;
             _authRepository = authRepository;
+            _branchRepository = branchRepository;
         }
 
         public async Task<Result<bool>> AddAsync(int employeeId, CreateHolidayDto dto)
@@ -80,11 +84,13 @@ namespace Requests.Application.Services
             foreach (var request in requests)
             {
                 var employeeInfo = await _employeeRepository.GetEmployeeBasicInfoAsync(request.EmployeeId);
+                var branchName = await _branchRepository.GetBranchByIdAsync(employeeInfo.Value.BranchId);
                 dtos.Add(new HolidayDto
                 {
                     Id = request.Id,
                     EmployeeId = request.EmployeeId,
                     EmployeeName = employeeInfo?.Name ?? string.Empty,
+                    BranchName = branchName.Value.Name,
                     FromDate = request.FromDate,
                     ToDate = request.ToDate,
                     TotalDays = request.TotalDays,

@@ -5,6 +5,7 @@
         public int Id { get; set; }
         public int EmployeeId { get; set; }
         public string EmployeeName { get; set; } = string.Empty;
+        public string BranchName { get; set; } = string.Empty;
         public string AreaManagerUserId { get; set; } = string.Empty;
         public DateTime RequestDate { get; set; }
         public string Status { get; set; } = string.Empty;

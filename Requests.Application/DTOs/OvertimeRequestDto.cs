@@ -7,6 +7,7 @@ namespace Requests.Application.DTOs
         public int Id { get; set; }
         public int EmployeeId { get; set; }
         public string EmployeeName { get; set; } = string.Empty;
+        public string BranchName { get; set; } = string.Empty;
         public double Hours { get; set; }
         public string? Notes { get; set; }
         public DateTime DateOfShift { get; set; }

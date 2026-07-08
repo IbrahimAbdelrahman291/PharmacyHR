@@ -11,13 +11,17 @@ namespace Requests.Application.Services
     {
         private readonly IResignationRepository _repository;
         private readonly IEmployeeRepository _employeeRepository;
+        private readonly IBranchRepository _branchRepository;
 
         public ResignationService(
             IResignationRepository repository,
-            IEmployeeRepository employeeRepository)
+            IEmployeeRepository employeeRepository,
+            SharedKernel.Interfaces.IBranchRepository branchRepository
+            )
         {
             _repository = repository;
             _employeeRepository = employeeRepository;
+            _branchRepository = branchRepository;
         }
 
         public async Task<Result<bool>> AddAsync(int employeeId, CreateResignationDto dto)
@@ -48,11 +52,13 @@ namespace Requests.Application.Services
             foreach (var request in requests)
             {
                 var employeeInfo = await _employeeRepository.GetEmployeeBasicInfoAsync(request.EmployeeId);
+                var branchName = await _branchRepository.GetBranchByIdAsync(employeeInfo.Value.BranchId);
                 dtos.Add(new ResignationDto
                 {
                     Id = request.Id,
                     EmployeeId = request.EmployeeId,
                     EmployeeName = employeeInfo?.Name ?? string.Empty,
+                    BranchName = branchName?.Name ?? string.Empty,
                     Reason = request.Reason,
                     RequestDate = request.RequestDate,
                     Status = request.Status,

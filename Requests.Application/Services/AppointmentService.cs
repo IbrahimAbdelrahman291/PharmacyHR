@@ -12,15 +12,19 @@ namespace Requests.Application.Services
         private readonly IAppointmentRepository _repository;
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IEmployeeTypeRepository _employeeTypeRepository;
+        private readonly IBranchRepository _branchRepository;
 
         public AppointmentService(
             IAppointmentRepository repository,
             IEmployeeRepository employeeRepository,
-            IEmployeeTypeRepository employeeTypeRepository)
+            IEmployeeTypeRepository employeeTypeRepository,
+            SharedKernel.Interfaces.IBranchRepository branchRepository
+            )
         {
             _repository = repository;
             _employeeRepository = employeeRepository;
             _employeeTypeRepository = employeeTypeRepository;
+            _branchRepository = branchRepository;
         }
 
         public async Task<Result<bool>> AddAsync(string areaManagerUserId, CreateAppointmentRequestDto dto)
@@ -50,11 +54,13 @@ namespace Requests.Application.Services
             foreach (var request in requests)
             {
                 var employeeInfo = await _employeeRepository.GetEmployeeBasicInfoAsync(request.EmployeeId);
+                var branchName = await _branchRepository.GetBranchByIdAsync(employeeInfo.Value.BranchId);
                 dtos.Add(new AppointmentRequestDto
                 {
                     Id = request.Id,
                     EmployeeId = request.EmployeeId,
                     EmployeeName = employeeInfo?.Name ?? string.Empty,
+                    BranchName = branchName?.Name ?? string.Empty,
                     AreaManagerUserId = request.AreaManagerUserId,
                     RequestDate = request.RequestDate,
                     Status = request.Status,

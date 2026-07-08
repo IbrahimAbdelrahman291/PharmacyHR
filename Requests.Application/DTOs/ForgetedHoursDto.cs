@@ -9,6 +9,7 @@ namespace Requests.Application.DTOs
         public int Id { get; set; }
         public int EmployeeId { get; set; }
         public string EmployeeName { get; set; } = string.Empty;
+        public string BranchName { get; set; } = string.Empty;
         public string Reason { get; set; } = string.Empty;
         public string? Notes { get; set; }
         public DateOnly ShiftDate { get; set; }

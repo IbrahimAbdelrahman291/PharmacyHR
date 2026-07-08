@@ -12,15 +12,19 @@ namespace Requests.Application.Services
         private readonly IComplaintRepository _repository;
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IAuthRepository _authRepository;
+        private readonly IBranchRepository _branchRepository;
 
         public ComplaintService(
             IComplaintRepository repository,
             IEmployeeRepository employeeRepository,
-            IAuthRepository authRepository)
+            IAuthRepository authRepository,
+            SharedKernel.Interfaces.IBranchRepository branchRepository
+            )
         {
             _repository = repository;
             _employeeRepository = employeeRepository;
             _authRepository = authRepository;
+            _branchRepository = branchRepository;
         }
 
         public async Task<Result<bool>> AddAsync(int employeeId, CreateComplaintDto dto)
@@ -69,11 +73,13 @@ namespace Requests.Application.Services
             foreach (var complaint in complaints)
             {
                 var employeeInfo = await _employeeRepository.GetEmployeeBasicInfoAsync(complaint.EmployeeId);
+                var branchName = await _branchRepository.GetBranchByIdAsync(employeeInfo.Value.BranchId);
                 dtos.Add(new ComplaintDto
                 {
                     Id = complaint.Id,
                     EmployeeId = complaint.EmployeeId,
                     EmployeeName = employeeInfo?.Name ?? string.Empty,
+                    BranchName = branchName?.Name ?? string.Empty,
                     Content = complaint.Content,
                     RecipientRole = complaint.RecipientRole,
                     Status = complaint.Status,

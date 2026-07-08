@@ -12,15 +12,19 @@ namespace Requests.Application.Services
         private readonly IBorrowRepository _repository;
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IMonthlyDataRepository _monthlyDataRepository;
+        private readonly IBranchRepository _branchRepository;
 
         public BorrowService(
             IBorrowRepository repository,
             IEmployeeRepository employeeRepository,
-            IMonthlyDataRepository monthlyDataRepository)
+            IMonthlyDataRepository monthlyDataRepository,
+            SharedKernel.Interfaces.IBranchRepository branchRepository
+            )
         {
             _repository = repository;
             _employeeRepository = employeeRepository;
             _monthlyDataRepository = monthlyDataRepository;
+            _branchRepository = branchRepository;
         }
 
         public async Task<Result<bool>> AddBorrowRequestAsync(int employeeId, CreateBorrowRequestDto dto)
@@ -67,11 +71,13 @@ namespace Requests.Application.Services
             foreach (var request in requests)
             {
                 var employeeInfo = await _employeeRepository.GetEmployeeBasicInfoAsync(request.EmployeeId);
+                var branchName = await _branchRepository.GetBranchByIdAsync(employeeInfo.Value.BranchId);
                 dtos.Add(new BorrowRequestDto
                 {
                     Id = request.Id,
                     EmployeeId = request.EmployeeId,
                     EmployeeName = employeeInfo?.Name ?? string.Empty,
+                    BranchName = branchName?.Name ?? string.Empty,
                     Amount = request.Amount,
                     Notes = request.Notes,
                     RequestDate = request.RequestDate,
