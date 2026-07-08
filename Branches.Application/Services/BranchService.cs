@@ -17,7 +17,13 @@ namespace Branches.Application.Services
 
         public async Task<Result<bool>> AddAsync(CreateBranchDto dto)
         {
-            var branch = new Branch { Name = dto.Name };
+            var branch = new Branch 
+            { 
+                Name = dto.Name,
+                TargetNumberOfEmployees = dto.TargetNumberOfEmployees,
+                TargetSalaries = dto.TargetSalaries,
+                TargetHours = dto.TargetHours,
+            };
             await _repository.AddAsync(branch);
             return Result<bool>.Success(true);
         }
@@ -39,7 +45,11 @@ namespace Branches.Application.Services
             var dtos = branches.Select(b => new BranchDto
             {
                 Id = b.Id,
-                Name = b.Name
+                Name = b.Name,
+                TargetNumberOfEmployees = b.TargetNumberOfEmployees,
+                TargetSalaries = b.TargetSalaries,
+                TargetHours = b.TargetHours,
+                
             }).ToList();
 
             return Result<PaginatedResponse<BranchDto>>.Success(new PaginatedResponse<BranchDto>
@@ -49,6 +59,23 @@ namespace Branches.Application.Services
                 Page = page,
                 PageSize = pageSize
             });
+        }
+
+        public async Task<Result<bool>> UpdateAsync(int id, UpdateBranchDto dto)
+        {
+            var branch = await _repository.GetByIdAsync(id);
+            if (branch is null)
+                return Result<bool>.Failure("Branch not found");
+
+            branch.TargetNumberOfEmployees = dto.TargetNumberOfEmployees ?? branch.TargetNumberOfEmployees;
+            branch.TargetSalaries = dto.TargetSalaries ?? branch.TargetSalaries;
+            branch.TargetHours = dto.TargetHours ?? branch.TargetHours;
+
+            var result = await _repository.UpdateAsync(branch);
+            if (!result)
+                return Result<bool>.Failure("Failed to update branch");
+
+            return Result<bool>.Success(true);
         }
     }
 }

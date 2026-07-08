@@ -27,6 +27,17 @@ namespace Branches.API.Controllers
 
             return Ok(new { message = "Branch added successfully" });
         }
+        [HttpPut("{id}")]
+        [Authorize(Roles = UserRoles.Admin)]
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateBranchDto dto)
+        {
+            var result = await _service.UpdateAsync(id, dto);
+            if (!result.IsSuccess)
+                return NotFound(new { message = result.Error });
+            
+            return Ok(new { message = "Branch updated successfully" });
+        }
+        
 
         [HttpDelete("{id}")]
         [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Admin}")]

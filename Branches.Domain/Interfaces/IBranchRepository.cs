@@ -8,6 +8,7 @@ namespace Branches.Domain.Interfaces
     public interface IBranchRepository
     {
         Task<bool> AddAsync(Branch branch);
+        Task<bool> UpdateAsync(Branch branch);
         Task<bool> DeleteAsync(int id);
         Task<IList<Branch>> GetAllAsync(int page, int pageSize);
         Task<int> GetTotalCountAsync();

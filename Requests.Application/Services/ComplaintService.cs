@@ -98,7 +98,7 @@ namespace Requests.Application.Services
             if (complaint is null)
                 return Result<bool>.Failure("Complaint not found");
 
-            if (role == "AreaManager" || role == "CEO")
+            if (role == "AreaManager")
             {
                 if (complaint.RecipientUserId != userId)
                     return Result<bool>.Failure("غير مسموح لك بالرد على هذه الشكوى");

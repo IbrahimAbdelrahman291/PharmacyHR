@@ -50,5 +50,12 @@ namespace Branches.Infrastructure.Repositories
             if (branch is null) return null;
             return (branch.Id, branch.Name);
         }
+
+        public async Task<bool> UpdateAsync(Branch branch)
+        {
+            _context.Branches.Update(branch);
+            var result = await _context.SaveChangesAsync();
+            return result > 0 ? true : false;
+        }
     }
 }
