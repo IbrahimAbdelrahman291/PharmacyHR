@@ -7,6 +7,7 @@ namespace Requests.Domain.Entities
         public int EmployeeId { get; set; }
         public double Hours { get; set; }
         public string? Notes { get; set; }
+        public string? NameOfLateEmployee { get; set; } = null;
         public DateTime RequestDate { get; set; }
         public DateTime DateShift { get; set; }
         public string Status { get; set; } = "Pending";

@@ -108,15 +108,29 @@ namespace Identity.Infrastructure.Repositories
         }
         public async Task<bool> AddAreaManagerBranchesAsync(string userId, IList<int> branchIds)
         {
-            var branches = branchIds.Select(branchId => new AreaManagerBranch
+            var result = (string?)null;
+            foreach (var branch in branchIds)
             {
-                UserId = userId,
-                BranchId = branchId
-            }).ToList();
+                result = await GetAreaManagerByBranchIdAsync(branch);
+            }
+            if (result is null)
+            {
 
-            await _context.AreaManagerBranches.AddRangeAsync(branches);
-            await _context.SaveChangesAsync();
-            return true;
+                var branches = branchIds.Select(branchId => new AreaManagerBranch
+                {
+                    UserId = userId,
+                    BranchId = branchId
+                }).ToList();
+
+                await _context.AreaManagerBranches.AddRangeAsync(branches);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
         }
 
         public async Task<IList<int>> GetAreaManagerBranchesAsync(string userId)
@@ -133,10 +147,9 @@ namespace Identity.Infrastructure.Repositories
         }
         public async Task<bool> AddAreaManagerBranchAsync(string userId, int branchId)
         {
-            var exists = await _context.AreaManagerBranches
-                .AnyAsync(x => x.UserId == userId && x.BranchId == branchId);
-            if (exists) return false;
-
+            var result = await GetAreaManagerByBranchIdAsync(branchId);
+            
+            if (result is not null) return false;
             await _context.AreaManagerBranches.AddAsync(new AreaManagerBranch
             {
                 UserId = userId,
