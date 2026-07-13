@@ -63,13 +63,17 @@ namespace Requests.Application.DTOs
             foreach (var request in requests)
             {
                 var employeeInfo = await _employeeRepository.GetEmployeeBasicInfoAsync(request.EmployeeId);
+                if (!employeeInfo.HasValue)
+                {
+                    continue;
+                }
                 var brachName = await _branchRepository.GetBranchByIdAsync(employeeInfo.Value.BranchId);
                 dtos.Add(new ForgetedHoursDto
                 {
                     Id = request.Id,
                     EmployeeId = request.EmployeeId,
                     EmployeeName = employeeInfo?.Name ?? string.Empty,
-                    BranchName = brachName.Value.Name ?? string.Empty,
+                    BranchName = brachName?.Name ?? string.Empty,
                     Reason = request.Reason,
                     Notes = request.Notes,
                     ShiftDate = request.ShiftDate,

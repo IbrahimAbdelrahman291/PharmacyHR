@@ -52,6 +52,10 @@ namespace Requests.Application.Services
             foreach (var request in requests)
             {
                 var employeeInfo = await _employeeRepository.GetEmployeeBasicInfoAsync(request.EmployeeId);
+                if (!employeeInfo.HasValue)
+                {
+                    continue;
+                }
                 var branchName = await _branchRepository.GetBranchByIdAsync(employeeInfo.Value.BranchId);
                 dtos.Add(new ResignationDto
                 {

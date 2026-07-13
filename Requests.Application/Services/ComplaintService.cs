@@ -73,6 +73,10 @@ namespace Requests.Application.Services
             foreach (var complaint in complaints)
             {
                 var employeeInfo = await _employeeRepository.GetEmployeeBasicInfoAsync(complaint.EmployeeId);
+                if (!employeeInfo.HasValue)
+                {
+                    continue;
+                }
                 var branchName = await _branchRepository.GetBranchByIdAsync(employeeInfo.Value.BranchId);
                 dtos.Add(new ComplaintDto
                 {

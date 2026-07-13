@@ -84,13 +84,17 @@ namespace Requests.Application.Services
             foreach (var request in requests)
             {
                 var employeeInfo = await _employeeRepository.GetEmployeeBasicInfoAsync(request.EmployeeId);
+                if (!employeeInfo.HasValue)
+                {
+                    continue;
+                }
                 var branchName = await _branchRepository.GetBranchByIdAsync(employeeInfo.Value.BranchId);
                 dtos.Add(new HolidayDto
                 {
                     Id = request.Id,
                     EmployeeId = request.EmployeeId,
                     EmployeeName = employeeInfo?.Name ?? string.Empty,
-                    BranchName = branchName.Value.Name,
+                    BranchName = branchName?.Name ?? string.Empty,
                     FromDate = request.FromDate,
                     ToDate = request.ToDate,
                     TotalDays = request.TotalDays,

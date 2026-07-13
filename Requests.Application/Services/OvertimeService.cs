@@ -70,6 +70,10 @@ namespace Requests.Application.Services
             foreach (var request in requests)
             {
                 var employeeInfo = await _employeeRepository.GetEmployeeBasicInfoAsync(request.EmployeeId);
+                if (!employeeInfo.HasValue)
+                {
+                    continue;
+                }
                 var branchName = await _branchRepository.GetBranchByIdAsync(employeeInfo.Value.BranchId);
                 dtos.Add(new OvertimeRequestDto
                 {
@@ -77,7 +81,7 @@ namespace Requests.Application.Services
                     EmployeeId = request.EmployeeId,
                     EmployeeName = employeeInfo?.Name ?? string.Empty,
                     NameOfLateEmployee = request.NameOfLateEmployee ?? string.Empty,
-                    BranchName = branchName.Value.Name,
+                    BranchName = branchName?.Name ?? string.Empty,
                     Hours = request.Hours,
                     Notes = request.Notes,
                     DateOfShift = request.DateShift,
