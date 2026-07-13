@@ -171,6 +171,7 @@ namespace Employees.Application.Services
             if (employee is null)
                 return Result<bool>.Failure("Employee not found");
 
+            if(dto.Name is not null) employee.Name = dto.Name;
             if (dto.theNameOfJob is not null) employee.theNameOfJob = dto.theNameOfJob;
             if (dto.BankId.HasValue) employee.BankId = dto.BankId;
             if (dto.BankAccount is not null) employee.BankAccount = dto.BankAccount;

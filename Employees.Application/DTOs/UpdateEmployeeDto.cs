@@ -6,6 +6,7 @@ namespace Employees.Application.DTOs
 {
     public class UpdateEmployeeDto
     {
+        public string? Name { get; set; }
         public string? theNameOfJob { get; set; }
         public int? BankId { get; set; }
         public string? BankAccount { get; set; }
