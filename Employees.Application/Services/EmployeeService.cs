@@ -118,6 +118,7 @@ namespace Employees.Application.Services
                 Id = employee.Id,
                 Name = employee.Name,
                 Role = employee.Role,
+                IsHaveNightShift = employee.IsHaveNightShift ?? false,
                 theNameOfJob = employee.theNameOfJob,
                 BankId = employee.BankId,
                 BankName = bank?.Name,
@@ -171,6 +172,8 @@ namespace Employees.Application.Services
             if (employee is null)
                 return Result<bool>.Failure("Employee not found");
 
+
+            if (dto.IsHaveNightShift is not null) employee.IsHaveNightShift = dto.IsHaveNightShift;
             if(dto.Name is not null) employee.Name = dto.Name;
             if (dto.theNameOfJob is not null) employee.theNameOfJob = dto.theNameOfJob;
             if (dto.BankId.HasValue) employee.BankId = dto.BankId;

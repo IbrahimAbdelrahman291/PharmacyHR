@@ -9,6 +9,7 @@ namespace Employees.Domain.Entities
     {
         public string Name { get; set; } = string.Empty;
         public string Role { get; set; } = string.Empty; // static, changable, delivery
+        public bool? IsHaveNightShift { get; set; } = false;
         public string? theNameOfJob { get; set; }
         public int? BankId { get; set; }
         public string? BankAccount { get; set; }

@@ -9,6 +9,7 @@ namespace Employees.Application.DTOs
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Role { get; set; } = string.Empty;
+        public bool? IsHaveNightShift { get; set; } = false;
         public string? theNameOfJob { get; set; }
         public int? BankId { get; set; }
         public string? BankName { get; set; }
