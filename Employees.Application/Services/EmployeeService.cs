@@ -56,6 +56,7 @@ namespace Employees.Application.Services
                 BankId = dto.BankId,
                 BankAccount = dto.BankAccount,
                 ShiftHours = dto.ShiftHours,
+                IsHaveNightShift = false,
                 BranchId = dto.BranchId,
                 UserId = string.Empty,
                 EmployeeType = dto.EmployeeType,
