@@ -83,7 +83,7 @@ namespace Identity.API.Controllers
             var result = await _authService.AddAreaManagerBranchAsync(userId, branchId);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
-            return Ok(new { message = "Branch added successfully" });
+            return Ok(new { message = "تم اضافة الفرع بنجاح" });
         }
 
         [HttpDelete("users/{userId}/branches/{branchId}")]
@@ -93,7 +93,7 @@ namespace Identity.API.Controllers
             var result = await _authService.RemoveAreaManagerBranchAsync(userId, branchId);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
-            return Ok(new { message = "Branch removed successfully" });
+            return Ok(new { message = "تم مسح الفرع بنجاح" });
         }
     }
 }

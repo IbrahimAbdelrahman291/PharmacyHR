@@ -142,7 +142,6 @@ namespace Requests.Application.Services
                 request.Status = "Rejected";
             }
 
-            request.IsSeenByHR = false;
             await _repository.UpdateAsync(request);
             return Result<bool>.Success(true);
         }

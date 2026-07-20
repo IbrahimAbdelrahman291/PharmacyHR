@@ -184,7 +184,7 @@ namespace Identity.Application.Services
         {
             var result = await _authRepository.AddAreaManagerBranchAsync(userId, branchId);
             if (!result)
-                return Result<bool>.Failure("Branch already exists for this Area Manager");
+                return Result<bool>.Failure("الفرع موجود بالفعل عند مدير اريا اخر");
             return Result<bool>.Success(true);
         }
 
@@ -192,7 +192,7 @@ namespace Identity.Application.Services
         {
             var result = await _authRepository.RemoveAreaManagerBranchAsync(userId, branchId);
             if (!result)
-                return Result<bool>.Failure("Branch not found for this Area Manager");
+                return Result<bool>.Failure("هذا الفرع غير موجود لمدير الاريا");
             return Result<bool>.Success(true);
         }
     }
