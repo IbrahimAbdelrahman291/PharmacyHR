@@ -51,6 +51,12 @@ namespace Payroll.Application.Services
 
             if (dto.TotalSalary.HasValue)
                 await _sharedRepository.UpdateSalaryAsync(employeeId, dto.TotalSalary.Value);
+            
+            if (dto.Holidays.HasValue)
+                await _sharedRepository.UpdateHolidays(employeeId, dto.Holidays.Value);
+            
+            if (dto.HolidaysHours.HasValue)
+                await _sharedRepository.UpdateHolidaysHours(employeeId, dto.HolidaysHours.Value);
 
             if (dto.SalaryPerHour.HasValue)
                 await _sharedRepository.UpdateSalaryPerHourAsync(employeeId, dto.SalaryPerHour.Value);

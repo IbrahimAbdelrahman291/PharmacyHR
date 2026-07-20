@@ -175,7 +175,7 @@ namespace Employees.Application.Services
 
 
             if (dto.IsHaveNightShift is not null) employee.IsHaveNightShift = dto.IsHaveNightShift;
-            if(dto.Name is not null) employee.Name = dto.Name;
+            if (dto.Name is not null) employee.Name = dto.Name;
             if (dto.theNameOfJob is not null) employee.theNameOfJob = dto.theNameOfJob;
             if (dto.BankId.HasValue) employee.BankId = dto.BankId;
             if (dto.BankAccount is not null) employee.BankAccount = dto.BankAccount;

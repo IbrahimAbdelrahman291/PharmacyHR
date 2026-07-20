@@ -73,7 +73,7 @@ namespace Payroll.Infrastructure.Repositories
             var data = await GetCurrentAsync(employeeId);
             if (data is null) return;
             data.HolidayHours = (data.HolidayHours ?? 0) + hours;
-            data.Holidaies = (data.Holidaies ?? 0) - TotalDays;
+            data.Holidaies = (data.Holidaies) - TotalDays;
             await RecalculateNetSalaryAsync(data);
             await _context.SaveChangesAsync();
         }
@@ -231,6 +231,22 @@ namespace Payroll.Infrastructure.Repositories
             await RecalculateNetSalaryAsync(data);
             await _context.SaveChangesAsync();
         }
+        public async Task UpdateHolidays(int employeeId, int Holidays)
+        {
+            var data = await GetCurrentAsync(employeeId);
+            if (data is null) return;
+            data.Holidaies = Holidays;
+            await _context.SaveChangesAsync();
+        }
+        public async Task UpdateHolidaysHours(int employeeId, double HolidayHours)
+        {
+            var data = await GetCurrentAsync(employeeId);
+            if (data is null) return;
+            data.HolidayHours = HolidayHours;
+            await RecalculateNetSalaryAsync(data);
+            await _context.SaveChangesAsync();
+        }
+
 
         public async Task<MonthlyEmployeeData?> GetCurrentMonthAsync(int employeeId)
             => await GetCurrentAsync(employeeId);
@@ -525,7 +541,7 @@ namespace Payroll.Infrastructure.Repositories
             var egyptNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, egyptTimeZone);
 
             var Holiydays = await _context.MonthlyEmployeeData
-                .Where(x => x.EmployeeId == employeeId)
+                .Where(x => x.EmployeeId == employeeId && x.Month == egyptNow.Month && x.Year == egyptNow.Year)
                 .Select(x => x.Holidaies)
                 .FirstOrDefaultAsync();
 

@@ -11,6 +11,8 @@ namespace Payroll.Application.DTOs
         public double? Insurence { get; set; }
         public double? HoursOverTime { get; set; }
         public double? ForgetedHours { get; set; }
+        public int? Holidays { get; set; }
+        public double? HolidaysHours { get; set; }
 
     }
 }

@@ -55,7 +55,7 @@ namespace Employees.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Admin},{UserRoles.AreaManager},{UserRoles.CEO}")]
+        [Authorize(Roles = $"{UserRoles.HR},{UserRoles.Admin},{UserRoles.AreaManager},{UserRoles.CEO},{UserRoles.Accountant}")]
         public async Task<IActionResult> GetAll(
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 10,

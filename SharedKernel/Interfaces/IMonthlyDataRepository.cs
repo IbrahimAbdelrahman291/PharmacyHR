@@ -19,6 +19,8 @@ namespace SharedKernel.Interfaces
         Task UpdateSalaryAsync(int employeeId, double totalSalary);
         Task UpdateSalaryPerHourAsync(int employeeId, double salaryPerHour);
         Task UpdateInsurenceAsync(int employeeId, double amount);
+        Task UpdateHolidays(int employeeId, int Holidays);
+        Task UpdateHolidaysHours(int employeeId, double HolidayHours);
         Task<bool> DeleteDiscountAsync(int id);
         Task<bool> DeleteContractDiscountAsync(int id);
         Task<bool> DeleteBonusAsync(int id);

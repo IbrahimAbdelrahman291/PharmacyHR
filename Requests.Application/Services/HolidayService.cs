@@ -43,7 +43,7 @@ namespace Requests.Application.Services
             if (Holiday is null)
                 return Result<bool>.Failure("لا توجد بيانات شهرية للموظف");
 
-            if ((Holiday ?? 0) < totalDays)
+            if (Holiday < totalDays)
                 return Result<bool>.Failure("رصيد الإجازات غير كافي");
 
             // جيب الـ Area Manager المسؤل عن الفرع
@@ -60,7 +60,7 @@ namespace Requests.Application.Services
                 ToDate = dto.ToDate,
                 TotalDays = totalDays,
                 Status = "Pending",
-                AreaManagerUserId = areaManagerUserId,
+                AreaManagerUserId = areaManagerUserId ?? string.Empty,
                 RequestDate = egyptNow,
                 IsSeenByHR = false,
                 IsSeenByEmployee = true
@@ -79,7 +79,7 @@ namespace Requests.Application.Services
 
             var requests = await _repository.GetAllAsync(employeeId, isSeenByHR, filterAreaManagerUserId, page, pageSize);
             var totalCount = await _repository.GetTotalCountAsync(employeeId, isSeenByHR, filterAreaManagerUserId);
-
+            
             var dtos = new List<HolidayDto>();
             foreach (var request in requests)
             {
@@ -88,6 +88,7 @@ namespace Requests.Application.Services
                 {
                     continue;
                 }
+                var areaManager = await _authRepository.GetAreaManagerByBranchIdAsync(employeeInfo.Value.BranchId);
                 var branchName = await _branchRepository.GetBranchByIdAsync(employeeInfo.Value.BranchId);
                 dtos.Add(new HolidayDto
                 {
