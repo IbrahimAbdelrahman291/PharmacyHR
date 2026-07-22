@@ -36,7 +36,7 @@ namespace Payroll.Infrastructure.Repositories
             var totalBorrows = (data.TotalBorrows ?? 0) + (data.TotalCashBorrows ?? 0);
             var totalDiscounts = (data.TotalDiscounts ?? 0) + (data.TotalContractDiscount ?? 0);
             var insurance = data.Insurence ?? 0;
-            var totalBonus = (data.TotalBouns ?? 0);
+            var totalBonus = (data.TotalBouns ?? 0) ;
             var totalHours = (data.Hours ?? 0) + (data.HoursOverTime ?? 0)
                 + (data.ForgetedHours ?? 0) + (data.HolidayHours ?? 0);
 
