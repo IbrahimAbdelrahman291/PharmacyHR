@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Employees.Infrastructure.Migrations
 {
     [DbContext(typeof(EmployeesDbContext))]
-    [Migration("20260630221017_EmployeeInitialCreate")]
-    partial class EmployeeInitialCreate
+    [Migration("20260722012533_initialcreate")]
+    partial class initialcreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -61,6 +61,9 @@ namespace Employees.Infrastructure.Migrations
 
                     b.Property<string>("EmployeeType")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsHaveNightShift")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()

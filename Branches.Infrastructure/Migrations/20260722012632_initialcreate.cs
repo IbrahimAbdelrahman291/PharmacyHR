@@ -5,7 +5,7 @@
 namespace Branches.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class BranchesInitialCreate : Migration
+    public partial class initialcreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,7 +16,10 @@ namespace Branches.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TargetNumberOfEmployees = table.Column<int>(type: "int", nullable: true),
+                    TargetSalaries = table.Column<int>(type: "int", nullable: true),
+                    TargetHours = table.Column<double>(type: "float", nullable: true)
                 },
                 constraints: table =>
                 {

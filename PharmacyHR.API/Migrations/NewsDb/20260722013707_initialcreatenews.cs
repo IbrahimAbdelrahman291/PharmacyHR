@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PharmacyHR.API.Migrations.NewsDb
 {
     /// <inheritdoc />
-    public partial class NewsInitialCreate : Migration
+    public partial class initialcreatenews : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

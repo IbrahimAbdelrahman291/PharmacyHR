@@ -12,8 +12,8 @@ using PharmacyHR.API.News;
 namespace PharmacyHR.API.Migrations.NewsDb
 {
     [DbContext(typeof(NewsDbContext))]
-    [Migration("20260630222100_NewsInitialCreate")]
-    partial class NewsInitialCreate
+    [Migration("20260722013707_initialcreatenews")]
+    partial class initialcreatenews
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

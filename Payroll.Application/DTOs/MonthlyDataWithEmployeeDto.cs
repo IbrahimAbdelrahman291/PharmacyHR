@@ -24,6 +24,7 @@ namespace Payroll.Application.DTOs
         public double? TotalBouns { get; set; }
         public double? TotalBorrows { get; set; }
         public double? TotalCashBorrows { get; set; }
+        public double? TotalInstallmentsBorrow { get; set; }
         public double? NetSalary { get; set; }
         public string? BankName { get; set; }
         public string? BankAccount { get; set; }

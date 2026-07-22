@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Employees.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class EmployeeInitialCreate : Migration
+    public partial class initialcreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -129,6 +129,7 @@ namespace Employees.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsHaveNightShift = table.Column<bool>(type: "bit", nullable: true),
                     theNameOfJob = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BankId = table.Column<int>(type: "int", nullable: true),
                     BankAccount = table.Column<string>(type: "nvarchar(max)", nullable: true),

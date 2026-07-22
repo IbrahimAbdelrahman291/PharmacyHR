@@ -36,7 +36,7 @@ namespace Payroll.Infrastructure.Repositories
             var totalBorrows = (data.TotalBorrows ?? 0) + (data.TotalCashBorrows ?? 0);
             var totalDiscounts = (data.TotalDiscounts ?? 0) + (data.TotalContractDiscount ?? 0);
             var insurance = data.Insurence ?? 0;
-            var totalBonus = data.TotalBouns ?? 0;
+            var totalBonus = (data.TotalBouns ?? 0);
             var totalHours = (data.Hours ?? 0) + (data.HoursOverTime ?? 0)
                 + (data.ForgetedHours ?? 0) + (data.HolidayHours ?? 0);
 
@@ -175,7 +175,7 @@ namespace Payroll.Infrastructure.Repositories
         {
             var data = await GetCurrentAsync(employeeId);
             if (data is null) return;
-            data.TotalBorrows = (data.TotalBorrows ?? 0) + amount;
+            data.totalInstallmentBorrow = (data.totalInstallmentBorrow ?? 0) + amount;
             await RecalculateNetSalaryAsync(data);
             await _context.SaveChangesAsync();
         }
@@ -257,6 +257,7 @@ namespace Payroll.Infrastructure.Repositories
                 .Include(x => x.ContractDiscounts)
                 .Include(x => x.Bonuses)
                 .Include(x => x.CashBorrows)
+                .Include(x => x.totalInstallmentBorrow)
                 .FirstOrDefaultAsync(x => x.EmployeeId == employeeId
                     && x.Month == month
                     && x.Year == year);

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Attendance.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class AttendanceInitialCreate : Migration
+    public partial class initialcreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -21,6 +21,7 @@ namespace Attendance.Infrastructure.Migrations
                     Day = table.Column<DateOnly>(type: "date", nullable: false),
                     Start = table.Column<TimeOnly>(type: "time", nullable: false),
                     End = table.Column<TimeOnly>(type: "time", nullable: false),
+                    IsEnd = table.Column<bool>(type: "bit", nullable: false),
                     TotalTime = table.Column<TimeSpan>(type: "time", nullable: false)
                 },
                 constraints: table =>

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Payroll.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class PayrollInitialCreate : Migration
+    public partial class initialcreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -52,6 +52,7 @@ namespace Payroll.Infrastructure.Migrations
                     TotalContractDiscount = table.Column<double>(type: "float", nullable: true),
                     TotalBouns = table.Column<double>(type: "float", nullable: true),
                     TotalBorrows = table.Column<double>(type: "float", nullable: true),
+                    totalInstallmentBorrow = table.Column<double>(type: "float", nullable: true),
                     TotalCashBorrows = table.Column<double>(type: "float", nullable: true),
                     Holidaies = table.Column<int>(type: "int", nullable: true),
                     NetSalary = table.Column<double>(type: "float", nullable: true),

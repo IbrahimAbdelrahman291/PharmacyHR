@@ -274,6 +274,9 @@ namespace Payroll.Infrastructure.Migrations
                     b.Property<int>("Year")
                         .HasColumnType("int");
 
+                    b.Property<double?>("totalInstallmentBorrow")
+                        .HasColumnType("float");
+
                     b.HasKey("Id");
 
                     b.ToTable("MonthlyEmployeeData");

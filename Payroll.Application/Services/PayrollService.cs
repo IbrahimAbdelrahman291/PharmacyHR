@@ -173,6 +173,7 @@ namespace Payroll.Application.Services
                     TotalBouns = data.TotalBouns,
                     TotalBorrows = data.TotalBorrows,
                     TotalCashBorrows = data.TotalCashBorrows,
+                    TotalInstallmentsBorrow = data.totalInstallmentBorrow,
                     NetSalary = data.NetSalary,
                     SalaryPerHour = data.SalaryPerHour,
 
@@ -317,6 +318,7 @@ namespace Payroll.Application.Services
             TotalBouns = data.TotalBouns,
             TotalBorrows = data.TotalBorrows,
             TotalCashBorrows = data.TotalCashBorrows,
+            totalInstallmentBorrow = data.totalInstallmentBorrow,
             Holidaies = data.Holidaies,
             NetSalary = data.NetSalary,
             Discounts = data.Discounts.Select(d => new DiscountItemDto

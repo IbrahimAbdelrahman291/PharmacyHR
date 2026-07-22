@@ -12,8 +12,8 @@ using Payroll.Infrastructure.Data;
 namespace Payroll.Infrastructure.Migrations
 {
     [DbContext(typeof(PayrollDbContext))]
-    [Migration("20260630221239_PayrollInitialCreate")]
-    partial class PayrollInitialCreate
+    [Migration("20260722013051_initialcreate")]
+    partial class initialcreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -276,6 +276,9 @@ namespace Payroll.Infrastructure.Migrations
 
                     b.Property<int>("Year")
                         .HasColumnType("int");
+
+                    b.Property<double?>("totalInstallmentBorrow")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 

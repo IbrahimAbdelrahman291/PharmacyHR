@@ -21,6 +21,7 @@ namespace Payroll.Domain.Entities
         public double? TotalContractDiscount { get; set; }
         public double? TotalBouns { get; set; }
         public double? TotalBorrows { get; set; }
+        public double? totalInstallmentBorrow { get; set; }
         public double? TotalCashBorrows { get; set; }
         public int? Holidaies { get; set; }
         public double? NetSalary { get; set; }

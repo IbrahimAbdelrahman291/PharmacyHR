@@ -12,8 +12,8 @@ using Requests.Infrastructure.Data;
 namespace Requests.Infrastructure.Migrations
 {
     [DbContext(typeof(RequestsDbContext))]
-    [Migration("20260630221452_RequestsInitialCreate")]
-    partial class RequestsInitialCreate
+    [Migration("20260722013323_initialcreate")]
+    partial class initialcreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -335,6 +335,9 @@ namespace Requests.Infrastructure.Migrations
 
                     b.Property<bool>("IsSeenByHR")
                         .HasColumnType("bit");
+
+                    b.Property<string>("NameOfLateEmployee")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Branches.Infrastructure.Migrations
 {
     [DbContext(typeof(BranchesDbContext))]
-    [Migration("20260708160636_AddBranchTargetFeature")]
-    partial class AddBranchTargetFeature
+    [Migration("20260722012632_initialcreate")]
+    partial class initialcreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,6 +35,9 @@ namespace Branches.Infrastructure.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("TargetHours")
+                        .HasColumnType("float");
 
                     b.Property<int?>("TargetNumberOfEmployees")
                         .HasColumnType("int");

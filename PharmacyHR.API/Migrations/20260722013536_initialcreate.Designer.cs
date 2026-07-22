@@ -12,8 +12,8 @@ using PharmacyHR.API.Audit;
 namespace PharmacyHR.API.Migrations
 {
     [DbContext(typeof(AuditDbContext))]
-    [Migration("20260630222311_AuditInitialCreate")]
-    partial class AuditInitialCreate
+    [Migration("20260722013536_initialcreate")]
+    partial class initialcreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
