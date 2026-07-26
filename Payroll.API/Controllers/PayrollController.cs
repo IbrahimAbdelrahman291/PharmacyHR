@@ -230,7 +230,7 @@ namespace Payroll.API.Controllers
             return Ok(new { message = "Bulk bonus added successfully" });
         }
         [HttpGet("monthly-data")]
-        [Authorize(Roles = UserRoles.Accountant)]
+        [Authorize(Roles = $"{UserRoles.Accountant},{UserRoles.CEO}")]
         public async Task<IActionResult> GetAllMonthlyData([FromQuery] int month,[FromQuery] int year,[FromQuery] int? branchId = null,int page = 1, int pageSize = 10)
         {
             var result = await _service.GetAllMonthlyDataAsync(month, year, branchId, page, pageSize);
