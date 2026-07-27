@@ -175,7 +175,7 @@ namespace Payroll.Infrastructure.Repositories
         {
             var data = await GetCurrentAsync(employeeId);
             if (data is null) return;
-            data.totalInstallmentBorrow = (data.totalInstallmentBorrow ?? 0) + amount;
+            data.TotalBorrows = (data.TotalBorrows ?? 0) + amount;
             await RecalculateNetSalaryAsync(data);
             await _context.SaveChangesAsync();
         }
