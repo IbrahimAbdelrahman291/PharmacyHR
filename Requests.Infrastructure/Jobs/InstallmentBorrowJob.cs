@@ -28,7 +28,7 @@ namespace Requests.Infrastructure.Jobs
                 var startDate = new DateTime(borrow.StartYear, borrow.StartMonth, 1);
                 if (egyptNow < startDate) continue;
 
-                await _monthlyDataRepository.AddBorrowAsync(borrow.EmployeeId, borrow.MonthlyAmount);
+                await _monthlyDataRepository.UpdateInstallmentBorrow(borrow.EmployeeId, borrow.MonthlyAmount);
 
                 borrow.RemainingMonths--;
                 if (borrow.RemainingMonths <= 0)

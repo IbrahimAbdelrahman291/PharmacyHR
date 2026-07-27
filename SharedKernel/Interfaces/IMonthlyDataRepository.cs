@@ -15,6 +15,7 @@ namespace SharedKernel.Interfaces
         Task AddContractDiscountAsync(int employeeId, double amount, string reason, string? notes);
         Task AddBonusAsync(int employeeId, double amount, string reason, string? notes);
         Task AddBorrowAsync(int employeeId, double amount);
+        Task UpdateInstallmentBorrow(int employeeId, double amount);
         Task AddCashBorrowAsync(int employeeId, double amount, string reason, string? notes);
         Task UpdateSalaryAsync(int employeeId, double totalSalary);
         Task UpdateSalaryPerHourAsync(int employeeId, double salaryPerHour);

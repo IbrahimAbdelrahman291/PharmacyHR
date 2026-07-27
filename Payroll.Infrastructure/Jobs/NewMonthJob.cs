@@ -55,6 +55,7 @@ namespace Payroll.Infrastructure.Jobs
                     TotalBouns = 0,
                     TotalBorrows = 0,
                     TotalCashBorrows = 0,
+                    totalInstallmentBorrow = 0,
                     TotalSalary = data.Role == "static" ? (data.TotalSalary - data.Insurence ?? 0) : 0,
                     SalaryPerHour = data.Role != "static" ? data.SalaryPerHour : null,
                     NetSalary = data.Role == "static" ? data.TotalSalary : 0,
