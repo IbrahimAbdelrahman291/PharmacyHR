@@ -574,23 +574,25 @@ namespace Payroll.Infrastructure.Repositories
                 if (employeeRole == "static")
                 {
                     totalSalary = await _context.MonthlyEmployeeData
-                        .Where(x => x.EmployeeId == employeeId)
+                        .Where(x => x.EmployeeId == employeeId
+                         && x.Month == egyptNow.Month
+                         && x.Year == egyptNow.Year)
                         .Select(x => x.TotalSalary)
                         .FirstOrDefaultAsync();
                     Quarter = totalSalary / 4;
                 }
                 else if (employeeRole == "changable")
                 {
-                    ShiftHours = await _context.MonthlyEmployeeData.Where(x => x.EmployeeId == employeeId).Select(x => x.Target).FirstOrDefaultAsync();;
-                    SalaryPerHour = await _context.MonthlyEmployeeData.Where(y => y.EmployeeId == employeeId).Select(y => y.SalaryPerHour).FirstOrDefaultAsync();
+                    ShiftHours = await _context.MonthlyEmployeeData.Where(x => x.EmployeeId == employeeId && x.Month == egyptNow.Month && x.Year == egyptNow.Year).Select(x => x.Target).FirstOrDefaultAsync();;
+                    SalaryPerHour = await _context.MonthlyEmployeeData.Where(y => y.EmployeeId == employeeId && y.Month == egyptNow.Month && y.Year == egyptNow.Year).Select(y => y.SalaryPerHour).FirstOrDefaultAsync();
 
                     totalSalary = (ShiftHours * SalaryPerHour) / 26;
                     Quarter = totalSalary / 4;
                 }
                 else if (employeeRole == "delivery") 
                 {
-                    ShiftHours = await _context.MonthlyEmployeeData.Where(x => x.EmployeeId == employeeId).Select(x => x.Target).FirstOrDefaultAsync(); ;
-                    SalaryPerHour = await _context.MonthlyEmployeeData.Where(y => y.EmployeeId == employeeId).Select(y => y.SalaryPerHour).FirstOrDefaultAsync();
+                    ShiftHours = await _context.MonthlyEmployeeData.Where(x => x.EmployeeId == employeeId && x.Month == egyptNow.Month && x.Year == egyptNow.Year).Select(x => x.Target).FirstOrDefaultAsync(); ;
+                    SalaryPerHour = await _context.MonthlyEmployeeData.Where(y => y.EmployeeId == employeeId && y.Month == egyptNow.Month && y.Year == egyptNow.Year).Select(y => y.SalaryPerHour).FirstOrDefaultAsync();
 
                     totalSalary = (ShiftHours * SalaryPerHour);
                     Quarter = totalSalary / 4;
