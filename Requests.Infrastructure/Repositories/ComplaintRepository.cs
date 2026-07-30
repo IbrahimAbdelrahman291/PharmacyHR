@@ -51,11 +51,13 @@ namespace Requests.Infrastructure.Repositories
             if (employeeId.HasValue)
                 query = query.Where(c => c.EmployeeId == employeeId.Value);
 
-            if (isSeenByHR.HasValue)
+            else if (isSeenByHR.HasValue)
                 query = query.Where(c => c.IsSeenByHR == isSeenByHR.Value);
 
-            if (!string.IsNullOrEmpty(recipientUserId))
+            else if (!string.IsNullOrEmpty(recipientUserId))
                 query = query.Where(c => c.RecipientUserId == recipientUserId);
+            else
+                query = query.Where(c => c.RecipientRole == "CEO");
 
             return await query.CountAsync();
         }

@@ -79,7 +79,7 @@ namespace Requests.Application.Services
 
             var requests = await _repository.GetAllAsync(employeeId, isSeenByHR, filterAreaManagerUserId, page, pageSize);
             var totalCount = await _repository.GetTotalCountAsync(employeeId, isSeenByHR, filterAreaManagerUserId);
-            
+
             var dtos = new List<HolidayDto>();
             foreach (var request in requests)
             {
@@ -154,13 +154,17 @@ namespace Requests.Application.Services
 
             if (dto.IsApproved)
             {
+                var shiftHours = await _employeeRepository.GetShiftHoursAsync(request.EmployeeId);
+                var totalHolidayHours = (shiftHours ?? 0) * request.TotalDays;
+
+                // نتأكد إن تحديث المرتب/الساعات نجح قبل ما نوافق فعليًا
+                var salaryResult = await _monthlyDataRepository.AddHolidayHoursAsync(request.EmployeeId, totalHolidayHours, request.TotalDays);
+                if (!salaryResult.IsSuccess)
+                    return Result<bool>.Failure(salaryResult.Error!);
+
                 request.Status = "Approved";
                 request.IsSeenByHR = true;
                 request.IsSeenByEmployee = false;
-                // ضيف ساعات الإجازة
-                var shiftHours = await _employeeRepository.GetShiftHoursAsync(request.EmployeeId);
-                var totalHolidayHours = (shiftHours ?? 0) * request.TotalDays;
-                await _monthlyDataRepository.AddHolidayHoursAsync(request.EmployeeId, totalHolidayHours, request.TotalDays);
             }
             else
             {
@@ -177,7 +181,7 @@ namespace Requests.Application.Services
         public async Task<Result<int>> GetUnseenCountAsync(string role, int? employeeId)
         {
 
-            var count = await _repository.GetUnseenCountAsync(role,employeeId);
+            var count = await _repository.GetUnseenCountAsync(role, employeeId);
             return Result<int>.Success(count);
         }
 

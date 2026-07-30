@@ -12,8 +12,8 @@ using Payroll.Infrastructure.Data;
 namespace Payroll.Infrastructure.Migrations
 {
     [DbContext(typeof(PayrollDbContext))]
-    [Migration("20260722013051_initialcreate")]
-    partial class initialcreate
+    [Migration("20260729145905_AddRowVersionToMonthlyEmployeeData")]
+    partial class AddRowVersionToMonthlyEmployeeData
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -249,6 +249,12 @@ namespace Payroll.Infrastructure.Migrations
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<double?>("SalaryPerHour")
                         .HasColumnType("float");

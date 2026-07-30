@@ -101,12 +101,16 @@ namespace Requests.Application.DTOs
 
             if (dto.IsApproved)
             {
+                var shiftHours = await _employeeRepository.GetShiftHoursAsync(request.EmployeeId);
+
+                // نتأكد إن تحديث المرتب نجح قبل ما نوافق فعليًا على الطلب
+                var salaryResult = await _monthlyDataRepository.AddForgetedHoursAsync(request.EmployeeId, shiftHours ?? 0);
+                if (!salaryResult.IsSuccess)
+                    return Result<bool>.Failure(salaryResult.Error);
+
                 request.Status = "Approved";
                 request.IsSeenByHR = true;
                 request.IsSeenByEmployee = false;
-
-                var shiftHours = await _employeeRepository.GetShiftHoursAsync(request.EmployeeId);
-                await _monthlyDataRepository.AddForgetedHoursAsync(request.EmployeeId, shiftHours ?? 0);
             }
             else
             {
@@ -136,7 +140,7 @@ namespace Requests.Application.DTOs
             {
                 request.IsSeenByHR = true;
             }
-            else if (role == "Employee") 
+            else if (role == "Employee")
             {
                 request.IsSeenByEmployee = true;
             }

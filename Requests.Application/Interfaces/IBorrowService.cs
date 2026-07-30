@@ -12,6 +12,5 @@ namespace Requests.Application.Interfaces
         Task<Result<bool>> MarkBorrowAsSeenAsync(int id, string role);
         Task<Result<bool>> AddInstallmentBorrowAsync(CreateInstallmentBorrowDto dto);
         Task<Result<IList<InstallmentBorrowDto>>> GetInstallmentBorrowsByEmployeeAsync(int employeeId);
-        Task ProcessMonthlyInstallmentsAsync();
     }
 }

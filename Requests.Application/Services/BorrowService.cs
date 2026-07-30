@@ -110,17 +110,21 @@ namespace Requests.Application.Services
 
             if (dto.IsApproved)
             {
+                // لازم نتأكد إن تحديث المرتب نجح الأول قبل ما نوافق فعليًا على الطلب
+                var salaryResult = await _monthlyDataRepository.AddBorrowAsync(request.EmployeeId, request.Amount);
+                if (!salaryResult.IsSuccess)
+                    return Result<bool>.Failure(salaryResult.Error!);
+
                 request.Status = "Approved";
                 request.IsSeenByHR = true;
-                request.IsSeenByEmployee = false; 
-                await _monthlyDataRepository.AddBorrowAsync(request.EmployeeId, request.Amount);
+                request.IsSeenByEmployee = false;
             }
             else
             {
                 request.Status = "Rejected";
                 request.RejectionReason = dto.RejectionReason;
                 request.IsSeenByHR = true;
-                request.IsSeenByEmployee = false; 
+                request.IsSeenByEmployee = false;
             }
 
             await _repository.UpdateBorrowRequestAsync(request);
@@ -143,7 +147,7 @@ namespace Requests.Application.Services
             {
                 request.IsSeenByHR = true;
             }
-            else if(role == "Employee")
+            else if (role == "Employee")
             {
                 request.IsSeenByEmployee = true;
             }
@@ -199,29 +203,6 @@ namespace Requests.Application.Services
             }
 
             return Result<IList<InstallmentBorrowDto>>.Success(dtos);
-        }
-
-        public async Task ProcessMonthlyInstallmentsAsync()
-        {
-            var egyptTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time");
-            var egyptNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, egyptTimeZone);
-
-            var activeBorrows = await _repository.GetActiveInstallmentBorrowsAsync();
-
-            foreach (var borrow in activeBorrows)
-            {
-                // تحقق إن الشهر الحالي >= شهر البداية
-                var startDate = new DateTime(borrow.StartYear, borrow.StartMonth, 1);
-                if (egyptNow < startDate) continue;
-
-                await _monthlyDataRepository.AddBorrowAsync(borrow.EmployeeId, borrow.MonthlyAmount);
-
-                borrow.RemainingMonths--;
-                if (borrow.RemainingMonths <= 0)
-                    borrow.IsActive = false;
-
-                await _repository.UpdateInstallmentBorrowAsync(borrow);
-            }
         }
     }
 }

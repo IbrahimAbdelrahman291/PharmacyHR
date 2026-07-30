@@ -1,5 +1,4 @@
-﻿
-
+﻿using SharedKernel.Wrappers;
 
 namespace SharedKernel.Interfaces
 {
@@ -7,27 +6,31 @@ namespace SharedKernel.Interfaces
     {
         Task<double?> GetTotalSalaryForInstallmentBorrow(int employeeId);
         Task<int?> GetHolidaysInCurrentMonthAsync(int employeeId);
-        Task AddHoursAsync(int employeeId, double hours);
-        Task AddHolidayHoursAsync(int employeeId, double hours, int TotalDays);
-        Task AddForgetedHoursAsync(int employeeId, double hours);
-        Task UpdateHoursOverTimeAsync(int employeeId, double hours);
-        Task AddDiscountAsync(int employeeId, double amount, string reason, string? notes);
-        Task AddContractDiscountAsync(int employeeId, double amount, string reason, string? notes);
-        Task AddBonusAsync(int employeeId, double amount, string reason, string? notes);
-        Task AddBorrowAsync(int employeeId, double amount);
-        Task UpdateInstallmentBorrow(int employeeId, double amount);
-        Task AddCashBorrowAsync(int employeeId, double amount, string reason, string? notes);
-        Task UpdateSalaryAsync(int employeeId, double totalSalary);
-        Task UpdateSalaryPerHourAsync(int employeeId, double salaryPerHour);
-        Task UpdateInsurenceAsync(int employeeId, double amount);
-        Task UpdateHolidays(int employeeId, int Holidays);
-        Task UpdateHolidaysHours(int employeeId, double HolidayHours);
-        Task<bool> DeleteDiscountAsync(int id);
-        Task<bool> DeleteContractDiscountAsync(int id);
-        Task<bool> DeleteBonusAsync(int id);
-        Task<bool> DeleteCashBorrowAsync(int id);
-        Task CreateMonthlyDataAsync(int employeeId, string role, double? totalSalary, double? salaryPerHour, double target, int branchId,double? insurence, int Holidaies);
-        Task BulkAddDiscountAsync(IList<int> employeeIds, double amount, string reason, string? notes);
-        Task BulkAddBonusAsync(IList<int> employeeIds, double amount, string reason, string? notes);
+
+        Task<Result<bool>> AddHoursAsync(int employeeId, double hours);
+        Task<Result<bool>> AddHolidayHoursAsync(int employeeId, double hours, int TotalDays);
+        Task<Result<bool>> AddForgetedHoursAsync(int employeeId, double hours);
+        Task<Result<bool>> UpdateHoursOverTimeAsync(int employeeId, double hours);
+        Task<Result<bool>> AddDiscountAsync(int employeeId, double amount, string reason, string? notes);
+        Task<Result<bool>> AddContractDiscountAsync(int employeeId, double amount, string reason, string? notes);
+        Task<Result<bool>> AddBonusAsync(int employeeId, double amount, string reason, string? notes);
+        Task<Result<bool>> AddBorrowAsync(int employeeId, double amount);
+        Task<Result<bool>> UpdateInstallmentBorrow(int employeeId, double amount);
+        Task<Result<bool>> AddCashBorrowAsync(int employeeId, double amount, string reason, string? notes);
+        Task<Result<bool>> UpdateSalaryAsync(int employeeId, double totalSalary);
+        Task<Result<bool>> UpdateSalaryPerHourAsync(int employeeId, double salaryPerHour);
+        Task<Result<bool>> UpdateInsurenceAsync(int employeeId, double amount);
+        Task<Result<bool>> UpdateHolidays(int employeeId, int Holidays);
+        Task<Result<bool>> UpdateHolidaysHours(int employeeId, double HolidayHours);
+
+        Task<Result<bool>> DeleteDiscountAsync(int id);
+        Task<Result<bool>> DeleteContractDiscountAsync(int id);
+        Task<Result<bool>> DeleteBonusAsync(int id);
+        Task<Result<bool>> DeleteCashBorrowAsync(int id);
+
+        Task CreateMonthlyDataAsync(int employeeId, string role, double? totalSalary, double? salaryPerHour, double target, int branchId, double? insurence, int Holidaies);
+
+        Task<Result<bool>> BulkAddDiscountAsync(IList<int> employeeIds, double amount, string reason, string? notes);
+        Task<Result<bool>> BulkAddBonusAsync(IList<int> employeeIds, double amount, string reason, string? notes);
     }
 }

@@ -28,7 +28,13 @@ namespace Requests.Infrastructure.Jobs
                 var startDate = new DateTime(borrow.StartYear, borrow.StartMonth, 1);
                 if (egyptNow < startDate) continue;
 
-                await _monthlyDataRepository.UpdateInstallmentBorrow(borrow.EmployeeId, borrow.MonthlyAmount);
+                var result = await _monthlyDataRepository.UpdateInstallmentBorrow(borrow.EmployeeId, borrow.MonthlyAmount);
+                if (!result.IsSuccess)
+                {
+                    // لو فشل موظف واحد، منكملش نقصه من RemainingMonths
+                    // ومنكملش على الموظف اللي بعده، مش نوقف الـ Job كله
+                    continue;
+                }
 
                 borrow.RemainingMonths--;
                 if (borrow.RemainingMonths <= 0)

@@ -83,12 +83,12 @@ namespace Attendance.Application.Services
             var egyptDate = DateOnly.FromDateTime(egyptNow);
             var egyptTime = TimeOnly.FromDateTime(egyptNow);
             var workLog = await _workLogRepository.GetOpenShiftAsync(employeeId);
-            
+
             if (workLog is null)
                 return Result<bool>.Failure("لا يوجد تسجيل حضور في هذا اليوم أو اليوم الذي يسبقه");
 
             var schedule = await _scheduleRepository.GetEmployeeScheduleByDayAsync(employeeId, workLog.Day.DayOfWeek);
-            var CheckOutTime = schedule.Value.CheckOutTime;
+            var CheckOutTime = schedule!.Value.CheckOutTime;
             var startDateTime = workLog.Day.ToDateTime(workLog.Start);
             var endDateTime = egyptDate.ToDateTime(CheckOutTime);
             var allowedCheckOut = workLog.Day.ToDateTime(schedule.Value.CheckOutTime.AddMinutes(15));
@@ -100,7 +100,7 @@ namespace Attendance.Application.Services
             var endShift = egyptDate.ToDateTime(egyptTime);
             var totalTime = endShift - startDateTime;
             var allowCheckOutEmergency = startDateTime.AddMinutes(15);
-           
+
 
             if (egyptNow >= allowCheckOutEmergency)
             {
@@ -111,22 +111,28 @@ namespace Attendance.Application.Services
                         workLog.End = CheckOutTime;
                         workLog.TotalTime = allowedCheckOut - startDateTime;
                         workLog.IsEnd = true;
-                        await _workLogRepository.UpdateAsync(workLog);
-                        await _monthlyDataRepository.AddHoursAsync(employeeId, totalWorkTime.TotalHours);
 
+                        var salaryResult1 = await _monthlyDataRepository.AddHoursAsync(employeeId, totalWorkTime.TotalHours);
+                        if (!salaryResult1.IsSuccess)
+                            return Result<bool>.Failure(salaryResult1.Error!);
+
+                        await _workLogRepository.UpdateAsync(workLog);
                         return Result<bool>.Success(true);
                     }
                 }
 
                 workLog.End = egyptTime;
                 workLog.TotalTime = totalTime;
-                workLog.IsEnd= true;
-                await _workLogRepository.UpdateAsync(workLog);
-                await _monthlyDataRepository.AddHoursAsync(employeeId, totalTime.TotalHours);
+                workLog.IsEnd = true;
 
+                var salaryResult2 = await _monthlyDataRepository.AddHoursAsync(employeeId, totalTime.TotalHours);
+                if (!salaryResult2.IsSuccess)
+                    return Result<bool>.Failure(salaryResult2.Error!);
+
+                await _workLogRepository.UpdateAsync(workLog);
                 return Result<bool>.Success(true);
             }
-            else 
+            else
             {
                 return Result<bool>.Failure("لا يمكنك انهاء الشيفت الان");
             }

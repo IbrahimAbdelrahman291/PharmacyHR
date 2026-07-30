@@ -156,19 +156,25 @@ namespace Requests.Application.Services
             if (request is null)
                 return Result<bool>.Failure("Request not found");
 
-            request.HRApproval = dto.IsApproved ? "Approved" : "Rejected";
-            request.HRRejectionReason = dto.RejectionReason;
-            request.IsSeenByHR = true;
-            request.IsSeenByEmployee = false;
             if (dto.IsApproved)
             {
+                // نتأكد إن تحديث الساعات نجح قبل ما نوافق فعليًا على الطلب
+                var salaryResult = await _monthlyDataRepository.UpdateHoursOverTimeAsync(request.EmployeeId, request.Hours);
+                if (!salaryResult.IsSuccess)
+                    return Result<bool>.Failure(salaryResult.Error!);
+
+                request.HRApproval = "Approved";
                 request.Status = "Approved";
-                await _monthlyDataRepository.UpdateHoursOverTimeAsync(request.EmployeeId, request.Hours);
             }
             else
             {
+                request.HRApproval = "Rejected";
                 request.Status = "Rejected";
             }
+
+            request.HRRejectionReason = dto.RejectionReason;
+            request.IsSeenByHR = true;
+            request.IsSeenByEmployee = false;
 
             await _repository.UpdateAsync(request);
             return Result<bool>.Success(true);
@@ -176,7 +182,7 @@ namespace Requests.Application.Services
 
         public async Task<Result<int>> GetUnseenCountAsync(string? userId, string role, int? employeeId)
         {
-            var count = await _repository.GetUnseenCountAsync(userId, role,employeeId);
+            var count = await _repository.GetUnseenCountAsync(userId, role, employeeId);
             return Result<int>.Success(count);
         }
 

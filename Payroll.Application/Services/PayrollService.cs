@@ -50,82 +50,118 @@ namespace Payroll.Application.Services
                 return Result<bool>.Failure("Monthly data not found");
 
             if (dto.TotalSalary.HasValue)
-                await _sharedRepository.UpdateSalaryAsync(employeeId, dto.TotalSalary.Value);
-            
+            {
+                var result = await _sharedRepository.UpdateSalaryAsync(employeeId, dto.TotalSalary.Value);
+                if (!result.IsSuccess)
+                    return Result<bool>.Failure(result.Error!);
+            }
+
             if (dto.Holidays.HasValue)
-                await _sharedRepository.UpdateHolidays(employeeId, dto.Holidays.Value);
-            
+            {
+                var result = await _sharedRepository.UpdateHolidays(employeeId, dto.Holidays.Value);
+                if (!result.IsSuccess)
+                    return Result<bool>.Failure(result.Error!);
+            }
+
             if (dto.HolidaysHours.HasValue)
-                await _sharedRepository.UpdateHolidaysHours(employeeId, dto.HolidaysHours.Value);
+            {
+                var result = await _sharedRepository.UpdateHolidaysHours(employeeId, dto.HolidaysHours.Value);
+                if (!result.IsSuccess)
+                    return Result<bool>.Failure(result.Error!);
+            }
 
             if (dto.SalaryPerHour.HasValue)
-                await _sharedRepository.UpdateSalaryPerHourAsync(employeeId, dto.SalaryPerHour.Value);
+            {
+                var result = await _sharedRepository.UpdateSalaryPerHourAsync(employeeId, dto.SalaryPerHour.Value);
+                if (!result.IsSuccess)
+                    return Result<bool>.Failure(result.Error!);
+            }
 
             if (dto.Insurence.HasValue)
-                await _sharedRepository.UpdateInsurenceAsync(employeeId, dto.Insurence.Value);
+            {
+                var result = await _sharedRepository.UpdateInsurenceAsync(employeeId, dto.Insurence.Value);
+                if (!result.IsSuccess)
+                    return Result<bool>.Failure(result.Error!);
+            }
 
             if (dto.HoursOverTime.HasValue)
-                await _sharedRepository.UpdateHoursOverTimeAsync(employeeId, dto.HoursOverTime.Value);
+            {
+                var result = await _sharedRepository.UpdateHoursOverTimeAsync(employeeId, dto.HoursOverTime.Value);
+                if (!result.IsSuccess)
+                    return Result<bool>.Failure(result.Error!);
+            }
 
             if (dto.ForgetedHours.HasValue)
-                await _sharedRepository.AddForgetedHoursAsync(employeeId, dto.ForgetedHours.Value);
+            {
+                var result = await _sharedRepository.AddForgetedHoursAsync(employeeId, dto.ForgetedHours.Value);
+                if (!result.IsSuccess)
+                    return Result<bool>.Failure(result.Error!);
+            }
 
             return Result<bool>.Success(true);
         }
 
         public async Task<Result<bool>> AddDiscountAsync(AddDiscountDto dto)
         {
-            await _sharedRepository.AddDiscountAsync(dto.EmployeeId, dto.Amount, dto.ReasonOfDiscount, dto.Notes);
+            var result = await _sharedRepository.AddDiscountAsync(dto.EmployeeId, dto.Amount, dto.ReasonOfDiscount, dto.Notes);
+            if (!result.IsSuccess)
+                return Result<bool>.Failure(result.Error!);
             return Result<bool>.Success(true);
         }
 
         public async Task<Result<bool>> AddContractDiscountAsync(AddDiscountDto dto)
         {
-            await _sharedRepository.AddContractDiscountAsync(dto.EmployeeId, dto.Amount, dto.ReasonOfDiscount, dto.Notes);
+            var result = await _sharedRepository.AddContractDiscountAsync(dto.EmployeeId, dto.Amount, dto.ReasonOfDiscount, dto.Notes);
+            if (!result.IsSuccess)
+                return Result<bool>.Failure(result.Error!);
             return Result<bool>.Success(true);
         }
 
         public async Task<Result<bool>> AddBonusAsync(AddBonusDto dto)
         {
-            await _sharedRepository.AddBonusAsync(dto.EmployeeId, dto.Amount, dto.Reason, dto.Notes);
+            var result = await _sharedRepository.AddBonusAsync(dto.EmployeeId, dto.Amount, dto.Reason, dto.Notes);
+            if (!result.IsSuccess)
+                return Result<bool>.Failure(result.Error!);
             return Result<bool>.Success(true);
         }
 
         public async Task<Result<bool>> AddCashBorrowAsync(AddBorrowDto dto)
         {
-            await _sharedRepository.AddCashBorrowAsync(dto.EmployeeId, dto.Amount, dto.Reason, dto.Notes);
+            var result = await _sharedRepository.AddCashBorrowAsync(dto.EmployeeId, dto.Amount, dto.Reason, dto.Notes);
+            if (!result.IsSuccess)
+                return Result<bool>.Failure(result.Error!);
             return Result<bool>.Success(true);
         }
 
         public async Task<Result<bool>> DeleteDiscountAsync(int id)
         {
             var result = await _sharedRepository.DeleteDiscountAsync(id);
-            if (!result)
-                return Result<bool>.Failure("Discount not found");
+            if (!result.IsSuccess)
+                return Result<bool>.Failure(result.Error!);
             return Result<bool>.Success(true);
         }
 
         public async Task<Result<bool>> DeleteContractDiscountAsync(int id)
         {
             var result = await _sharedRepository.DeleteContractDiscountAsync(id);
-            if (!result)
-                return Result<bool>.Failure("Contract discount not found");
+            if (!result.IsSuccess)
+                return Result<bool>.Failure(result.Error!);
             return Result<bool>.Success(true);
         }
 
         public async Task<Result<bool>> DeleteBonusAsync(int id)
         {
             var result = await _sharedRepository.DeleteBonusAsync(id);
-            if (!result)
-                return Result<bool>.Failure("Bonus not found");
+            if (!result.IsSuccess)
+                return Result<bool>.Failure(result.Error!);
             return Result<bool>.Success(true);
         }
 
         public async Task<Result<bool>> DeleteCashBorrowAsync(int id)
         {
             var result = await _sharedRepository.DeleteCashBorrowAsync(id);
-            if (!result)
-                return Result<bool>.Failure("Cash borrow not found");
+            if (!result.IsSuccess)
+                return Result<bool>.Failure(result.Error!);
             return Result<bool>.Success(true);
         }
 
@@ -141,10 +177,10 @@ namespace Payroll.Application.Services
             return Result<bool>.Success(true);
         }
 
-        public async Task<Result<PaginatedResponse<MonthlyDataWithEmployeeDto>>> GetAllMonthlyDataAsync(int month, int year, int? branchId,int page, int pageSize)
+        public async Task<Result<PaginatedResponse<MonthlyDataWithEmployeeDto>>> GetAllMonthlyDataAsync(int month, int year, int? branchId, int page, int pageSize)
         {
             var allData = await _repository.GetAllByMonthAndYearAsync(month, year, branchId, page, pageSize);
-            var totalCount = await _repository.GetTotalMonthlyDataCount(month,year,branchId);
+            var totalCount = await _repository.GetTotalMonthlyDataCount(month, year, branchId);
             var result = new List<MonthlyDataWithEmployeeDto>();
             foreach (var data in allData)
             {
@@ -180,7 +216,7 @@ namespace Payroll.Application.Services
                 });
             }
 
-            return Result<PaginatedResponse<MonthlyDataWithEmployeeDto>>.Success(new PaginatedResponse<MonthlyDataWithEmployeeDto> 
+            return Result<PaginatedResponse<MonthlyDataWithEmployeeDto>>.Success(new PaginatedResponse<MonthlyDataWithEmployeeDto>
             {
                 Data = result,
                 TotalCount = totalCount,
@@ -240,21 +276,33 @@ namespace Payroll.Application.Services
         public async Task<Result<bool>> BulkVariedDiscountAsync(IList<BulkVariedItemDto> items)
         {
             foreach (var item in items)
-                await _sharedRepository.AddDiscountAsync(item.EmployeeId, item.Amount, item.Reason, item.Notes);
+            {
+                var result = await _sharedRepository.AddDiscountAsync(item.EmployeeId, item.Amount, item.Reason, item.Notes);
+                if (!result.IsSuccess)
+                    return Result<bool>.Failure($"فشل في تطبيق الخصم للموظف {item.EmployeeId}: {result.Error}");
+            }
             return Result<bool>.Success(true);
         }
 
         public async Task<Result<bool>> BulkVariedContractDiscountAsync(IList<BulkVariedItemDto> items)
         {
             foreach (var item in items)
-                await _sharedRepository.AddContractDiscountAsync(item.EmployeeId, item.Amount, item.Reason, item.Notes);
+            {
+                var result = await _sharedRepository.AddContractDiscountAsync(item.EmployeeId, item.Amount, item.Reason, item.Notes);
+                if (!result.IsSuccess)
+                    return Result<bool>.Failure($"فشل في تطبيق خصم العقد للموظف {item.EmployeeId}: {result.Error}");
+            }
             return Result<bool>.Success(true);
         }
 
         public async Task<Result<bool>> BulkVariedBonusAsync(IList<BulkVariedItemDto> items)
         {
             foreach (var item in items)
-                await _sharedRepository.AddBonusAsync(item.EmployeeId, item.Amount, item.Reason, item.Notes);
+            {
+                var result = await _sharedRepository.AddBonusAsync(item.EmployeeId, item.Amount, item.Reason, item.Notes);
+                if (!result.IsSuccess)
+                    return Result<bool>.Failure($"فشل في تطبيق المكافأة للموظف {item.EmployeeId}: {result.Error}");
+            }
             return Result<bool>.Success(true);
         }
         public async Task<Result<PayrollDetailsDto>> GetDetailsAsync(int employeeId, int? month, int? year)
