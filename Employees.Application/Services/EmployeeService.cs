@@ -179,12 +179,12 @@ namespace Employees.Application.Services
 
             if (dto.ShiftHours.HasValue || (dto.BranchId.HasValue && dto.BranchId.Value != employee.BranchId))
             {
-                var currentMonthlyData = await _monthlyDataRepository.GetCurrentMonthAsync(employee.Id);
+                var currentMonthlyData = await _monthlyDataRepository.GetCurrentTargetAndBranchAsync(employee.Id);
                 if (currentMonthlyData is null)
                     return Result<bool>.Failure($"لا يوجد سجل بيانات شهرية للموظف {employee.Id} لهذا الشهر");
 
-                oldTarget = currentMonthlyData.Target;
-                oldBranchId = currentMonthlyData.BranchId;
+                oldTarget = currentMonthlyData.Value.Target;
+                oldBranchId = currentMonthlyData.Value.BranchId;
             }
 
             if (dto.IsHaveNightShift is not null) employee.IsHaveNightShift = dto.IsHaveNightShift;

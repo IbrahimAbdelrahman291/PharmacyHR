@@ -756,5 +756,12 @@ namespace Payroll.Infrastructure.Repositories
         public async Task<Result<bool>> UpdateTargetAsync(int employeeId, double target)
             => await ApplySimpleFieldMutationAsync(employeeId, data =>
                 data.Target = target);
+        public async Task<(double? Target, int? BranchId)?> GetCurrentTargetAndBranchAsync(int employeeId)
+        {
+            var data = await GetCurrentAsync(employeeId);
+            if (data is null) return null;
+
+            return (data.Target, data.BranchId);
+        }
     }
 }
