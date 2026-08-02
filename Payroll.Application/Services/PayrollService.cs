@@ -103,7 +103,7 @@ namespace Payroll.Application.Services
 
         public async Task<Result<bool>> AddDiscountAsync(AddDiscountDto dto)
         {
-            var result = await _sharedRepository.AddDiscountAsync(dto.EmployeeId, dto.Amount, dto.ReasonOfDiscount, dto.Notes);
+            var result = await _sharedRepository.AddDiscountAsync(dto.EmployeeId, dto.Amount, dto.ReasonOfDiscount, dto.Notes, dto.Month, dto.Year);
             if (!result.IsSuccess)
                 return Result<bool>.Failure(result.Error!);
             return Result<bool>.Success(true);
@@ -111,7 +111,7 @@ namespace Payroll.Application.Services
 
         public async Task<Result<bool>> AddContractDiscountAsync(AddDiscountDto dto)
         {
-            var result = await _sharedRepository.AddContractDiscountAsync(dto.EmployeeId, dto.Amount, dto.ReasonOfDiscount, dto.Notes);
+            var result = await _sharedRepository.AddContractDiscountAsync(dto.EmployeeId, dto.Amount, dto.ReasonOfDiscount, dto.Notes, dto.Month, dto.Year);
             if (!result.IsSuccess)
                 return Result<bool>.Failure(result.Error!);
             return Result<bool>.Success(true);
@@ -119,7 +119,7 @@ namespace Payroll.Application.Services
 
         public async Task<Result<bool>> AddBonusAsync(AddBonusDto dto)
         {
-            var result = await _sharedRepository.AddBonusAsync(dto.EmployeeId, dto.Amount, dto.Reason, dto.Notes);
+            var result = await _sharedRepository.AddBonusAsync(dto.EmployeeId, dto.Amount, dto.Reason, dto.Notes, dto.Month, dto.Year);
             if (!result.IsSuccess)
                 return Result<bool>.Failure(result.Error!);
             return Result<bool>.Success(true);
@@ -127,7 +127,7 @@ namespace Payroll.Application.Services
 
         public async Task<Result<bool>> AddCashBorrowAsync(AddBorrowDto dto)
         {
-            var result = await _sharedRepository.AddCashBorrowAsync(dto.EmployeeId, dto.Amount, dto.Reason, dto.Notes);
+            var result = await _sharedRepository.AddCashBorrowAsync(dto.EmployeeId, dto.Amount, dto.Reason, dto.Notes, dto.Month, dto.Year);
             if (!result.IsSuccess)
                 return Result<bool>.Failure(result.Error!);
             return Result<bool>.Success(true);

@@ -11,12 +11,12 @@ namespace SharedKernel.Interfaces
         Task<Result<bool>> AddHolidayHoursAsync(int employeeId, double hours, int TotalDays);
         Task<Result<bool>> AddForgetedHoursAsync(int employeeId, double hours);
         Task<Result<bool>> UpdateHoursOverTimeAsync(int employeeId, double hours);
-        Task<Result<bool>> AddDiscountAsync(int employeeId, double amount, string reason, string? notes);
-        Task<Result<bool>> AddContractDiscountAsync(int employeeId, double amount, string reason, string? notes);
-        Task<Result<bool>> AddBonusAsync(int employeeId, double amount, string reason, string? notes);
+        Task<Result<bool>> AddDiscountAsync(int employeeId, double amount, string reason, string? notes, int? month = null, int? year = null);
+        Task<Result<bool>> AddContractDiscountAsync(int employeeId, double amount, string reason, string? notes, int? month = null, int? year = null);
+        Task<Result<bool>> AddBonusAsync(int employeeId, double amount, string reason, string? notes, int? month = null, int? year = null);
         Task<Result<bool>> AddBorrowAsync(int employeeId, double amount);
         Task<Result<bool>> UpdateInstallmentBorrow(int employeeId, double amount);
-        Task<Result<bool>> AddCashBorrowAsync(int employeeId, double amount, string reason, string? notes);
+        Task<Result<bool>> AddCashBorrowAsync(int employeeId, double amount, string reason, string? notes, int? month = null, int? year = null);
         Task<Result<bool>> UpdateSalaryAsync(int employeeId, double totalSalary);
         Task<Result<bool>> UpdateSalaryPerHourAsync(int employeeId, double salaryPerHour);
         Task<Result<bool>> UpdateInsurenceAsync(int employeeId, double amount);

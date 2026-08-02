@@ -172,7 +172,7 @@ namespace Employees.Application.Services
             var employee = await _employeeRepository.GetByIdAsync(id);
             if (employee is null)
                 return Result<bool>.Failure("Employee not found");
-
+            
 
             if (dto.IsHaveNightShift is not null) employee.IsHaveNightShift = dto.IsHaveNightShift;
             if (dto.Name is not null) employee.Name = dto.Name;

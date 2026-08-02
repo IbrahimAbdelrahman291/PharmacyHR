@@ -68,8 +68,6 @@ namespace Employees.API.Controllers
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
 
-
-
             return Ok(result.Value);
         }
 

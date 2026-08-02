@@ -33,6 +33,16 @@ namespace Payroll.Infrastructure.Repositories
                     && x.Year == egyptNow.Year);
         }
 
+        // Method جديدة: بتاخد شهر/سنة اختياريين، لو موجودين تستخدم GetByMonthAndYearAsync، لو لأ ترجع لـ GetCurrentAsync
+        // من غير ما تلمس GetCurrentAsync نفسها خالص
+        private async Task<MonthlyEmployeeData?> GetTargetMonthDataAsync(int employeeId, int? month, int? year)
+        {
+            if (month.HasValue && year.HasValue)
+                return await GetByMonthAndYearAsync(employeeId, month.Value, year.Value);
+
+            return await GetCurrentAsync(employeeId);
+        }
+
         private async Task RecalculateNetSalaryAsync(MonthlyEmployeeData data)
         {
             var totalBorrows = (data.TotalBorrows ?? 0) + (data.TotalCashBorrows ?? 0) + (data.totalInstallmentBorrow ?? 0);
@@ -93,19 +103,25 @@ namespace Payroll.Infrastructure.Repositories
 
         // ==========================================================================
         // Helper 2: للـ mutation + إضافة سجل تفصيلي (Discount/Bonus/CashBorrow)
+        // دلوقتي بتقبل month/year اختياريين عشان الـ HR يقدر يحدد شهر مختلف عن الحالي
         // ==========================================================================
         private async Task<Result<bool>> ApplyMutationWithDetailRecordAsync(
             int employeeId,
             Action<MonthlyEmployeeData> mutation,
-            Func<MonthlyEmployeeData, object> createDetailRecord)
+            Func<MonthlyEmployeeData, object> createDetailRecord,
+            int? month = null,
+            int? year = null)
         {
             for (int attempt = 0; attempt < MaxRetries; attempt++)
             {
                 try
                 {
-                    var data = await GetCurrentAsync(employeeId);
+                    var data = await GetTargetMonthDataAsync(employeeId, month, year);
                     if (data is null)
-                        return Result<bool>.Failure($"لا يوجد سجل بيانات شهرية للموظف {employeeId} لهذا الشهر");
+                    {
+                        var monthLabel = month.HasValue && year.HasValue ? $"{month}/{year}" : "الشهر الحالي";
+                        return Result<bool>.Failure($"لا يوجد سجل بيانات شهرية للموظف {employeeId} لـ {monthLabel}");
+                    }
 
                     var detailRecord = createDetailRecord(data);
                     await _context.AddAsync(detailRecord);
@@ -174,14 +190,14 @@ namespace Payroll.Infrastructure.Repositories
             => await ApplyMutationAsync(employeeId, data =>
                 data.HolidayHours = HolidayHours);
 
-        // UpdateHolidays دلوقتي بتنادي RecalculateNetSalaryAsync زي ما طلبت
         public async Task<Result<bool>> UpdateHolidays(int employeeId, int Holidays)
             => await ApplyMutationAsync(employeeId, data =>
                 data.Holidaies = Holidays);
 
         // ================= المجموعة 2: Mutation + Detail Record =================
+        // كل واحدة دلوقتي بتقبل month/year اختياريين (default null = الشهر الحالي)
 
-        public async Task<Result<bool>> AddDiscountAsync(int employeeId, double amount, string reason, string? notes)
+        public async Task<Result<bool>> AddDiscountAsync(int employeeId, double amount, string reason, string? notes, int? month = null, int? year = null)
             => await ApplyMutationWithDetailRecordAsync(
                 employeeId,
                 mutation: data => data.TotalDiscounts = (data.TotalDiscounts ?? 0) + amount,
@@ -195,13 +211,15 @@ namespace Payroll.Infrastructure.Repositories
                         Amount = amount,
                         ReasonOfDiscount = reason,
                         Notes = notes,
-                        Year = egyptNow.Year,
-                        Month = egyptNow.Month,
-                        Date = egyptNow
+                        Year = data.Year,      // شهر/سنة الـ MonthlyEmployeeData المستهدفة، مش وقت التنفيذ
+                        Month = data.Month,
+                        Date = egyptNow        // وقت التنفيذ الفعلي (إمتى الـ HR عمل العملية)
                     };
-                });
+                },
+                month: month,
+                year: year);
 
-        public async Task<Result<bool>> AddContractDiscountAsync(int employeeId, double amount, string reason, string? notes)
+        public async Task<Result<bool>> AddContractDiscountAsync(int employeeId, double amount, string reason, string? notes, int? month = null, int? year = null)
             => await ApplyMutationWithDetailRecordAsync(
                 employeeId,
                 mutation: data => data.TotalContractDiscount = (data.TotalContractDiscount ?? 0) + amount,
@@ -215,13 +233,15 @@ namespace Payroll.Infrastructure.Repositories
                         Amount = amount,
                         ReasonOfDiscount = reason,
                         Notes = notes,
-                        Year = egyptNow.Year,
-                        Month = egyptNow.Month,
+                        Year = data.Year,
+                        Month = data.Month,
                         Date = egyptNow
                     };
-                });
+                },
+                month: month,
+                year: year);
 
-        public async Task<Result<bool>> AddBonusAsync(int employeeId, double amount, string reason, string? notes)
+        public async Task<Result<bool>> AddBonusAsync(int employeeId, double amount, string reason, string? notes, int? month = null, int? year = null)
             => await ApplyMutationWithDetailRecordAsync(
                 employeeId,
                 mutation: data => data.TotalBouns = (data.TotalBouns ?? 0) + amount,
@@ -235,13 +255,15 @@ namespace Payroll.Infrastructure.Repositories
                         Amount = amount,
                         Reason = reason,
                         Notes = notes,
-                        Year = egyptNow.Year,
-                        Month = egyptNow.Month,
+                        Year = data.Year,
+                        Month = data.Month,
                         DateOfBonus = egyptNow
                     };
-                });
+                },
+                month: month,
+                year: year);
 
-        public async Task<Result<bool>> AddCashBorrowAsync(int employeeId, double amount, string reason, string? notes)
+        public async Task<Result<bool>> AddCashBorrowAsync(int employeeId, double amount, string reason, string? notes, int? month = null, int? year = null)
             => await ApplyMutationWithDetailRecordAsync(
                 employeeId,
                 mutation: data => data.TotalCashBorrows = (data.TotalCashBorrows ?? 0) + amount,
@@ -255,11 +277,13 @@ namespace Payroll.Infrastructure.Repositories
                         Amount = amount,
                         Reason = reason,
                         Notes = notes,
-                        Year = egyptNow.Year,
-                        Month = egyptNow.Month,
+                        Year = data.Year,
+                        Month = data.Month,
                         DateOfBorrow = egyptNow
                     };
-                });
+                },
+                month: month,
+                year: year);
 
         // ================= المجموعة 3: Delete methods (مع Retry) =================
 
