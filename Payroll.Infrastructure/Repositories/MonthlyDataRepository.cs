@@ -720,5 +720,41 @@ namespace Payroll.Infrastructure.Repositories
 
             return await query.CountAsync();
         }
+        // ===================================================================
+        // Helper 3: للـ mutation اللي متأثرش على NetSalary خالص (زي Branch, Target)
+        // ===================================================================
+        private async Task<Result<bool>> ApplySimpleFieldMutationAsync(int employeeId, Action<MonthlyEmployeeData> mutation)
+        {
+            for (int attempt = 0; attempt < MaxRetries; attempt++)
+            {
+                try
+                {
+                    var data = await GetCurrentAsync(employeeId);
+                    if (data is null)
+                        return Result<bool>.Failure($"لا يوجد سجل بيانات شهرية للموظف {employeeId} لهذا الشهر");
+
+                    mutation(data);
+                    await _context.SaveChangesAsync();
+                    return Result<bool>.Success(true);
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (attempt == MaxRetries - 1)
+                        return Result<bool>.Failure("فشل التحديث بسبب تعارض متزامن، حاول مرة أخرى");
+
+                    foreach (var entry in _context.ChangeTracker.Entries())
+                        entry.State = EntityState.Detached;
+                }
+            }
+            return Result<bool>.Failure("فشل غير متوقع أثناء تحديث البيانات");
+        }
+
+        public async Task<Result<bool>> UpdateBranchAsync(int employeeId, int branchId)
+            => await ApplySimpleFieldMutationAsync(employeeId, data =>
+                data.BranchId = branchId);
+
+        public async Task<Result<bool>> UpdateTargetAsync(int employeeId, double target)
+            => await ApplySimpleFieldMutationAsync(employeeId, data =>
+                data.Target = target);
     }
 }

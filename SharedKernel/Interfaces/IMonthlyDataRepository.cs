@@ -22,6 +22,8 @@ namespace SharedKernel.Interfaces
         Task<Result<bool>> UpdateInsurenceAsync(int employeeId, double amount);
         Task<Result<bool>> UpdateHolidays(int employeeId, int Holidays);
         Task<Result<bool>> UpdateHolidaysHours(int employeeId, double HolidayHours);
+        Task<Result<bool>> UpdateBranchAsync(int employeeId, int branchId);
+        Task<Result<bool>> UpdateTargetAsync(int employeeId, double target);
 
         Task<Result<bool>> DeleteDiscountAsync(int id);
         Task<Result<bool>> DeleteContractDiscountAsync(int id);

@@ -172,16 +172,50 @@ namespace Employees.Application.Services
             var employee = await _employeeRepository.GetByIdAsync(id);
             if (employee is null)
                 return Result<bool>.Failure("Employee not found");
-            
+
+            // لازم ناخد القيم القديمة الأول قبل أي تعديل، عشان نقدر نعمل rollback يدوي لو حصلت مشكلة
+            double? oldTarget = null;
+            int? oldBranchId = null;
+
+            if (dto.ShiftHours.HasValue || (dto.BranchId.HasValue && dto.BranchId.Value != employee.BranchId))
+            {
+                var currentMonthlyData = await _monthlyDataRepository.GetCurrentMonthAsync(employee.Id);
+                if (currentMonthlyData is null)
+                    return Result<bool>.Failure($"لا يوجد سجل بيانات شهرية للموظف {employee.Id} لهذا الشهر");
+
+                oldTarget = currentMonthlyData.Target;
+                oldBranchId = currentMonthlyData.BranchId;
+            }
 
             if (dto.IsHaveNightShift is not null) employee.IsHaveNightShift = dto.IsHaveNightShift;
             if (dto.Name is not null) employee.Name = dto.Name;
             if (dto.theNameOfJob is not null) employee.theNameOfJob = dto.theNameOfJob;
             if (dto.BankId.HasValue) employee.BankId = dto.BankId;
             if (dto.BankAccount is not null) employee.BankAccount = dto.BankAccount;
-            if (dto.ShiftHours.HasValue) employee.ShiftHours = dto.ShiftHours;
+
+            // تحديث Target في MonthlyData لو الـ ShiftHours اتغيرت
+            if (dto.ShiftHours.HasValue)
+            {
+                var newTarget = dto.ShiftHours.Value * 26;
+                var targetResult = await _monthlyDataRepository.UpdateTargetAsync(employee.Id, newTarget);
+                if (!targetResult.IsSuccess)
+                    return Result<bool>.Failure(targetResult.Error!);
+
+                employee.ShiftHours = dto.ShiftHours;
+            }
+
+            // تحديث BranchId في MonthlyData لو الفرع اتغير
             if (dto.BranchId.HasValue && dto.BranchId.Value != employee.BranchId)
             {
+                var branchResult = await _monthlyDataRepository.UpdateBranchAsync(employee.Id, dto.BranchId.Value);
+                if (!branchResult.IsSuccess)
+                {
+                    if (dto.ShiftHours.HasValue && oldTarget.HasValue)
+                        await _monthlyDataRepository.UpdateTargetAsync(employee.Id, oldTarget.Value);
+
+                    return Result<bool>.Failure(branchResult.Error!);
+                }
+
                 employee.BranchId = dto.BranchId.Value;
                 await _employeeRepository.AddEmployeeBranchAsync(new EmployeeBranch
                 {
@@ -190,6 +224,7 @@ namespace Employees.Application.Services
                     StartDate = DateTime.UtcNow
                 });
             }
+
             if (dto.EmployeeType is not null)
             {
                 employee.EmployeeType = dto.EmployeeType;
@@ -201,9 +236,32 @@ namespace Employees.Application.Services
 
             await _auditService.LogDetailsAsync(userId, userName, $"تعديل بيانات الموظف {employee.Name}");
 
+            // آخر خطوة: نحفظ الـ Employee. لو فشلت (false) أو حصل Exception، نرجع كل تعديلات MonthlyData للقيم القديمة
+            try
+            {
+                var employeeUpdateSucceeded = await _employeeRepository.UpdateAsync(employee);
+                if (!employeeUpdateSucceeded)
+                {
+                    await CompensateMonthlyDataAsync(employee.Id, dto, oldTarget, oldBranchId);
+                    return Result<bool>.Failure("فشل تحديث بيانات الموظف");
+                }
+            }
+            catch (Exception)
+            {
+                await CompensateMonthlyDataAsync(employee.Id, dto, oldTarget, oldBranchId);
+                throw; // نرمي الاستثناء تاني عشان الـ middleware/logging العام يتعامل معاه زي أي exception تاني في السيستم
+            }
 
-            await _employeeRepository.UpdateAsync(employee);
             return Result<bool>.Success(true);
+        }
+
+        private async Task CompensateMonthlyDataAsync(int employeeId, UpdateEmployeeDto dto, double? oldTarget, int? oldBranchId)
+        {
+            if (dto.ShiftHours.HasValue && oldTarget.HasValue)
+                await _monthlyDataRepository.UpdateTargetAsync(employeeId, oldTarget.Value);
+
+            if (dto.BranchId.HasValue && oldBranchId.HasValue && dto.BranchId.Value != oldBranchId.Value)
+                await _monthlyDataRepository.UpdateBranchAsync(employeeId, oldBranchId.Value);
         }
         public async Task<Result<EmployeeHistoryDto>> GetHistoryAsync(int employeeId)
         {
