@@ -38,7 +38,8 @@ namespace Requests.API.Controllers
         public async Task<IActionResult> GetAll(
             [FromQuery] int? employeeId = null,
             [FromQuery] int page = 1,
-            [FromQuery] int pageSize = 10)
+            [FromQuery] int pageSize = 10,
+            [FromQuery] bool? isSeenByHR = false)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
             var role = User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
@@ -49,7 +50,7 @@ namespace Requests.API.Controllers
                 employeeId = empId;
             }
 
-            var result = await _service.GetAllAsync(employeeId, userId, role, page, pageSize);
+            var result = await _service.GetAllAsync(employeeId, isSeenByHR, userId, role, page, pageSize);
             if (!result.IsSuccess)
                 return NotFound(new { message = result.Error });
 

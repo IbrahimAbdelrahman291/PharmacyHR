@@ -61,10 +61,10 @@ namespace Requests.Application.Services
             return Result<bool>.Success(true);
         }
 
-        public async Task<Result<PaginatedResponse<OvertimeRequestDto>>> GetAllAsync(int? employeeId, string? userId, string role, int page, int pageSize)
+        public async Task<Result<PaginatedResponse<OvertimeRequestDto>>> GetAllAsync(int? employeeId, bool? isSeenByHR,string? userId, string role, int page, int pageSize)
         {
-            var requests = await _repository.GetAllAsync(employeeId, userId, role, page, pageSize);
-            var totalCount = await _repository.GetTotalCountAsync(employeeId, userId, role);
+            var requests = await _repository.GetAllAsync(employeeId, isSeenByHR,userId, role, page, pageSize);
+            var totalCount = await _repository.GetTotalCountAsync(employeeId,isSeenByHR, userId, role);
 
             var dtos = new List<OvertimeRequestDto>();
             foreach (var request in requests)

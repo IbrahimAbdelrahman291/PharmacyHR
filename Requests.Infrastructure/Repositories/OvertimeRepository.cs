@@ -21,12 +21,15 @@ namespace Requests.Infrastructure.Repositories
             return true;
         }
 
-        public async Task<IList<OvertimeRequest>> GetAllAsync(int? employeeId, string? userId, string role, int page, int pageSize)
+        public async Task<IList<OvertimeRequest>> GetAllAsync(int? employeeId, bool? isSeenByHR,string? userId, string role, int page, int pageSize)
         {
             var query = _context.OvertimeRequests.AsQueryable();
 
             if (employeeId.HasValue)
                 query = query.Where(r => r.EmployeeId == employeeId.Value);
+
+            if (isSeenByHR.HasValue)
+                query = query.Where(r => r.IsSeenByHR == isSeenByHR.Value);
 
             if (role == "AreaManager" && !string.IsNullOrEmpty(userId))
                 query = query.Where(r => r.AreaManagerUserId == userId);
@@ -38,12 +41,16 @@ namespace Requests.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<int> GetTotalCountAsync(int? employeeId, string? userId, string role)
+        public async Task<int> GetTotalCountAsync(int? employeeId, bool? isSeenByHR, string? userId, string role)
         {
             var query = _context.OvertimeRequests.AsQueryable();
 
             if (employeeId.HasValue)
                 query = query.Where(r => r.EmployeeId == employeeId.Value);
+
+            if (isSeenByHR.HasValue)
+                query = query.Where(r => r.IsSeenByHR == isSeenByHR.Value);
+
 
             if (role == "AreaManager" && !string.IsNullOrEmpty(userId))
                 query = query.Where(r => r.AreaManagerUserId == userId);
