@@ -5,7 +5,7 @@
 namespace Payroll.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class AddRowVersionToMonthlyEmployeeData : Migration
+    public partial class AddRowVersionToTestServer : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

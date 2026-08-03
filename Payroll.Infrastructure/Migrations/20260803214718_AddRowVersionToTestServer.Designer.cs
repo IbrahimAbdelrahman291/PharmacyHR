@@ -12,8 +12,8 @@ using Payroll.Infrastructure.Data;
 namespace Payroll.Infrastructure.Migrations
 {
     [DbContext(typeof(PayrollDbContext))]
-    [Migration("20260729145905_AddRowVersionToMonthlyEmployeeData")]
-    partial class AddRowVersionToMonthlyEmployeeData
+    [Migration("20260803214718_AddRowVersionToTestServer")]
+    partial class AddRowVersionToTestServer
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
