@@ -92,13 +92,13 @@ namespace Payroll.Infrastructure.Repositories
                 catch (DbUpdateConcurrencyException)
                 {
                     if (attempt == MaxRetries - 1)
-                        return Result<bool>.Failure("فشل التحديث بسبب تعارض متزامن، حاول مرة أخرى");
+                        return Result<bool>.Failure("فشل التحديث بسبب تعارض متزامن، حاول مرة أخرى خلال عشر دقائق");
 
                     foreach (var entry in _context.ChangeTracker.Entries())
                         entry.State = EntityState.Detached;
                 }
             }
-            return Result<bool>.Failure("فشل غير متوقع أثناء تحديث البيانات");
+            return Result<bool>.Failure("فشل غير متوقع أثناء تحديث البيانات هناك تعديل على نفس البيانات في نفس الوقت خلال عشر دقائق");
         }
 
         // ==========================================================================
