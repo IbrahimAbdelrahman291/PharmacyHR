@@ -109,14 +109,32 @@ namespace Attendance.Application.Services
                     if (egyptNow > allowedCheckOut)
                     {
                         workLog.End = CheckOutTime;
-                        workLog.TotalTime = allowedCheckOut - startDateTime;
+                        workLog.TotalTime = totalWorkTime;
                         workLog.IsEnd = true;
+
+                        if(totalWorkTime.TotalHours <= 0)
+                        {
+                            return Result<bool>.Failure("حدث خطأ في حساب مدة الشيفت، برجاء التواصل مع الدعم الفني لمراجعة الحضور");
+                        }
 
                         var salaryResult1 = await _monthlyDataRepository.AddHoursAsync(employeeId, totalWorkTime.TotalHours);
                         if (!salaryResult1.IsSuccess)
                             return Result<bool>.Failure(salaryResult1.Error!);
 
-                        await _workLogRepository.UpdateAsync(workLog);
+                        try
+                        {
+                            var workLogUpdateSucceeded = await _workLogRepository.UpdateAsync(workLog);
+                            if (!workLogUpdateSucceeded)
+                            {
+                                await _monthlyDataRepository.AddHoursAsync(employeeId, -totalTime.TotalHours);
+                                return Result<bool>.Failure("فشل تسجيل انتهاء الشيفت، حاول مرة أخرى");
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            await _monthlyDataRepository.AddHoursAsync(employeeId, -totalTime.TotalHours);
+                            return Result<bool>.Failure("فشل تسجيل انتهاء الشيفت، حاول مرة أخرى");
+                        }
                         return Result<bool>.Success(true);
                     }
                 }
@@ -124,12 +142,28 @@ namespace Attendance.Application.Services
                 workLog.End = egyptTime;
                 workLog.TotalTime = totalTime;
                 workLog.IsEnd = true;
-
+                if (totalTime.TotalHours <= 0)
+                {
+                    return Result<bool>.Failure("حدث خطأ في حساب مدة الشيفت، برجاء التواصل مع الدعم الفني لمراجعة الحضور يدويًا");
+                }
                 var salaryResult2 = await _monthlyDataRepository.AddHoursAsync(employeeId, totalTime.TotalHours);
                 if (!salaryResult2.IsSuccess)
                     return Result<bool>.Failure(salaryResult2.Error!);
 
-                await _workLogRepository.UpdateAsync(workLog);
+                try
+                {
+                    var workLogUpdateSucceeded = await _workLogRepository.UpdateAsync(workLog);
+                    if (!workLogUpdateSucceeded)
+                    {
+                        await _monthlyDataRepository.AddHoursAsync(employeeId, -totalTime.TotalHours);
+                        return Result<bool>.Failure("فشل تسجيل انتهاء الشيفت، حاول مرة أخرى");
+                    }
+                }
+                catch (Exception)
+                {
+                    await _monthlyDataRepository.AddHoursAsync(employeeId, -totalTime.TotalHours);
+                    return Result<bool>.Failure("فشل تسجيل انتهاء الشيفت، حاول مرة أخرى");
+                }
                 return Result<bool>.Success(true);
             }
             else
